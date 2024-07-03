@@ -1,0 +1,25 @@
+{
+  "name": "yard-manager-be",
+  "version": "1.0.0",
+  "description": "My Yard Manager Backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --env-file=.env index.js",
+    "dev": "nodemon --env-file=.env index.js",
+    "test": "npm run test"
+  },
+  "author": "Mashaim Ali",
+  "license": "ISC",
+  "dependencies": {
+    "backblaze-b2": "^1.7.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-validator": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.3",
+    "multer": "^1.4.5-lts.1",
+    "passport": "^0.7.0",
+    "uuid": "^10.0.0"
+  }
+}
