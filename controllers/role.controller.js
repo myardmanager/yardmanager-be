@@ -41,6 +41,7 @@ exports.getRole = async (req, res) => {
 exports.createRole = async (req, res) => {
 	try {
 		req.body.company = req.user.company;
+		req.body.createdBy = req.user.id;
 		const role = await Role.create(req.body);
 		res.status(201).json({
 			success: true,

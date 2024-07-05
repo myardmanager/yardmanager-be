@@ -50,12 +50,7 @@ const inventorySchema = new mongoose.Schema(
 		color: {
 			type: String
 		},
-		addedBy: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "User",
-			required: true
-		},
-		vendor: {
+		owner: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Company",
 			required: true
