@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+const roles = require("../constants/roles.constants.json");
+
+// const ROLES_NAME = ["employees", "invoices", "inventory", "parts", "settings", "locations", "recycled", "roles"];
 
 const roleSchema = new mongoose.Schema(
 	{
@@ -11,7 +14,7 @@ const roleSchema = new mongoose.Schema(
         name: {
           type: String,
           required: true,
-          enum: ["employees", "invoices", "inventory", "parts", "settings", "locations", "recycled", "roles"]
+          enum: roles.privileges
         },
 				permissions: {
 					read: {
@@ -32,9 +35,16 @@ const roleSchema = new mongoose.Schema(
 					}
 				}
 			}
-		]
+		],
+		company: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Company",
+			required: true
+		}
 	},
 	{ timestamps: true }
 );
+
+// exports.ROLES_NAME = ROLES_NAME;
 
 module.exports = mongoose.model("Role", roleSchema);

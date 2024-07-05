@@ -4,6 +4,7 @@ const { verifyToken } = require("../middlewares/authorization");
 const {
 	getAllUsers,
 	getUser,
+	getInfo,
 	updateInfo,
 	deleteUser,
 	login,
@@ -14,6 +15,7 @@ const { validateUserWithCompany } = require("../validators/user.validator");
 const { runValidation } = require("../validators");
 
 router.get("/all", getAllUsers);
+router.get("/info", verifyToken, getInfo);
 router.get("/s/:id", getUser);
 router.put("/s/:id", updateInfo);
 router.delete("/s/:id", deleteUser);

@@ -8,6 +8,8 @@ const port = process.env.PORT || 5000;
 const adminRoutes = require("./routes/admin.routes");
 const roleRoutes = require("./routes/role.routes");
 const userRoutes = require("./routes/user.routes");
+const locationRoutes = require("./routes/location.routes");
+const partRoutes = require("./routes/part.routes");
 
 mongoose
 	.connect(process.env.MONGODB_URI)
@@ -50,6 +52,8 @@ app.get("/", (req, res) => {
 app.use("/api/admin", adminRoutes);
 app.use("/api/roles", roleRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/locations", locationRoutes);
+app.use("/api/parts", partRoutes);
 
 app.listen(port, () => {
 	console.log(`Server is running on port ${port}`);

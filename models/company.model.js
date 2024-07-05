@@ -40,4 +40,6 @@ const companySchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
+companySchema.index({ owner: 1 }, { unique: true });
+
 module.exports = mongoose.model("Company", companySchema);

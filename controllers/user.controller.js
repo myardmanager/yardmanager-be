@@ -79,10 +79,14 @@ exports.login = async (req, res) => {
 				message: "Invalid password"
 			});
 		}
+
+		const company = await companyModel.find({owner: user._id});
+		
 		const token = jwt.sign(
 			{
 				id: user._id,
-				email: user.email
+				email: user.email,
+				company: company[0]._id
 			},
 			process.env.JWT_SECRET,
 			{ expiresIn: "10h" }
@@ -104,10 +108,11 @@ exports.login = async (req, res) => {
 exports.getInfo = async (req, res) => {
 	try {
 		const user = await User.findById(req.user.id);
+		const company = await companyModel.findById(req.user.company);
 		res.status(200).json({
 			success: true,
 			message: "User fetched successfully",
-			data: user
+			data: {user, company}
 		});
 	} catch (error) {
 		res.status(500).json({

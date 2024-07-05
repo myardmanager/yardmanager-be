@@ -1,0 +1,12 @@
+{
+  "privileges": [
+    "employees",
+    "invoices",
+    "inventory",
+    "parts",
+    "settings",
+    "locations",
+    "recycled",
+    "roles"
+  ]
+}
