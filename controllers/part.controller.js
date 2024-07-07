@@ -132,3 +132,23 @@ exports.paginateParts = async (req, res) => {
 		});
 	}
 };
+
+exports.searchPartsByName = async (req, res) => {
+	try {
+		const name = req.query.name;
+		const parts = await Part.find({ name: { $regex: `.*${name}.*`, $options: "i" }, company: req.user.company })
+			.sort({ createdAt: -1 });
+
+		res.status(200).json({
+			success: true,
+			message: "Parts searched successfully",
+			data: parts
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+			error: error.message
+		});
+	}
+};

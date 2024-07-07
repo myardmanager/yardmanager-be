@@ -139,3 +139,27 @@ exports.paginateLocations = async (req, res) => {
 		});
 	}
 };
+
+exports.searchLocations = async (req, res) => {
+	try {
+		const searchString = req.query.name || "";
+		const locations = await Location.find({
+			company: req.user.company,
+			location: { $regex: searchString, $options: "i" }
+		})
+			.sort({ createdAt: -1 })
+			.exec();
+
+		res.status(200).json({
+			success: true,
+			message: "Locations fetched successfully",
+			data: locations
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+			error: error.message
+		});
+	}
+};

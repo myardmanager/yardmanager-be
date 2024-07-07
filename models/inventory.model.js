@@ -7,7 +7,13 @@ const inventorySchema = new mongoose.Schema(
 			required: true
 		},
 		location: {
-			type: String,
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Location",
+			required: true
+		},
+		part: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Part",
 			required: true
 		},
 		startYear: {
@@ -44,13 +50,17 @@ const inventorySchema = new mongoose.Schema(
 				type: String
 			}
 		],
-    sku: {
-      type: Number,
-    },
+		sku: {
+			type: Number
+		},
 		color: {
 			type: String
 		},
-		owner: {
+		deleted: {
+			type: Boolean,
+			default: false
+		},
+		company: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Company",
 			required: true
@@ -60,6 +70,5 @@ const inventorySchema = new mongoose.Schema(
 );
 
 inventorySchema.index({ vendor: 1, addedBy: 1 });
-
 
 module.exports = mongoose.model("Inventory", inventorySchema);

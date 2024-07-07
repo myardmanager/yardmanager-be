@@ -7,7 +7,8 @@ const {
 	createLocation,
 	updateLocation,
 	deleteLocation,
-	paginateLocations
+	paginateLocations,
+	searchLocations
 } = require("../controllers/location.controller");
 const { validateLocation } = require("../validators/location.validator");
 const { runValidation } = require("../validators");
@@ -18,5 +19,6 @@ router.post("/new", verifyToken, validateLocation, runValidation, createLocation
 router.put("/s/:id", verifyToken, validateLocation, runValidation, updateLocation);
 router.delete("/s/:id", verifyToken, deleteLocation);
 router.get("/paginate", verifyToken, paginateLocations);
+router.get("/search", verifyToken, searchLocations);
 
 module.exports = router;

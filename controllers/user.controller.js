@@ -8,41 +8,41 @@ const jwt = require("jsonwebtoken");
 exports.register = async (req, res) => {
 	try {
 		const salt = await bcrypt.genSalt(10);
-    console.log(req.body);
-    console.log(req.body.user.password);
+		// console.log(req.body);
+		// console.log(req.body.user.password);
 		req.body.user.password = await bcrypt.hash(req.body.user.password, salt);
 
 		if (req.files) {
-      console.log(req.files);
+			console.log(req.files);
 			if (req.files.profile) {
 				let profile = await uploadFile(req.files.profile[0]);
-				req.body.user.images = {profile};
-      } else {
-        res.status(400).json({
-          success: false,
-          message: "Profile image is required"
-        });
-      }
+				req.body.user.images = { profile };
+			} else {
+				res.status(400).json({
+					success: false,
+					message: "Profile image is required"
+				});
+			}
 
 			if (req.files.cover) {
 				let cover = await uploadFile(req.files.cover[0]);
 				req.body.user.images.cover = cover;
 			} else {
-        res.status(400).json({
-          success: false,
-          message: "Cover image is required"
-        });
-      }
+				res.status(400).json({
+					success: false,
+					message: "Cover image is required"
+				});
+			}
 
 			if (req.files.companyImage) {
 				let companyImage = await uploadFile(req.files.companyImage[0]);
 				req.body.company.image = companyImage;
-      } else {
-        res.status(400).json({
-          success: false,
-          message: "Company image is required"
-        });
-      }
+			} else {
+				res.status(400).json({
+					success: false,
+					message: "Company image is required"
+				});
+			}
 		}
 
 		const user = await User.create(req.body.user);
@@ -52,7 +52,7 @@ exports.register = async (req, res) => {
 		res.status(201).json({
 			success: true,
 			message: "User created successfully",
-			data: {user, company}
+			data: { user, company }
 		});
 	} catch (error) {
 		res.status(500).json({
@@ -80,12 +80,13 @@ exports.login = async (req, res) => {
 			});
 		}
 
-		const company = await companyModel.find({owner: user._id});
-		
+		const company = await companyModel.find({ owner: user._id });
+
 		const token = jwt.sign(
 			{
 				id: user._id,
 				email: user.email,
+				type: 'user',
 				company: company[0]._id
 			},
 			process.env.JWT_SECRET,
@@ -112,7 +113,7 @@ exports.getInfo = async (req, res) => {
 		res.status(200).json({
 			success: true,
 			message: "User fetched successfully",
-			data: {user, company}
+			data: { user, company }
 		});
 	} catch (error) {
 		res.status(500).json({
@@ -198,6 +199,28 @@ exports.getUser = async (req, res) => {
 			success: true,
 			message: "User fetched successfully",
 			data: user
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+			error: error.message
+		});
+	}
+};
+
+exports.changePassword = async (req, res) => {
+	try {
+		const user = await User.findById(req.user.id);
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+		const salt = await bcrypt.genSalt(10);
+		user.password = await bcrypt.hash(req.body.password, salt);
+		await user.save();
+		res.status(200).json({
+			success: true,
+			message: "Password changed successfully"
 		});
 	} catch (error) {
 		res.status(500).json({
