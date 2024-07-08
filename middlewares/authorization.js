@@ -13,7 +13,21 @@ exports.verifyToken = (req, res, next) => {
 
 		req.user = user;
 		// logMiddleware(req, res);
-		next();
+
+		// console.log(req.user);
+		// console.log(global.userList);
+		const userCheck = global.userList.find((item) => item.email === req.user.email);
+		// console.log(userCheck);
+		// console.log(token, '\n', userCheck?.token)
+		if (token === userCheck?.token) {
+			next();
+			return;
+		}
+
+		return res
+			.status(403)
+			.json({ success: false, message: "Insufficient permissions", result: req.user.email });
+		// next();
 	});
 };
 

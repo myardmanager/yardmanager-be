@@ -17,10 +17,11 @@ exports.createInvoice = async (req, res) => {
 		const tax = (total * req.body.tax) / 100;
 		req.body.status = req.body.paid === total + tax ? true : false;
 		const invoice = await Invoice.create(req.body);
+		const newInvoice = await invoice.populate(["soldByUser", "soldByEmployee"]);
 		res.status(201).json({
 			success: true,
 			message: "Invoice created successfully",
-			data: invoice
+			data: newInvoice
 		});
 	} catch (error) {
 		res.status(500).json({

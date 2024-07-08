@@ -82,16 +82,19 @@ exports.login = async (req, res) => {
 
 		const company = await companyModel.find({ owner: user._id });
 
-		const token = jwt.sign(
-			{
-				id: user._id,
-				email: user.email,
-				type: 'user',
-				company: company[0]._id
-			},
-			process.env.JWT_SECRET,
-			{ expiresIn: "10h" }
-		);
+		const dataSign = {
+			id: user._id,
+			email: user.email,
+			type: "user",
+			company: company[0]._id
+		};
+		const token = jwt.sign(dataSign, process.env.JWT_SECRET, { expiresIn: "10h" });
+
+		global.userList = global.userList.filter((item) => item.email !== user.email);
+		global.userList.push({ token, ...dataSign });
+
+		// console.log(global.userList);
+
 		res.status(200).json({
 			success: true,
 			message: "User logged in successfully",
