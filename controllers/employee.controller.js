@@ -1,8 +1,6 @@
 const { uploadFile } = require("../services/backblaze.service");
 const Employee = require("../models/employee.model");
-
-// controllers\employee.controller.js
-const Employee = require("../models/employee.model");
+const bcrypt = require("bcryptjs");
 
 exports.getAllEmployees = async (req, res) => {
 	try {
@@ -49,12 +47,22 @@ exports.getEmployee = async (req, res) => {
 
 exports.createEmployee = async (req, res) => {
 	try {
+		// Created by
 		if (req.user.type === "user") req.body.createdByUser = req.user.id;
 		if (req.user.type === "employee") req.body.createdByEmployee = req.user.employee;
+
+		// Company
 		req.body.company = req.user.company;
+
+		// Encrypt password
+		const salt = await bcrypt.genSalt(10);
+		req.body.password = await bcrypt.hash(req.body.password, salt);
+
+		// Image upload
 		if (req.files && req.files.length > 0) {
 			req.body.profile = await uploadFile(req.files[0]);
 		}
+
 		const employee = await Employee.create(req.body);
 		res.status(201).json({
 			success: true,
@@ -72,10 +80,15 @@ exports.createEmployee = async (req, res) => {
 
 exports.updateEmployee = async (req, res) => {
 	try {
-		const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
 		if (req.files && req.files.length > 0) {
 			req.body.profile = await uploadFile(req.files[0]);
 		}
+		if (req.body.password) {
+			const salt = await bcrypt.genSalt(10);
+			req.body.password = await bcrypt.hash(req.body.password, salt);
+		}
+
+		const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
 		if (!employee) {
 			return res.status(404).json({
 				success: false,

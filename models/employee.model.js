@@ -33,6 +33,10 @@ const employeeSchema = new mongoose.Schema(
 		profile: {
 			type: String
 		},
+		date: {
+			type: Date,
+			default: Date.now
+		},
 		status: {
 			type: Boolean,
 			default: true
@@ -56,7 +60,7 @@ const employeeSchema = new mongoose.Schema(
 
 employeeSchema.index({ email: 1, company: 1 }, { unique: true });
 
-invoiceSchema.pre("validate", function (next) {
+employeeSchema.pre("validate", function (next) {
 	if (!this.createdByUser && !this.createdByEmployee) {
 		next(new Error("Invoice must contains soldBy from user or employee only one"));
 	}

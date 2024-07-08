@@ -7,16 +7,31 @@ const {
 	getEmployee,
 	createEmployee,
 	updateEmployee,
-  deleteEmployee,
-  paginateEmployees
+	deleteEmployee,
+	paginateEmployees
 } = require("../controllers/employee.controller");
 const { runValidation } = require("../validators");
-const { validateEmployee, validateEmployeeUpdate } = require("../validators/employee.validator");
+const { validateEmployee, validateUpdateEmployee } = require("../validators/employee.validator");
+const uploadMulter = require("../middlewares/upload");
 
 router.get("/all", verifyToken, getAllEmployees);
 router.get("/s/:id", verifyToken, getEmployee);
-router.post("/new", verifyToken, validateEmployee, runValidation, createEmployee);
-router.put("/s/:id", verifyToken, validateEmployeeUpdate, runValidation, updateEmployee);
+router.post(
+	"/new",
+	verifyToken,
+	uploadMulter.any(),
+	validateEmployee,
+	runValidation,
+	createEmployee
+);
+router.put(
+	"/s/:id",
+	verifyToken,
+	uploadMulter.any(),
+	validateUpdateEmployee,
+	runValidation,
+	updateEmployee
+);
 router.delete("/s/:id", verifyToken, deleteEmployee);
 router.get("/paginate", verifyToken, paginateEmployees);
 

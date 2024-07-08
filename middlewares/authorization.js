@@ -6,10 +6,10 @@ exports.verifyToken = (req, res, next) => {
 	const authHeader = req.headers["authorization"];
 	const token = authHeader && authHeader.split(" ")[1];
 
-	if (token == null) return res.sendStatus(401);
+	if (token == null) return res.status(401).json({ success: false, message: "No token provided" });
 
 	jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-		if (err) return res.sendStatus(403);
+		if (err) return res.status(403).json({ success: false, message: "Token expired" });
 
 		req.user = user;
 		// logMiddleware(req, res);
@@ -26,7 +26,7 @@ exports.verifyToken = (req, res, next) => {
 
 		return res
 			.status(403)
-			.json({ success: false, message: "Insufficient permissions", result: req.user.email });
+			.json({ success: false, message: "New Login session occurs", result: req.user.email });
 		// next();
 	});
 };
