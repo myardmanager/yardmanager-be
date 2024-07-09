@@ -65,10 +65,11 @@ exports.createEmployee = async (req, res) => {
 		}
 
 		const employee = await Employee.create(req.body);
+		const newEmployee = await employee.populate(["role", "company"]);
 		res.status(201).json({
 			success: true,
 			message: "Employee created successfully",
-			data: employee
+			data: newEmployee
 		});
 	} catch (error) {
 		res.status(500).json({
