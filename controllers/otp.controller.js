@@ -47,6 +47,8 @@ exports.sendOtp = async (req, res) => {
 	}
 };
 
+const jwt = require("jsonwebtoken");
+
 exports.verifyOtp = async (req, res) => {
 	try {
 		const { email, otp } = req.body;
@@ -54,11 +56,14 @@ exports.verifyOtp = async (req, res) => {
 		if (!otpRecord) {
 			return res.status(404).json({ message: "OTP not found" });
 		}
+		console.log(typeof otpRecord.otp, otpRecord.otp, typeof otp, otp);
 		if (otpRecord.otp === otp) {
-			await otpRecord.remove();
+			await otpRecord.deleteOne();
+			const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "15m" });
 			res.status(200).json({
 				success: true,
-				message: "OTP verified successfully"
+				message: "OTP verified successfully.",
+				data: token
 			});
 		} else {
 			res.status(400).json({

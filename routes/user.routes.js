@@ -13,7 +13,7 @@ const {
 const uploadMulter = require("../middlewares/upload");
 const { validateUserWithCompany } = require("../validators/user.validator");
 const { runValidation } = require("../validators");
-const { sendOtp } = require("../controllers/otp.controller");
+const { sendOtp, verifyOtp } = require("../controllers/otp.controller");
 
 router.get("/all", getAllUsers);
 router.get("/info", verifyToken, getInfo);
@@ -33,5 +33,6 @@ router.post(
 	register
 );
 router.post("/forgot-password", sendOtp);
+router.post("/verify-otp", verifyOtp);
 
 module.exports = router;

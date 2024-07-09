@@ -96,10 +96,11 @@ exports.updateEmployee = async (req, res) => {
 				message: "Employee not found"
 			});
 		}
+		const updatedEmployee = await Employee.findById(req.params.id).populate(["role", "company"]);
 		res.status(200).json({
 			success: true,
 			message: "Employee updated successfully",
-			data: employee
+			data: updatedEmployee
 		});
 	} catch (error) {
 		res.status(500).json({
