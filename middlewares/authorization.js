@@ -14,11 +14,7 @@ exports.verifyToken = (req, res, next) => {
 		req.user = user;
 		// logMiddleware(req, res);
 
-		// console.log(req.user);
-		// console.log(global.userList);
-		const userCheck = global.userList.find((item) => item.email === req.user.email);
-		// console.log(userCheck);
-		// console.log(token, '\n', userCheck?.token)
+		const userCheck = global.userList.find((item) => item.id === req.user.id);
 		if (token === userCheck?.token) {
 			next();
 			return;

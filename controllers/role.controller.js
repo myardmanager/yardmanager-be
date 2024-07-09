@@ -1,4 +1,5 @@
 const Role = require("../models/role.model");
+const Employee = require("../models/employee.model");
 
 //ROLES CONTROLLER
 exports.getAllRoles = async (req, res) => {
@@ -109,10 +110,20 @@ exports.paginateRoles = async (req, res) => {
 
 		const total = await Role.countDocuments({ company: req.user.company });
 		const roles = await Role.find({ company: req.user.company }).skip(skip).limit(limit);
+
+		const rolesWithEmployeesCount = await Promise.all(
+			roles.map(async (role) => {
+				const count = await Employee.countDocuments({ role: role._id, company: req.user.company });
+				return { ...role.toObject(), employeesCount: count };
+			})
+		);
+		const rolesWithEmployeeCount = rolesWithEmployeesCount;
+		console.log(rolesWithEmployeeCount);
 		res.status(200).json({
 			success: true,
 			message: "Roles fetched successfully",
 			data: roles,
+			rolesWithEmployeeCount,
 			meta: { total, page, limit }
 		});
 	} catch (error) {
@@ -123,3 +134,25 @@ exports.paginateRoles = async (req, res) => {
 		});
 	}
 };
+
+exports.searchRoles = async (req, res) => {
+	try {
+		const searchQuery = new RegExp(req.query.name, "i");
+		const roles = await Role.find({
+			company: req.user.company,
+			name: searchQuery
+		});
+		res.status(200).json({
+			success: true,
+			message: "Roles fetched successfully",
+			data: roles
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+			error: error.message
+		});
+	}
+};
+

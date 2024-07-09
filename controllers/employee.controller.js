@@ -1,6 +1,7 @@
 const { uploadFile } = require("../services/backblaze.service");
 const Employee = require("../models/employee.model");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 exports.getAllEmployees = async (req, res) => {
 	try {
@@ -164,3 +165,47 @@ exports.paginateEmployees = async (req, res) => {
 		});
 	}
 };
+
+// exports.login = async (req, res) => {
+// 	try {
+// 		const employee = await Employee.findOne({ email: req.body.email }).populate("company");
+// 		if (!employee) {
+// 			return res.status(400).json({
+// 				success: false,
+// 				message: "Invalid email"
+// 			});
+// 		}
+// 		const isPasswordValid = await bcrypt.compare(req.body.password, employee.password);
+// 		if (!isPasswordValid) {
+// 			return res.status(400).json({
+// 				success: false,
+// 				message: "Invalid password"
+// 			});
+// 		}
+
+// 		const dataSign = {
+// 			id: employee._id,
+// 			email: employee.email,
+// 			type: "user",
+// 			company: employee.company._id
+// 		};
+// 		const token = jwt.sign(dataSign, process.env.JWT_SECRET, { expiresIn: "10h" });
+
+// 		global.userList = global.userList.filter((item) => item.email !== employee.email);
+// 		global.userList.push({ token, ...dataSign });
+
+// 		// console.log(global.userList);
+
+// 		res.status(200).json({
+// 			success: true,
+// 			message: "User logged in successfully",
+// 			token: token
+// 		});
+// 	} catch (error) {
+// 		res.status(500).json({
+// 			success: false,
+// 			message: "Internal server error",
+// 			error: error.message
+// 		});
+// 	}
+// };

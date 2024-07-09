@@ -8,7 +8,8 @@ const {
 	createEmployee,
 	updateEmployee,
 	deleteEmployee,
-	paginateEmployees
+	paginateEmployees,
+	login
 } = require("../controllers/employee.controller");
 const { runValidation } = require("../validators");
 const { validateEmployee, validateUpdateEmployee } = require("../validators/employee.validator");
@@ -34,5 +35,6 @@ router.put(
 );
 router.delete("/s/:id", verifyToken, deleteEmployee);
 router.get("/paginate", verifyToken, paginateEmployees);
+// router.post("/login", login);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
+const Employee = require("../models/employee.model");
 const { uploadFile } = require("../services/backblaze.service");
 const companyModel = require("../models/company.model");
 const jwt = require("jsonwebtoken");
@@ -66,13 +67,35 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
 	try {
 		const user = await User.findOne({ email: req.body.email });
-		if (!user) {
+		const employee = await Employee.findOne({ email: req.body.email });
+		if (!user && !employee) {
 			return res.status(400).json({
 				success: false,
 				message: "Invalid email"
 			});
 		}
-		const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
+		let isPasswordValid;
+		let dataSign = {};
+
+		if (user) {
+			isPasswordValid = await bcrypt.compare(req.body.password, user.password);
+			const company = await companyModel.find({ owner: user._id });
+			dataSign = {
+				id: user._id.toString(),
+				email: user.email,
+				type: "user",
+				company: company[0]._id
+			};
+		} else {
+			isPasswordValid = await bcrypt.compare(req.body.password, employee.password);
+			dataSign = {
+				id: employee._id.toString(),
+				email: employee.email,
+				type: "employee",
+				company: employee.company._id
+			};
+		}
+
 		if (!isPasswordValid) {
 			return res.status(400).json({
 				success: false,
@@ -80,20 +103,10 @@ exports.login = async (req, res) => {
 			});
 		}
 
-		const company = await companyModel.find({ owner: user._id });
-
-		const dataSign = {
-			id: user._id,
-			email: user.email,
-			type: "user",
-			company: company[0]._id
-		};
 		const token = jwt.sign(dataSign, process.env.JWT_SECRET, { expiresIn: "10h" });
 
-		global.userList = global.userList.filter((item) => item.email !== user.email);
+		global.userList = global.userList.filter((item) => item.id !== dataSign.id);
 		global.userList.push({ token, ...dataSign });
-
-		// console.log(global.userList);
 
 		res.status(200).json({
 			success: true,
@@ -112,11 +125,14 @@ exports.login = async (req, res) => {
 exports.getInfo = async (req, res) => {
 	try {
 		const user = await User.findById(req.user.id);
+		const employee = await Employee.findById(req.user.id).select("-password").populate({
+			path: "role"
+		});
 		const company = await companyModel.findById(req.user.company);
 		res.status(200).json({
 			success: true,
 			message: "User fetched successfully",
-			data: { user, company }
+			data: { user: user || employee, company, type: user ? "user" : "employee" }
 		});
 	} catch (error) {
 		res.status(500).json({

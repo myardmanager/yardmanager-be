@@ -1,4 +1,5 @@
 const User = require("../models/user.model");
+const Employee = require("../models/employee.model");
 const emailjs = require("emailjs-com");
 const otpModel = require("../models/otp.model");
 
@@ -6,11 +7,17 @@ exports.sendOtp = async (req, res) => {
 	try {
 		const { email } = req.body;
 		const user = await User.findOne({ email });
-		if (!user) {
+		const employee = await Employee.findOne({ email });
+
+		if (!user && !employee) {
 			return res.status(404).json({ message: "User not found" });
 		}
 
 		const otp = Math.floor(100000 + Math.random() * 900000);
+		const lastOtp = await otpModel.findOne({ email }).sort({ createdAt: -1 });
+		if (lastOtp && lastOtp.createdAt > Date.now() - 2 * 60 * 1000) {
+			return res.status(400).json({ message: "OTP sent recently, please wait for some time" });
+		}
 		await otpModel.create({ email, otp });
 
 		const templateParams = {
@@ -18,15 +25,14 @@ exports.sendOtp = async (req, res) => {
 			otp
 		};
 
-		emailjs
-			.send("service_7yv83gy", "template_3st7v4i", templateParams, "kprpF991QyeJ4uPlv")
-			.then((response) => {
-				console.log(response.statusCode);
-				console.log(response.body);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+		console.log(templateParams);
+		// try {
+		// 	const response = await emailjs.send("service_7yv83gy", "template_3st7v4i", templateParams, "kprpF991QyeJ4uPlv");
+		// 	console.log(response.statusCode);
+		// 	console.log(response.body);
+		// } catch (error) {
+		// 	console.log(error);
+		// }
 
 		res.status(200).json({
 			success: true,
