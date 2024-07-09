@@ -82,16 +82,12 @@ exports.verifyOtp = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
 	try {
-		const user = await User.findById(req.user.id);
+		let user = await User.findById(req.user.id);
+		if (!user) {
+			user = await Employee.findById(req.user.id);
+		}
 		if (!user) {
 			return res.status(404).json({ message: "User not found" });
-		}
-		const isPasswordValid = await bcrypt.compare(req.body.oldPassword, user.password);
-		if (!isPasswordValid) {
-			return res.status(400).json({
-				success: false,
-				message: "Old password is incorrect"
-			});
 		}
 		user.password = await bcrypt.hash(req.body.newPassword, 10);
 		await user.save();
