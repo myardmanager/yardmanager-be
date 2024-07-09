@@ -5,7 +5,7 @@ const Invoice = require("../models/invoice.model");
 exports.createInvoice = async (req, res) => {
 	try {
 		if (req.user.type === "user") req.body.soldByUser = req.user.id;
-		if (req.user.type === "employee") req.body.soldByEmployee = req.user.employee;
+		if (req.user.type === "employee") req.body.soldByEmployee = req.user.id;
 		req.body.company = req.user.company;
 		if (req.body.products.length === 0) {
 			return res.status(400).json({ message: "No products found" });
