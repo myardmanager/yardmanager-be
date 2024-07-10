@@ -14,7 +14,7 @@ exports.sendOtp = async (req, res) => {
 			return res.status(404).json({ message: "User not found" });
 		}
 
-		const otp = Math.floor(100000 + Math.random() * 900000);
+		const otp = Math.floor(1000 + Math.random() * 9000);
 		const lastOtp = await otpModel.findOne({ email }).sort({ createdAt: -1 });
 		if (lastOtp && lastOtp.createdAt > Date.now() - 2 * 60 * 1000) {
 			return res.status(400).json({ message: "OTP sent recently, please wait for some time" });

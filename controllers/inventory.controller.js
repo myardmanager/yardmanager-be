@@ -189,19 +189,16 @@ exports.getInventoryPagination = async (req, res) => {
 			deleted: req.query.deleted,
 			$or: [
 				{ name: { $regex: search } },
-				{ color: { $regex: search } }
+				{ color: { $regex: search } },
+				{ variant: { $regex: search } },
+				{ model: { $regex: search } },
+				{ make: { $regex: search } },
+				{ startYear: { $regex: search } },
+				{ endYear: { $regex: search } }
 			]
 		})
-			.populate({
-				path: "part",
-				select: "name",
-				match: { name: { $regex: search } }
-			})
-			.populate({
-				path: "location",
-				select: "location",
-				match: { location: { $regex: search } }
-			})
+			.populate("part", "name")
+			.populate("location", "location")
 			.sort({ createdAt: -1 })
 			.skip(offset)
 			.limit(limit)
