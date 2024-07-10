@@ -232,24 +232,24 @@ exports.getUser = async (req, res) => {
 	}
 };
 
-exports.changePassword = async (req, res) => {
-	try {
-		const user = await User.findById(req.user.id);
-		if (!user) {
-			return res.status(404).json({ message: "User not found" });
-		}
-		const salt = await bcrypt.genSalt(10);
-		user.password = await bcrypt.hash(req.body.password, salt);
-		await user.save();
-		res.status(200).json({
-			success: true,
-			message: "Password changed successfully"
-		});
-	} catch (error) {
-		res.status(500).json({
-			success: false,
-			message: "Internal server error",
-			error: error.message
-		});
-	}
-};
+// exports.changePassword = async (req, res) => {
+// 	try {
+// 		const user = await User.findById(req.user.id);
+// 		if (!user) {
+// 			return res.status(404).json({ message: "User not found" });
+// 		}
+// 		const salt = await bcrypt.genSalt(10);
+// 		user.password = await bcrypt.hash(req.body.password, salt);
+// 		await user.save();
+// 		res.status(200).json({
+// 			success: true,
+// 			message: "Password changed successfully"
+// 		});
+// 	} catch (error) {
+// 		res.status(500).json({
+// 			success: false,
+// 			message: "Internal server error",
+// 			error: error.message
+// 		});
+// 	}
+// };

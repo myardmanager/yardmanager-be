@@ -2,6 +2,7 @@ const User = require("../models/user.model");
 const Employee = require("../models/employee.model");
 const emailjs = require("emailjs-com");
 const otpModel = require("../models/otp.model");
+const bcrypt = require("bcryptjs");
 
 exports.sendOtp = async (req, res) => {
 	try {
@@ -89,7 +90,7 @@ exports.changePassword = async (req, res) => {
 		if (!user) {
 			return res.status(404).json({ message: "User not found" });
 		}
-		user.password = await bcrypt.hash(req.body.newPassword, 10);
+		user.password = await bcrypt.hash(req.body.password, 10);
 		await user.save();
 		res.status(200).json({
 			success: true,
