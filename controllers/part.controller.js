@@ -111,9 +111,17 @@ exports.paginateParts = async (req, res) => {
 		const page = parseInt(req.query.page) || 1;
 		const limit = parseInt(req.query.limit) || 10;
 		const skip = (page - 1) * limit;
+		const search = req.query.search || "";
 
-		const total = await Part.countDocuments({ company: req.user.company });
-		const parts = await Part.find({ company: req.user.company })
+		const total = await Part.countDocuments({
+			$or: [{ name: { $regex: search, $options: "i" } }, { variant: { $in: [search] } }],
+			company: req.user.company
+		});
+
+		const parts = await Part.find({
+			company: req.user.company,
+			$or: [{ name: { $regex: search, $options: "i" } }, { variant: { $in: [search] } }]
+		})
 			.sort({ createdAt: -1 })
 			.skip(skip)
 			.limit(limit);
@@ -136,8 +144,10 @@ exports.paginateParts = async (req, res) => {
 exports.searchPartsByName = async (req, res) => {
 	try {
 		const name = req.query.name;
-		const parts = await Part.find({ name: { $regex: `.*${name}.*`, $options: "i" }, company: req.user.company })
-			.sort({ createdAt: -1 });
+		const parts = await Part.find({
+			name: { $regex: `.*${name}.*`, $options: "i" },
+			company: req.user.company
+		}).sort({ createdAt: -1 });
 
 		res.status(200).json({
 			success: true,

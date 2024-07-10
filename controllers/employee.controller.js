@@ -143,9 +143,24 @@ exports.paginateEmployees = async (req, res) => {
 		const page = parseInt(req.query.page) || 1;
 		const limit = parseInt(req.query.limit) || 5;
 		const skip = (page - 1) * limit;
+		const search = req.query.search || "";
 
-		const total = await Employee.countDocuments({ company: req.user.company });
-		const employees = await Employee.find({ company: req.user.company })
+		const total = await Employee.countDocuments({
+			company: req.user.company,
+			$or: [
+				{ name: { $regex: search, $options: "i" } },
+				{ email: { $regex: search, $options: "i" } },
+				{ position: { $regex: search, $options: "i" } }
+			]
+		});
+		const employees = await Employee.find({
+			company: req.user.company,
+			$or: [
+				{ name: { $regex: search, $options: "i" } },
+				{ email: { $regex: search, $options: "i" } },
+				{ position: { $regex: search, $options: "i" } }
+			]
+		})
 			.populate("role")
 			.skip(skip)
 			.limit(limit);

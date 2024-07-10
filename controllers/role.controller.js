@@ -107,9 +107,18 @@ exports.paginateRoles = async (req, res) => {
 		const page = req.query.page * 1 || 1;
 		const limit = req.query.limit * 1 || 10;
 		const skip = (page - 1) * limit;
+		const search = req.query.search || "";
 
-		const total = await Role.countDocuments({ company: req.user.company });
-		const roles = await Role.find({ company: req.user.company }).skip(skip).limit(limit);
+		const total = await Role.countDocuments({
+			company: req.user.company,
+			name: { $regex: search, $options: "i" }
+		});
+		const roles = await Role.find({
+			company: req.user.company,
+			name: { $regex: search, $options: "i" }
+		})
+			.skip(skip)
+			.limit(limit);
 
 		const rolesWithEmployeesCount = await Promise.all(
 			roles.map(async (role) => {
@@ -155,4 +164,3 @@ exports.searchRoles = async (req, res) => {
 		});
 	}
 };
-

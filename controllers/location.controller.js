@@ -118,9 +118,16 @@ exports.paginateLocations = async (req, res) => {
 		const page = parseInt(req.query.page) || 1;
 		const limit = parseInt(req.query.limit) || 10;
 		const skip = (page - 1) * limit;
+		const search = req.query.search || "";
 
-		const total = await Location.countDocuments({ company: req.user.company });
-		const locations = await Location.find({ company: req.user.company })
+		const total = await Location.countDocuments({
+			company: req.user.company,
+			location: { $regex: search, $options: "i" }
+		});
+		const locations = await Location.find({
+			company: req.user.company,
+			location: { $regex: search, $options: "i" }
+		})
 			.sort({ createdAt: -1 })
 			.skip(skip)
 			.limit(limit);
