@@ -26,14 +26,9 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: true
 		},
-		images: {
-			profile: {
-				type: String
-			},
-			cover: {
-				type: String
-			}
-		},
+		profile: {
+			type: String
+		}
 	},
 	{ timestamps: true }
 );

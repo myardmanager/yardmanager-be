@@ -9,15 +9,13 @@ const jwt = require("jsonwebtoken");
 exports.register = async (req, res) => {
 	try {
 		const salt = await bcrypt.genSalt(10);
-		// console.log(req.body);
-		// console.log(req.body.user.password);
 		req.body.user.password = await bcrypt.hash(req.body.user.password, salt);
 
 		if (req.files) {
 			console.log(req.files);
 			if (req.files.profile) {
 				let profile = await uploadFile(req.files.profile[0]);
-				req.body.user.images = { profile };
+				req.body.user.profile = profile;
 			} else {
 				res.status(400).json({
 					success: false,
@@ -27,7 +25,7 @@ exports.register = async (req, res) => {
 
 			if (req.files.cover) {
 				let cover = await uploadFile(req.files.cover[0]);
-				req.body.user.images.cover = cover;
+				req.body.company.images = { cover };
 			} else {
 				res.status(400).json({
 					success: false,
@@ -37,7 +35,7 @@ exports.register = async (req, res) => {
 
 			if (req.files.companyImage) {
 				let companyImage = await uploadFile(req.files.companyImage[0]);
-				req.body.company.image = companyImage;
+				req.body.company.images.profile = companyImage;
 			} else {
 				res.status(400).json({
 					success: false,
@@ -149,6 +147,15 @@ exports.getInfo = async (req, res) => {
 
 exports.updateInfo = async (req, res) => {
 	try {
+		// req.body.name = JSON.parse(req.body.name);
+		console.log(req.body);
+		if (req.files && req.files.length > 0) {
+			req.body.profile = await uploadFile(req.files[0]);
+		}
+		if (req.body.password) {
+			const salt = await bcrypt.genSalt(10);
+			req.body.password = await bcrypt.hash(req.body.password, salt);
+		}
 		const user = await User.findByIdAndUpdate(req.user.id, req.body, {
 			new: true
 		});
@@ -162,6 +169,93 @@ exports.updateInfo = async (req, res) => {
 			success: true,
 			message: "User updated successfully",
 			data: user
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+			error: error.message
+		});
+	}
+};
+
+exports.updateCompany = async (req, res) => {
+	try {
+		if (req.body.password) {
+			const salt = await bcrypt.genSalt(10);
+			req.body.password = await bcrypt.hash(req.body.password, salt);
+		}
+		req.body.owner = undefined;
+
+		const company = await companyModel.findOneAndUpdate(
+			{ _id: req.user.company, owner: req.user.id },
+			req.body,
+			{ new: true }
+		);
+		if (!company) {
+			return res.status(400).json({
+				success: false,
+				message: "Company not found"
+			});
+		}
+		res.status(200).json({
+			success: true,
+			message: "Company updated successfully",
+			data: company
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+			error: error.message
+		});
+	}
+};
+
+exports.updateCompanyImage = async (req, res) => {
+	try {
+		let updateFields = {};
+
+		// console.log(req.files);
+		if (req.files?.profile) {
+			const profile = await uploadFile(req.files.profile[0]);
+			updateFields = {
+				...updateFields,
+				profile
+			};
+		}
+
+		if (req.files?.cover) {
+			const cover = await uploadFile(req.files.cover[0]);
+			updateFields = {
+				...updateFields,
+				cover
+			};
+		}
+
+		if (!req.files?.profile && !req.files?.cover) {
+			return res.status(400).json({
+				success: false,
+				message: "At least one image (profile or cover) is required"
+			});
+		}
+
+		// console.log(updateFields);
+		const company = await companyModel.findOneAndUpdate(
+			{ _id: req.user.company, owner: req.user.id },
+			{ images: updateFields },
+			{ new: true }
+		);
+		if (!company) {
+			return res.status(400).json({
+				success: false,
+				message: "Company not found"
+			});
+		}
+		res.status(200).json({
+			success: true,
+			message: "Company image updated successfully",
+			data: company
 		});
 	} catch (error) {
 		res.status(500).json({
@@ -231,25 +325,3 @@ exports.getUser = async (req, res) => {
 		});
 	}
 };
-
-// exports.changePassword = async (req, res) => {
-// 	try {
-// 		const user = await User.findById(req.user.id);
-// 		if (!user) {
-// 			return res.status(404).json({ message: "User not found" });
-// 		}
-// 		const salt = await bcrypt.genSalt(10);
-// 		user.password = await bcrypt.hash(req.body.password, salt);
-// 		await user.save();
-// 		res.status(200).json({
-// 			success: true,
-// 			message: "Password changed successfully"
-// 		});
-// 	} catch (error) {
-// 		res.status(500).json({
-// 			success: false,
-// 			message: "Internal server error",
-// 			error: error.message
-// 		});
-// 	}
-// };

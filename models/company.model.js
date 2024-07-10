@@ -14,28 +14,23 @@ const companySchema = new mongoose.Schema(
 			type: String,
 			required: true
 		},
-		image: {
-			type: String
+		images: {
+			profile: {
+				type: String
+			},
+			cover: {
+				type: String
+			}
+		},
+		price: {
+			type: Boolean,
+			default: false
 		},
 		owner: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
 			required: true
-		},
-		employees: [
-			{
-				id: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: "Employee",
-					required: true
-				},
-				role: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: "Role",
-					required: true
-				}
-			}
-		]
+		}
 	},
 	{ timestamps: true }
 );

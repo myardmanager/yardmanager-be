@@ -136,8 +136,26 @@ exports.paginateInvoices = async (req, res) => {
 		const page = parseInt(req.query.page) || 1;
 		const limit = parseInt(req.query.limit) || 10;
 		const skip = (page - 1) * limit;
-		const invoices = await Invoice.find({ company: req.user.company }).skip(skip).limit(limit);
-		const total = await Invoice.countDocuments({ company: req.user.company });
+		const search = req.query.search || "";
+
+		const invoices = await Invoice.find({
+			company: req.user.company,
+			$or: [
+				{ name: { $regex: search, $options: "i" } },
+				{ email: { $regex: search, $options: "i" } },
+				{ phone: { $regex: search, $options: "i" } }
+			]
+		})
+			.skip(skip)
+			.limit(limit);
+		const total = await Invoice.countDocuments({
+			company: req.user.company,
+			$or: [
+				{ name: { $regex: search, $options: "i" } },
+				{ email: { $regex: search, $options: "i" } },
+				{ phone: { $regex: search, $options: "i" } }
+			]
+		});
 		res.status(200).json({
 			success: true,
 			message: "Invoices fetched successfully",
