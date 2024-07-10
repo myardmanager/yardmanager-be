@@ -181,14 +181,27 @@ exports.getInventoryPagination = async (req, res) => {
 	try {
 		const { page = 1, limit = 10 } = req.query;
 		const offset = (page - 1) * limit;
+		const search = req.query.search || "";
 
 		if (typeof req.query.deleted === "undefined") req.query.deleted = false;
 		const inventory = await Inventory.find({
 			company: req.user.company,
-			deleted: req.query.deleted
+			deleted: req.query.deleted,
+			$or: [
+				{ name: { $regex: search } },
+				{ color: { $regex: search } }
+			]
 		})
-			.populate("part", "name")
-			.populate("location", "location")
+			.populate({
+				path: "part",
+				select: "name",
+				match: { name: { $regex: search } }
+			})
+			.populate({
+				path: "location",
+				select: "location",
+				match: { location: { $regex: search } }
+			})
 			.sort({ createdAt: -1 })
 			.skip(offset)
 			.limit(limit)
@@ -236,7 +249,6 @@ exports.setInventoryDeleteMark = async (req, res) => {
 		});
 	}
 };
-
 
 exports.getInventoryByName = async (req, res) => {
 	try {
