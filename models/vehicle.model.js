@@ -13,7 +13,12 @@ const vehicleSchema = new mongoose.Schema(
 		location: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Location",
-			required: true
+			// required: true
+		},
+		part: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Part",
+			// required: true
 		},
 		start_year: {
 			type: Date,

@@ -8,7 +8,7 @@ exports.validateVehicle = [
     .withMessage("VIN must be a string")
     .isLength({ min: 17, max: 17 })
     .withMessage("VIN must be exactly 17 characters long"),
-  check("year")
+  check("start_year")
     .notEmpty()
     .withMessage("Year is required")
     .isISO8601()
@@ -43,11 +43,6 @@ exports.validateVehicle = [
     })
     .withMessage("Model must contain only strings"),
   check("notes").optional().isString().withMessage("Notes must be a string"),
-  check("company")
-    .notEmpty()
-    .withMessage("Company is required")
-    .isMongoId()
-    .withMessage("Company must be a valid MongoDB ObjectId")
 ];
 
 exports.validateVehicleUpdate = [
