@@ -65,7 +65,10 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
 	try {
 		const user = await User.findOne({ email: req.body.email });
-		const employee = await Employee.findOne({ email: req.body.email }).populate(["role"]);
+		const employee = await Employee.findOne({ email: req.body.email }).populate([
+			"role",
+			"company"
+		]);
 		if (!user && !employee) {
 			return res.status(400).json({
 				success: false,
@@ -74,10 +77,11 @@ exports.login = async (req, res) => {
 		}
 		let isPasswordValid;
 		let dataSign = {};
+		let company = {};
 
 		if (user) {
 			isPasswordValid = await bcrypt.compare(req.body.password, user.password);
-			const company = await companyModel.find({ owner: user._id });
+			company = await companyModel.find({ owner: user._id });
 			dataSign = {
 				id: user._id.toString(),
 				email: user.email,
@@ -86,6 +90,7 @@ exports.login = async (req, res) => {
 			};
 		} else {
 			isPasswordValid = await bcrypt.compare(req.body.password, employee.password);
+			company = employee.company;
 			dataSign = {
 				id: employee._id.toString(),
 				email: employee.email,
@@ -112,6 +117,7 @@ exports.login = async (req, res) => {
 			userType: user ? "user" : "employee",
 			data: {
 				user: user ? user : employee,
+				company,
 				token: token
 			}
 		});

@@ -108,6 +108,7 @@ exports.paginateRoles = async (req, res) => {
 		const limit = req.query.limit * 1 || 10;
 		const skip = (page - 1) * limit;
 		const search = req.query.search || "";
+		const filter = req.query.filter || "";
 
 		const total = await Role.countDocuments({
 			company: req.user.company,
@@ -126,14 +127,16 @@ exports.paginateRoles = async (req, res) => {
 				return { ...role.toObject(), employeesCount: count };
 			})
 		);
-		const rolesWithEmployeeCount = rolesWithEmployeesCount;
+
+		const rolesWithEmployeeCount = rolesWithEmployeesCount.filter((role) => {
+			return role.employeesCount >= filter;
+		});
 		console.log(rolesWithEmployeeCount);
 		res.status(200).json({
 			success: true,
 			message: "Roles fetched successfully",
-			data: roles,
-			rolesWithEmployeeCount,
-			meta: { total, page, limit }
+			data: rolesWithEmployeeCount,
+			meta: { total: rolesWithEmployeeCount.length, page, limit }
 		});
 	} catch (error) {
 		res.status(500).json({

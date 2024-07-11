@@ -112,15 +112,24 @@ exports.paginateParts = async (req, res) => {
 		const limit = parseInt(req.query.limit) || 10;
 		const skip = (page - 1) * limit;
 		const search = req.query.search || "";
+		let filter = req.query.filter || [];
+		if (filter) {
+			filter = filter.split(",");
+		} else {
+			filter = [];
+		}
+		console.log(filter);
 
 		const total = await Part.countDocuments({
 			$or: [{ name: { $regex: search, $options: "i" } }, { variant: { $in: [search] } }],
-			company: req.user.company
+			company: req.user.company,
+			variant: { $all: filter }
 		});
 
 		const parts = await Part.find({
 			company: req.user.company,
-			$or: [{ name: { $regex: search, $options: "i" } }, { variant: { $in: [search] } }]
+			$or: [{ name: { $regex: search, $options: "i" } }, { variant: { $in: [search] } }],
+			variant: { $all: filter }
 		})
 			.sort({ createdAt: -1 })
 			.skip(skip)

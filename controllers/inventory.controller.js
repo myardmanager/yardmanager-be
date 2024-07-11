@@ -182,19 +182,21 @@ exports.getInventoryPagination = async (req, res) => {
 		const { page = 1, limit = 10 } = req.query;
 		const offset = (page - 1) * limit;
 		const search = req.query.search || "";
+		// const s_years = req.query.filter_s || "";
+		// const e_years = req.query.filter_e || "";
 
 		if (typeof req.query.deleted === "undefined") req.query.deleted = false;
 		const inventory = await Inventory.find({
 			company: req.user.company,
 			deleted: req.query.deleted,
 			$or: [
-				{ name: { $regex: search } },
-				{ color: { $regex: search } },
-				{ variant: { $regex: search } },
-				{ model: { $regex: search } },
-				{ make: { $regex: search } },
-				{ startYear: { $regex: search } },
-				{ endYear: { $regex: search } }
+				{ name: { $regex: search, $options: "i" } },
+				{ color: { $regex: search, $options: "i" } },
+				{ variant: { $regex: search, $options: "i" } },
+				{ model: { $regex: search, $options: "i" } },
+				{ make: { $regex: search, $options: "i" } },
+				{ startYear: { $regex: search, $options: "i" } },
+				{ endYear: { $regex: search, $options: "i" } }
 			]
 		})
 			.populate("part", "name")

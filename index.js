@@ -4,7 +4,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const port = process.env.PORT || 5000;
 
-global.userList = [];
+// global.userList = [];
 
 // Routes
 const adminRoutes = require("./routes/admin.routes");

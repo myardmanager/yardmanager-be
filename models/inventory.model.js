@@ -17,10 +17,10 @@ const inventorySchema = new mongoose.Schema(
 			required: true
 		},
 		startYear: {
-			type: String
+			type: Date,
 		},
 		lastYear: {
-			type: String
+			type: Date,
 		},
 		model: [
 			{

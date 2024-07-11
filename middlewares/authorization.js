@@ -14,15 +14,15 @@ exports.verifyToken = (req, res, next) => {
 		req.user = user;
 		// logMiddleware(req, res);
 
-		const userCheck = global.userList.find((item) => item.id === req.user.id);
-		if (token === userCheck?.token) {
-			next();
-			return;
-		}
+		// const userCheck = global.userList.find((item) => item.id === req.user.id);
+		next();
+		return;
+		// if (token === userCheck?.token) {
+		// }
 
-		return res
-			.status(403)
-			.json({ success: false, message: "New Login session occurs", result: req.user.email });
+		// return res
+		// 	.status(403)
+		// 	.json({ success: false, message: "New Login session occurs", result: req.user.email });
 		// next();
 	});
 };
