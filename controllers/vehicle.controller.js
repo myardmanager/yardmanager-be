@@ -1,6 +1,7 @@
 // Vehicle controller
 
 const Vehicle = require("../models/vehicle.model");
+const vinDecoder = require("./../services/vinDecoder.service");
 
 exports.getAllVehicles = async (req, res) => {
 	try {
@@ -87,6 +88,17 @@ exports.searchVehiclesByDescription = async (req, res) => {
 	try {
 		const vehicles = await Vehicle.find({ description: { $regex: query, $options: "i" } });
 		res.status(200).json(vehicles);
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+};
+
+
+exports.decodeVin = async (req, res) => {
+	const { vin } = req.query;
+	try {
+		const vehicle = await vinDecoder(vin);
+		res.status(200).json(vehicle);
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}

@@ -149,7 +149,7 @@ exports.paginateEmployees = async (req, res) => {
 
 		const total = await Employee.countDocuments({
 			company: req.user.company,
-			status: active,
+			...(typeof active === "boolean" ? { status: active } : {}),
 			$or: [
 				{ name: { $regex: search, $options: "i" } },
 				{ email: { $regex: search, $options: "i" } },
@@ -158,7 +158,7 @@ exports.paginateEmployees = async (req, res) => {
 		});
 		const employees = await Employee.find({
 			company: req.user.company,
-			status: active,
+			...(typeof active === "boolean" ? {status: active}: {}),
 			$or: [
 				{ name: { $regex: search, $options: "i" } },
 				{ email: { $regex: search, $options: "i" } },

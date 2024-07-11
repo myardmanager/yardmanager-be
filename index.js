@@ -15,6 +15,7 @@ const partRoutes = require("./routes/part.routes");
 const inventoryRoutes = require("./routes/inventory.routes");
 const invoiceRoutes = require("./routes/invoice.routes");
 const employeeRoutes = require("./routes/employee.routes");
+const vehicleRoutes = require("./routes/vehicle.routes");
 const analyticsRoutes = require("./routes/analytics.routes");
 
 mongoose
@@ -64,6 +65,7 @@ app.use("/api/inventory", inventoryRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/vehicles", vehicleRoutes);
 
 app.listen(port, () => {
 	console.log(`Server is running on port ${port}`);

@@ -7,41 +7,44 @@ const vehicleSchema = new mongoose.Schema(
 			required: true,
 			unique: true
 		},
-		year: {
-			type: Number,
-			required: true
-		},
-		make: {
+		name: {
 			type: String,
-			required: true
-		},
-		model: {
-			type: String,
-			required: true
-		},
-		color: {
-			type: String,
-			required: true
-		},
-		description: {
-			type: String,
-			required: true
-		},
-		odometer: {
-			type: Number,
-			required: true
-		},
-		notes: {
-			type: String
-		},
-		company: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Company",
-			required: true
 		},
 		location: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Location",
+			required: true
+		},
+		start_year: {
+			type: Date,
+			required: true
+		},
+		end_year: {
+			type: Date,
+		},
+		make: [
+			{
+				type: String,
+				required: true
+			}
+		],
+		model: [
+			{
+				type: String,
+				required: true
+			}
+		],
+		notes: {
+			type: String
+		},
+		images: [
+			{
+				type: String
+			}
+		],
+		company: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Company",
 			required: true
 		},
 		company: {
