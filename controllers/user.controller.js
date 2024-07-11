@@ -108,8 +108,8 @@ exports.login = async (req, res) => {
 
 		const token = jwt.sign(dataSign, process.env.JWT_SECRET, { expiresIn: "10h" });
 
-		global.userList = global.userList.filter((item) => item.id !== dataSign.id);
-		global.userList.push({ token, ...dataSign });
+		// global.userList = global.userList.filter((item) => item.id !== dataSign.id);
+		// global.userList.push({ token, ...dataSign });
 
 		res.status(200).json({
 			success: true,
