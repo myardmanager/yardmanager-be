@@ -145,7 +145,7 @@ exports.paginateEmployees = async (req, res) => {
 		const limit = parseInt(req.query.limit) || 5;
 		const skip = (page - 1) * limit;
 		const search = req.query.search || "";
-		const active = req.query.filter_active ?? "";
+		const active = req.query.filter_active === "true" ? true : req.query.filter_active === "false" ? false : "";
 		const hiring_date = req.query.filter_hiring_date || "";
 
 		const total = await Employee.countDocuments({
@@ -159,7 +159,7 @@ exports.paginateEmployees = async (req, res) => {
 		});
 		const employees = await Employee.find({
 			company: req.user.company,
-			...(typeof active === "boolean" ? {status: active}: {}),
+			...(typeof active === "boolean" ? { status: active } : {}),
 			$or: [
 				{ name: { $regex: search, $options: "i" } },
 				{ email: { $regex: search, $options: "i" } },
