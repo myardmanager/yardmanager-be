@@ -195,8 +195,6 @@ exports.getInventoryPagination = async (req, res) => {
 				{ variant: { $regex: search, $options: "i" } },
 				{ model: { $regex: search, $options: "i" } },
 				{ make: { $regex: search, $options: "i" } },
-				{ startYear: { $regex: search, $options: "i" } },
-				{ endYear: { $regex: search, $options: "i" } }
 			]
 		})
 			.populate("part", "name")
