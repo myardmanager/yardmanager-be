@@ -167,29 +167,59 @@ exports.decodeVin = async (req, res) => {
 	}
 };
 
+// exports.addVehicleToInventory = async (req, res) => {
+// 	const { id } = req.params;
+// 	try {
+// 		const vehicle = await Vehicle.findOne({ _id: id, company: req.user.company });
+// 		if (!vehicle) {
+// 			return res.status(404).json({ success: false, message: "Vehicle not found" });
+// 		}
+
+// 		const inventory = new inventoryModel({
+// 			part: vehicle._id,
+// 			make: vehicle.make,
+//       name: vehicle.name,
+// 			model: vehicle.model,
+// 			start_year: vehicle.start_year,
+// 			price: vehicle.price,
+// 			notes: vehicle.notes,
+// 			images: vehicle.images,
+// 			location: vehicle.location,
+// 			company: vehicle.company
+// 		});
+// 		await inventory.save();
+
+// 		return res.status(200).json({ success: true, message: "Vehicle added to inventory" });
+// 	} catch (error) {
+// 		res.status(500).json({ message: error.message });
+// 	}
+// };
+
 exports.addVehicleToInventory = async (req, res) => {
-	const { id } = req.params;
+	const session = await mongoose.startSession();
+	session.startTransaction();
+
 	try {
-		const vehicle = await Vehicle.findOne({ _id: id, company: req.user.company });
+		const vehicle = await Vehicle.findOne({ _id: req.params.id, company: req.user.company }).session(session);
+
 		if (!vehicle) {
-			return res.status(404).json({ success: false, message: "Vehicle not found" });
+			return res.status(404).json({ message: "Vehicle not found" });
 		}
 
-		const inventory = new inventoryModel({
-			part: vehicle._id,
-			make,
-			model,
-			year,
-			price: vehicle.price,
-			notes: vehicle.notes,
-			images: vehicle.images,
-			location: vehicle.location,
-			company: vehicle.company
-		});
-		await inventory.save();
+		const archivedVehicle = new inventoryModel(vehicle.toObject());
 
-		return res.status(200).json({ success: true, message: "Vehicle added to inventory" });
-	} catch (error) {
-		res.status(500).json({ message: error.message });
+		await archivedVehicle.validate();
+		await archivedVehicle.save({ session });
+		await Vehicle.findByIdAndDelete(req.params.id).session(session);
+
+		await session.commitTransaction();
+		session.endSession();
+
+		res.status(200).json({ success: true, message: "Vehicle added to inventory successfully" });
+	} catch (err) {
+		await session.abortTransaction();
+		session.endSession();
+
+		res.status(500).json({ success: false, message: err.message });
 	}
 };
