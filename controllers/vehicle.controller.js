@@ -115,16 +115,28 @@ exports.paginateVehicles = async (req, res) => {
 	const search = req.query.search || "";
 
 	try {
+		console.log(search);
 		const vehicles = await Vehicle.find({
 			company: req.user.company,
-			// $or: { name: { $regex: search, $options: "i" } }
+			$or: [
+				{ name: { $regex: search, $options: "i" } },
+				{ make: { $regex: search, $options: "i" } },
+				{ model: { $regex: search, $options: "i" } }
+			]
 		})
 			.skip(skip)
 			.limit(Number(limit));
-		const total = await Vehicle.countDocuments();
-		res.status(200).json({ success: true, data: vehicles, meta: { total } });
+		const total = await Vehicle.countDocuments({
+			company: req.user.company,
+			$or: [
+				{ name: { $regex: search, $options: "i" } },
+				{ make: { $regex: search, $options: "i" } },
+				{ model: { $regex: search, $options: "i" } }
+			]
+		});
+		res.status(200).json({ success: true, data: vehicles, meta: { total, page, limit } });
 	} catch (error) {
-		res.status(500).json({ message: error.message });
+		res.status(500).json({ message: error.message, errror: error });
 	}
 };
 
