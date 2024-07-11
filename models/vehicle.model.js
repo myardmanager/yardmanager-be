@@ -39,6 +39,12 @@ const vehicleSchema = new mongoose.Schema(
 				required: true
 			}
 		],
+		variant: [
+			{
+				type: String,
+				required: true
+			}
+		],
 		notes: {
 			type: String
 		},
