@@ -46,6 +46,9 @@ exports.updateVehicle = async (req, res) => {
 	try {
 		console.log(req.body);
 		req.body.deleted = false;
+		req.body.make = JSON.parse(req.body.make);
+		req.body.model = JSON.parse(req.body.model);
+		req.body.variant = JSON.parse(req.body.variant);
 		// Check if images are provided
 		if (!req.body.images) {
 			let images = await Vehicle.findOne({
