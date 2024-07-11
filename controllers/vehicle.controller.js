@@ -44,7 +44,7 @@ exports.createVehicle = async (req, res) => {
 
 exports.updateVehicle = async (req, res) => {
 	try {
-    console.log(req.body);
+		console.log(req.body);
 		req.body.deleted = false;
 		// Check if images are provided
 		if (!req.body.images) {
@@ -65,7 +65,7 @@ exports.updateVehicle = async (req, res) => {
 			req.body.images = [...req.body.images, ...newImages];
 		}
 
-    console.log(req.body);
+		console.log(req.body);
 		// Update inventory
 		const inventory = await Vehicle.findOneAndUpdate(
 			{ _id: req.params.id, company: req.user.company },
@@ -97,7 +97,6 @@ exports.updateVehicle = async (req, res) => {
 	}
 };
 
-
 exports.deleteVehicle = async (req, res) => {
 	try {
 		const { id } = req.params;
@@ -118,12 +117,12 @@ exports.paginateVehicles = async (req, res) => {
 	try {
 		const vehicles = await Vehicle.find({
 			company: req.user.company,
-			$or: { description: { $regex: search, $options: "i" } }
+			// $or: { name: { $regex: search, $options: "i" } }
 		})
 			.skip(skip)
 			.limit(Number(limit));
 		const total = await Vehicle.countDocuments();
-		res.status(200).json({ vehicles, total });
+		res.status(200).json({ success: true, data: vehicles, meta: { total } });
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}
@@ -143,7 +142,7 @@ exports.decodeVin = async (req, res) => {
 	const { vin } = req.params;
 	try {
 		const vehicle = await vinDecoder.vinDecoder(vin);
-    return res.status(200).json({ success: true, data: vehicle});
+		return res.status(200).json({ success: true, data: vehicle });
 	} catch (error) {
 		res.status(500).json({ success: false, message: error.message, error: error });
 	}
@@ -157,7 +156,6 @@ exports.addVehicleToInventory = async (req, res) => {
 			return res.status(404).json({ success: false, message: "Vehicle not found" });
 		}
 
-
 		const inventory = new inventoryModel({
 			part: vehicle._id,
 			make,
@@ -167,7 +165,7 @@ exports.addVehicleToInventory = async (req, res) => {
 			notes: vehicle.notes,
 			images: vehicle.images,
 			location: vehicle.location,
-			company: vehicle.company,
+			company: vehicle.company
 		});
 		await inventory.save();
 
