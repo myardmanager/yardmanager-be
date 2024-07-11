@@ -125,7 +125,11 @@ exports.paginateVehicles = async (req, res) => {
 			]
 		})
 			.skip(skip)
-			.limit(Number(limit));
+			.limit(Number(limit))
+			.populate([
+				{ path: "location", select: "location" },
+				{ path: "part", select: ["name", "variant"] }
+			]);
 		const total = await Vehicle.countDocuments({
 			company: req.user.company,
 			$or: [
