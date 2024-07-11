@@ -128,7 +128,7 @@ exports.paginateVehicles = async (req, res) => {
 			.limit(Number(limit))
 			.populate([
 				{ path: "location", select: "location" },
-				{ path: "part", select: ["name", "variant"] }
+				{ path: "part", select: ["name"] }
 			]);
 		const total = await Vehicle.countDocuments({
 			company: req.user.company,
