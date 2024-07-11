@@ -1,5 +1,6 @@
 // Vehicle controller
 
+const { default: mongoose } = require("mongoose");
 const inventoryModel = require("../models/inventory.model");
 const Vehicle = require("../models/vehicle.model");
 const { uploadFile } = require("../services/backblaze.service");
