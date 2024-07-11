@@ -22,6 +22,6 @@ router.put("/s/:id", verifyToken, uploadMulter.any(), validateVehicleUpdate, run
 router.delete("/s/:id", verifyToken, deleteVehicle);
 router.get("/paginate", verifyToken, paginateVehicles);
 router.get("/decode/:vin", verifyToken, decodeVin);
-router.post("/s/:id/inventory", verifyToken, addVehicleToInventory);
+router.get("/s/:id/inventory", verifyToken, addVehicleToInventory);
 
 module.exports = router;
