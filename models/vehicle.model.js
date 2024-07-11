@@ -7,17 +7,21 @@ const vehicleSchema = new mongoose.Schema(
 			required: true,
 			unique: true
 		},
+		sku: {
+			type: Number,
+			default: 0
+		},
 		name: {
-			type: String,
+			type: String
 		},
 		location: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "Location",
+			ref: "Location"
 			// required: true
 		},
 		part: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "Part",
+			ref: "Part"
 			// required: true
 		},
 		start_year: {
@@ -25,7 +29,7 @@ const vehicleSchema = new mongoose.Schema(
 			required: true
 		},
 		end_year: {
-			type: Date,
+			type: Date
 		},
 		make: [
 			{
