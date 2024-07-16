@@ -1,6 +1,7 @@
 const Employee = require("../models/employee.model");
 const Inventory = require("../models/inventory.model");
 const Part = require("../models/part.model");
+const Vehicle = require("../models/vehicle.model");
 const Location = require("../models/location.model");
 const { default: mongoose } = require("mongoose");
 
@@ -8,6 +9,7 @@ exports.getDashboardAnalytics = async (req, res) => {
 	try {
 		const employees = await Employee.countDocuments({ company: req.user.company });
 		const inventories = await Inventory.countDocuments({ deleted: false });
+		const vehicles = await Vehicle.countDocuments({ company: req.user.company });
 		const parts = await Part.countDocuments({ company: req.user.company });
 		const locations = await Location.countDocuments({ company: req.user.company });
 
@@ -15,6 +17,7 @@ exports.getDashboardAnalytics = async (req, res) => {
 			employees: employees,
 			inventories: inventories,
 			parts: parts,
+			vehicles: vehicles,
 			locations: locations
 		};
 
@@ -46,7 +49,7 @@ exports.getInventoryData = async (req, res) => {
 		// 	filter = { createdAt: { $gte: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) } };
 		// }
     let companyId = new mongoose.Types.ObjectId(req.user.company);
-		const inventory = await Inventory.find({ company: companyId, deleted: false })
+		const inventory = await Vehicle.find({ company: companyId })
 			.sort({ createdAt: 1 })
 			.then((inventory) => {
 				const data = inventory.map((item) => {
@@ -71,17 +74,17 @@ exports.getInventoryData = async (req, res) => {
 
 exports.getPartData = async (req, res) => {
   try {
-    const { division } = req.query;
-    let filter = {};
-    if (division === "month") {
-      filter = { createdAt: { $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) } };
-    } else if (division === "year") {
-      filter = { createdAt: { $gte: new Date(new Date().getFullYear(), 0, 1) } };
-    } else {
-      filter = { createdAt: { $gte: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) } };
-    }
+    // const { division } = req.query;
+    // let filter = {};
+    // if (division === "month") {
+    //   filter = { createdAt: { $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) } };
+    // } else if (division === "year") {
+    //   filter = { createdAt: { $gte: new Date(new Date().getFullYear(), 0, 1) } };
+    // } else {
+    //   filter = { createdAt: { $gte: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) } };
+    // }
     let companyId = new mongoose.Types.ObjectId(req.user.company);
-    const part = await Part.find({ company: companyId, ...filter })
+    const part = await Part.find({ company: companyId })
       .sort({ createdAt: 1 })
       .then((part) => {
         const data = part.map((item) => {

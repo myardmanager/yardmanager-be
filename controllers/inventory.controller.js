@@ -72,6 +72,13 @@ exports.createInventory = async (req, res) => {
 				req.body.images.push(image);
 			}
 		}
+		// Auto increment SKU
+		const lastInventory = await Inventory.findOne({ company: req.user.company }).sort({ sku: -1 });
+		if (lastInventory) {
+			req.body.sku = lastInventory.sku + 1;
+		} else {
+			req.body.sku = 1;
+		}
 		const inventory = await Inventory.create(req.body);
 		const newInventory = await inventory.populate([{ path: "location" }, { path: "part" }]);
 		res.status(201).json({
