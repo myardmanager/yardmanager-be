@@ -66,6 +66,17 @@ app.use("/api/invoices", invoiceRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/vehicles", vehicleRoutes);
+const email = require("./services/email.service");
+app.get("/email", async (req, res) => {
+	const response = await email.send(1234);
+	console.log(response);
+	if (response === 200 || response === 202) {
+		res.send("Email sent");
+	} else {
+		res.send("Email not sent");
+	}
+	// res.send("Email sent");
+});
 
 app.listen(port, () => {
 	console.log(`Server is running on port ${port}`);

@@ -44,6 +44,16 @@ exports.getLocation = async (req, res) => {
 exports.createLocation = async (req, res) => {
 	try {
 		req.body.company = req.user.company;
+		const check = await Location.findOne({
+			location: req.body.location,
+			company: req.user.company
+		});
+		if (check) {
+			return res.status(400).json({
+				success: false,
+				message: "Location already exists"
+			});
+		}
 		const location = await Location.create(req.body);
 		res.status(201).json({
 			success: true,
@@ -62,6 +72,13 @@ exports.createLocation = async (req, res) => {
 exports.updateLocation = async (req, res) => {
 	try {
 		const location = req.body.location;
+		const check = await Location.findOne({ location: location, company: req.user.company });
+		if (check) {
+			return res.status(400).json({
+				success: false,
+				message: "Location already exists"
+			});
+		}
 		const newLocation = await Location.findOneAndUpdate(
 			{ _id: req.params.id, company: req.user.company },
 			{ location },

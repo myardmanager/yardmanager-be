@@ -25,20 +25,28 @@ exports.getDashboardAnalytics = async (req, res) => {
 	}
 };
 
+function getWeekNumber(date) {
+	const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+	const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+
+	return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+}
+
+
 // Get Inventory data ordered by date with filter option
 exports.getInventoryData = async (req, res) => {
 	try {
-		const { division } = req.query;
-		let filter = {};
-		if (division === "month") {
-			filter = { createdAt: { $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) } };
-		} else if (division === "year") {
-			filter = { createdAt: { $gte: new Date(new Date().getFullYear(), 0, 1) } };
-		} else {
-			filter = { createdAt: { $gte: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) } };
-		}
+		// const { division } = req.query;
+		// let filter = {};
+		// if (division === "month") {
+		// 	filter = { createdAt: { $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) } };
+		// } else if (division === "year") {
+		// 	filter = { createdAt: { $gte: new Date(new Date().getFullYear(), 0, 1) } };
+		// } else {
+		// 	filter = { createdAt: { $gte: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) } };
+		// }
     let companyId = new mongoose.Types.ObjectId(req.user.company);
-		const inventory = await Inventory.find({ company: companyId, deleted: false, ...filter })
+		const inventory = await Inventory.find({ company: companyId, deleted: false })
 			.sort({ createdAt: 1 })
 			.then((inventory) => {
 				const data = inventory.map((item) => {
@@ -46,6 +54,7 @@ exports.getInventoryData = async (req, res) => {
 						year: item.createdAt.getFullYear(),
 						month: item.createdAt.getMonth() + 1,
 						day: item.createdAt.getDate(),
+						week: getWeekNumber(item.createdAt),
 						count: 1
 					};
 				});
@@ -80,6 +89,7 @@ exports.getPartData = async (req, res) => {
             year: item.createdAt.getFullYear(),
             month: item.createdAt.getMonth() + 1,
             day: item.createdAt.getDate(),
+						week: getWeekNumber(item.createdAt),
             count: 1
           };
         });

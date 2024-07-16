@@ -62,6 +62,9 @@ const invoiceSchema = new mongoose.Schema(
 		notes: {
 			type: String
 		},
+		paymentMethod: {
+			type: String
+		},
 		datePaid: {
 			type: Date,
 			default: Date.now
