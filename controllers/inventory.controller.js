@@ -179,7 +179,7 @@ exports.deleteInventory = async (req, res) => {
 
 exports.deleteAllInventory = async (req, res) => {
 	try {
-		const inventory = await Inventory.deleteMany({ company: req.user.company, deleted: false });
+		const inventory = await Inventory.deleteMany({ company: req.user.company, deleted: true });
 		res.status(200).json({
 			success: true,
 			message: "Inventory deleted successfully",
