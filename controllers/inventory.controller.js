@@ -177,6 +177,23 @@ exports.deleteInventory = async (req, res) => {
 	}
 };
 
+exports.deleteAllInventory = async (req, res) => {
+	try {
+		const inventory = await Inventory.deleteMany({ company: req.user.company, deleted: false });
+		res.status(200).json({
+			success: true,
+			message: "Inventory deleted successfully",
+			data: inventory
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+			error: error.message
+		});
+	}
+};
+
 exports.getInventoryPagination = async (req, res) => {
 	try {
 		const { page = 1, limit = 10 } = req.query;

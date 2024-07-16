@@ -78,6 +78,7 @@ exports.login = async (req, res) => {
 		let isPasswordValid;
 		let dataSign = {};
 		let company = {};
+		console.log(user, employee);
 
 		if (user) {
 			isPasswordValid = await bcrypt.compare(req.body.password, user.password);

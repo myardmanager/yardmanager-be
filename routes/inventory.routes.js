@@ -7,6 +7,7 @@ const {
 	updateInventory,
 	createInventory,
 	deleteInventory,
+	deleteAllInventory,
 	getInventoryPagination,
 	setInventoryDeleteMark,
 	getInventoryByName
@@ -20,6 +21,7 @@ router.put("/s/:id", verifyToken, uploadMulter.any(), updateInventory);
 router.post("/new", verifyToken, uploadMulter.any(), createInventory);
 router.delete("/s/:id", verifyToken, deleteInventory);
 router.get("/name", verifyToken, getInventoryByName);
+router.delete("/all", verifyToken, deleteAllInventory);
 
 // Delete and restore inventory
 router.get(
