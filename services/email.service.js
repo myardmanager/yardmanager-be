@@ -1,25 +1,16 @@
-// using Twilio SendGrid's v3 Node.js Library
-// https://github.com/sendgrid/sendgrid-nodejs
-const { readFileSync } = require("fs");
-const { resolve } = require("path");
 const sgMail = require("@sendgrid/mail");
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+console.log(process.env.SENDGRID_API_KEY);
 
-const template = resolve(__dirname, "../New folder/otp.html");
-const html = readFileSync(template, "utf8");
-
-const send = async () => {
-  // console.log(html);
-  let newHtml = html.replace("{{otp}}", 1234);
-	// console.log(newHtml);
+const send = async (to, subject, template) => {
 
 	const msg = {
-		to: "tmashaim@gmail.com", // Change to your recipient
+		to: to, // Change to your recipient
 		from: "no-reply@aiautoparts.net", // Change to your verified sender
-		subject: "OTP",
+		subject: subject,
 		// text: "and easy to do anywhere, even with Node.js",
-		html: newHtml
+		html: template
 	};
 	try {
 		const response = await sgMail.send(msg);

@@ -227,7 +227,7 @@ exports.getInventoryPagination = async (req, res) => {
 			.skip(offset)
 			.limit(limit)
 			.exec();
-		const count = await Inventory.countDocuments({ company: req.user.company }).exec();
+		// const count = await Inventory.countDocuments({ company: req.user.company }).exec();
 		res.status(200).json({
 			success: true,
 			message: "Inventory fetched successfully",
@@ -235,7 +235,7 @@ exports.getInventoryPagination = async (req, res) => {
 			pagination: {
 				page: parseInt(page),
 				limit: parseInt(limit),
-				total: count
+				total: inventory.length
 			}
 		});
 	} catch (error) {

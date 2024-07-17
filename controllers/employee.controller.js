@@ -1,7 +1,12 @@
 const { uploadFile } = require("../services/backblaze.service");
 const Employee = require("../models/employee.model");
+const Email = require("../services/email.service");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { readFileSync } = require("fs");
+const { resolve } = require("path");
+const template = resolve(__dirname, "../templates/invitation.html");
+const html = readFileSync(template, "utf8");
 
 exports.getAllEmployees = async (req, res) => {
 	try {
@@ -9,6 +14,7 @@ exports.getAllEmployees = async (req, res) => {
 			"role",
 			"company"
 		]);
+
 		res.status(200).json({
 			success: true,
 			message: "Employees retrieved successfully",
@@ -54,6 +60,7 @@ exports.createEmployee = async (req, res) => {
 		req.body.status = false;
 
 		// Company
+		const password = req.body.password;
 		req.body.company = req.user.company;
 
 		// Encrypt password
@@ -67,6 +74,11 @@ exports.createEmployee = async (req, res) => {
 
 		const employee = await Employee.create(req.body);
 		const newEmployee = await employee.populate(["role", "company"]);
+
+		let newHtml = html.replace("{{password}}", password);
+		const response = await Email.send(newEmployee.email, "Invitation", newHtml);
+		console.log(response);
+
 		res.status(201).json({
 			success: true,
 			message: "Employee created successfully",
@@ -145,7 +157,8 @@ exports.paginateEmployees = async (req, res) => {
 		const limit = parseInt(req.query.limit) || 5;
 		const skip = (page - 1) * limit;
 		const search = req.query.search || "";
-		const active = req.query.filter_active === "true" ? true : req.query.filter_active === "false" ? false : "";
+		const active =
+			req.query.filter_active === "true" ? true : req.query.filter_active === "false" ? false : "";
 		const hiring_date = req.query.filter_hiring_date || "";
 
 		const total = await Employee.countDocuments({

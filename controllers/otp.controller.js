@@ -1,8 +1,12 @@
 const User = require("../models/user.model");
 const Employee = require("../models/employee.model");
-const emailjs = require("emailjs-com");
+const Email = require("../services/email.service");
 const otpModel = require("../models/otp.model");
 const bcrypt = require("bcryptjs");
+const { readFileSync } = require("fs");
+const { resolve } = require("path");
+const template = resolve(__dirname, "../templates/otp.html");
+const html = readFileSync(template, "utf8");
 
 exports.sendOtp = async (req, res) => {
 	try {
@@ -27,13 +31,18 @@ exports.sendOtp = async (req, res) => {
 		};
 
 		console.log(templateParams);
-		// try {
-		// 	const response = await emailjs.send("service_7yv83gy", "template_3st7v4i", templateParams, "kprpF991QyeJ4uPlv");
-		// 	console.log(response.statusCode);
-		// 	console.log(response.body);
-		// } catch (error) {
-		// 	console.log(error);
-		// }
+		let newHtml = html.replace("{{otp}}", otp);
+
+		try {
+			const response = await Email.send('mashaim@buraktec.com', 'OTP', newHtml);
+			console.log(response);
+		} catch (error) {
+			return res.status(500).json({
+				success: false,
+				message: error.message,
+				error: error
+			});
+		}
 
 		res.status(200).json({
 			success: true,
