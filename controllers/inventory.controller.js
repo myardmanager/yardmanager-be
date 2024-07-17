@@ -218,7 +218,7 @@ exports.getInventoryPagination = async (req, res) => {
 				{ color: { $regex: search, $options: "i" } },
 				{ variant: { $regex: search, $options: "i" } },
 				{ model: { $regex: search, $options: "i" } },
-				{ make: { $regex: search, $options: "i" } },
+				{ make: { $regex: search, $options: "i" } }
 			]
 		})
 			.populate("part", "name")
@@ -227,7 +227,17 @@ exports.getInventoryPagination = async (req, res) => {
 			.skip(offset)
 			.limit(limit)
 			.exec();
-		// const count = await Inventory.countDocuments({ company: req.user.company }).exec();
+		const count = await Inventory.countDocuments({
+			company: req.user.company,
+			deleted: req.query.deleted,
+			$or: [
+				{ name: { $regex: search, $options: "i" } },
+				{ color: { $regex: search, $options: "i" } },
+				{ variant: { $regex: search, $options: "i" } },
+				{ model: { $regex: search, $options: "i" } },
+				{ make: { $regex: search, $options: "i" } }
+			]
+		}).exec();
 		res.status(200).json({
 			success: true,
 			message: "Inventory fetched successfully",
@@ -235,7 +245,7 @@ exports.getInventoryPagination = async (req, res) => {
 			pagination: {
 				page: parseInt(page),
 				limit: parseInt(limit),
-				total: inventory.length
+				total: count
 			}
 		});
 	} catch (error) {
