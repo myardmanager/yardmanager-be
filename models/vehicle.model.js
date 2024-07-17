@@ -24,11 +24,11 @@ const vehicleSchema = new mongoose.Schema(
 			ref: "Part"
 			// required: true
 		},
-		start_year: {
+		startYear: {
 			type: Date,
 			required: true
 		},
-		end_year: {
+		endYear: {
 			type: Date
 		},
 		make: [
