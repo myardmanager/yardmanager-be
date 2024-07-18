@@ -52,7 +52,7 @@ exports.validateVehicleUpdate = [
 		.withMessage("VIN must be a string")
 		.isLength({ min: 17, max: 17 })
 		.withMessage("VIN must be exactly 17 characters long"),
-	check("year").optional().isISO8601().toDate().withMessage("Year must be a valid date"),
+	check("startYear").optional().isISO8601().toDate().withMessage("Year must be a valid date"),
 	check("make").optional().isArray().withMessage("Make must be an array"),
 	// .custom((value) => {
 	//   for (let i = 0; i < value.length; i++) {
