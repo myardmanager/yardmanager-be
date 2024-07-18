@@ -76,9 +76,8 @@ exports.createEmployee = async (req, res) => {
 		const employee = await Employee.create(req.body);
 		const newEmployee = await employee.populate(["role", "company"]);
 
-		let newHtml = html;
-		newHtml = html.replace("{{password}}", password);
-		newHtml = html.replace("{{name}}", name);
+		let newHtml = html.replace("{{password}}", password);
+		newHtml = newHtml.replace("{{name}}", name);
 		const response = await Email.send(newEmployee.email, "Invitation", newHtml);
 		console.log(response);
 
