@@ -144,7 +144,7 @@ exports.paginateInvoices = async (req, res) => {
 				{ name: { $regex: search, $options: "i" } },
 				{ email: { $regex: search, $options: "i" } },
 				{ phone: { $regex: search, $options: "i" } },
-				{ _id: { $regex: search, $options: "i" } },
+				// { _id: { $regex: search, $options: "i" } },
 			]
 		})
 			.skip(skip)
