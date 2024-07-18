@@ -32,9 +32,13 @@ exports.sendOtp = async (req, res) => {
 
 		console.log(templateParams);
 		let newHtml = html.replace("{{otp}}", otp);
+		newHtml = newHtml.replace(
+			"{{name}}",
+			user ? user.name.first + " " + user.name.last : employee.name.first + " " + employee.name.last
+		);
 
 		try {
-			const response = await Email.send('mashaim@buraktec.com', 'OTP', newHtml);
+			const response = await Email.send(email, "OTP", newHtml);
 			console.log(response);
 		} catch (error) {
 			return res.status(500).json({
