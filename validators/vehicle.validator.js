@@ -8,7 +8,7 @@ exports.validateVehicle = [
 		.withMessage("VIN must be a string")
 		.isLength({ min: 17, max: 17 })
 		.withMessage("VIN must be exactly 17 characters long"),
-	check("start_year")
+	check("startYear")
 		.notEmpty()
 		.withMessage("Year is required")
 		.isISO8601()
