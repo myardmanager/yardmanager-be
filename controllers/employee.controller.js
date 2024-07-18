@@ -61,6 +61,7 @@ exports.createEmployee = async (req, res) => {
 
 		// Company
 		const password = req.body.password;
+		const name = req.body.name.first + " " + req.body.name.last;
 		req.body.company = req.user.company;
 
 		// Encrypt password
@@ -76,6 +77,7 @@ exports.createEmployee = async (req, res) => {
 		const newEmployee = await employee.populate(["role", "company"]);
 
 		let newHtml = html.replace("{{password}}", password);
+		newHtml = html.replace("{{name}}", name);
 		const response = await Email.send(newEmployee.email, "Invitation", newHtml);
 		console.log(response);
 
