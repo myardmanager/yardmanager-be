@@ -96,9 +96,9 @@ exports.verifyOtp = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
 	try {
-		let user = await User.findById(req.user.id);
+		let user = await User.findOne({ email: req.user.email });
 		if (!user) {
-			user = await Employee.findById(req.user.id);
+			user = await Employee.findOne({email: req.user.email});
 		}
 		if (!user) {
 			return res.status(404).json({ message: "User not found" });
