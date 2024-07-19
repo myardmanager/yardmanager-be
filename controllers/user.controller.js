@@ -75,10 +75,10 @@ exports.login = async (req, res) => {
 				message: "Invalid email"
 			});
 		}
+
 		let isPasswordValid;
 		let dataSign = {};
 		let company = {};
-		// console.log(user, employee);
 
 		if (user) {
 			isPasswordValid = await bcrypt.compare(req.body.password, user.password);
@@ -109,6 +109,16 @@ exports.login = async (req, res) => {
 
 		const token = jwt.sign(dataSign, process.env.JWT_SECRET, { expiresIn: "10h" });
 
+		if (employee) {
+			await Employee.findByIdAndUpdate(employee._id, {
+				status: true,
+				lastLogin: Date.now()
+			});
+		} else if (user) {
+			await User.findByIdAndUpdate(user._id, {
+				lastLogin: Date.now()
+			});
+		}
 		// global.userList = global.userList.filter((item) => item.id !== dataSign.id);
 		// global.userList.push({ token, ...dataSign });
 

@@ -46,6 +46,9 @@ const employeeSchema = new mongoose.Schema(
 			ref: "Company",
 			required: true
 		},
+		lastLogin: {
+			type: Date,
+		},
 		createdByUser: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User"

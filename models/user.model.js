@@ -28,6 +28,9 @@ const userSchema = new mongoose.Schema(
 		},
 		profile: {
 			type: String
+		},
+		lastLogin: {
+			type: Date
 		}
 	},
 	{ timestamps: true }
