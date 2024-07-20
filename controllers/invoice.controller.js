@@ -34,7 +34,10 @@ exports.createInvoice = async (req, res) => {
 
 exports.getInvoice = async (req, res) => {
 	try {
-		const invoice = await Invoice.findOne({ _id: req.params.id, company: req.user.company });
+		const invoice = await Invoice.findOne({
+			_id: req.params.id,
+			company: req.user.company
+		}).populate(["soldByUser", "soldByEmployee", "products.product"]);
 		if (!invoice) {
 			return res.status(404).json({ message: "Invoice not found" });
 		}
@@ -54,7 +57,11 @@ exports.getInvoice = async (req, res) => {
 
 exports.getAllInvoices = async (req, res) => {
 	try {
-		const invoices = await Invoice.find({ company: req.user.company });
+		const invoices = await Invoice.find({ company: req.user.company }).populate([
+			"soldByUser",
+			"soldByEmployee",
+			"products.product"
+		]);
 		res.status(200).json({
 			success: true,
 			message: "Invoices fetched successfully",
@@ -143,7 +150,7 @@ exports.paginateInvoices = async (req, res) => {
 			$or: [
 				{ name: { $regex: search, $options: "i" } },
 				{ email: { $regex: search, $options: "i" } },
-				{ phone: { $regex: search, $options: "i" } },
+				{ phone: { $regex: search, $options: "i" } }
 				// { _id: { $regex: search, $options: "i" } },
 			]
 		})
