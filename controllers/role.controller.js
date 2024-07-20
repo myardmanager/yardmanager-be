@@ -72,8 +72,8 @@ exports.updateRole = async (req, res) => {
 		res.status(200).json({
 			success: true,
 			message: "Role updated successfully",
-			data: role,
-			employeesCount: count
+			data: { ...role.toObject(), employeesCount: count },
+			// employeesCount: count
 		});
 	} catch (error) {
 		res.status(500).json({
