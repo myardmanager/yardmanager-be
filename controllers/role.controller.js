@@ -68,10 +68,12 @@ exports.updateRole = async (req, res) => {
 		if (!role) {
 			return res.status(404).json({ message: "Role not found" });
 		}
+		const count = await Employee.countDocuments({ role: role._id, company: req.user.company });
 		res.status(200).json({
 			success: true,
 			message: "Role updated successfully",
-			data: role
+			data: role,
+			employeesCount: count
 		});
 	} catch (error) {
 		res.status(500).json({
