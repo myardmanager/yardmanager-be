@@ -41,7 +41,9 @@ exports.login = async (req, res) => {
 				message: "Invalid email"
 			});
 		}
+		console.log(req.body.password, admin.password);
 		const isPasswordValid = await bcrypt.compare(req.body.password, admin.password);
+		console.log(isPasswordValid);
 		if (!isPasswordValid) {
 			return res.status(400).json({
 				success: false,
