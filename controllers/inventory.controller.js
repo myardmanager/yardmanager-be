@@ -269,7 +269,7 @@ exports.setInventoryDeleteMark = async (req, res) => {
 		]);
 		res.status(200).json({
 			success: true,
-			message: "Inventory deleted successfully",
+			message: `Inventory ${req.delete ? "deleted" : "restored"} successfully`,
 			data: deleted
 		});
 	} catch (error) {
