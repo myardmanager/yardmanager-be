@@ -43,6 +43,11 @@ exports.createRole = async (req, res) => {
 	try {
 		req.body.company = req.user.company;
 		req.body.createdBy = req.user.id;
+		const roleCheck = await Role.findOne({ name: req.body.name, company: req.user.company });
+		if (roleCheck) {
+			return res.status(400).json({ success: false, message: "Role already exists" });
+		}
+
 		const role = await Role.create(req.body);
 		res.status(201).json({
 			success: true,
@@ -72,7 +77,7 @@ exports.updateRole = async (req, res) => {
 		res.status(200).json({
 			success: true,
 			message: "Role updated successfully",
-			data: { ...role.toObject(), employeesCount: count },
+			data: { ...role.toObject(), employeesCount: count }
 			// employeesCount: count
 		});
 	} catch (error) {
