@@ -28,7 +28,7 @@ const vehicleSchema = new mongoose.Schema(
 			type: Date,
 			required: true
 		},
-		endYear: {
+		lastYear: {
 			type: Date
 		},
 		make: [
