@@ -64,7 +64,7 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
 	try {
-		const user = await User.findOne({ email: req.body.email });
+		const user = await User.findOne({ email: req.body.email }).populate(["company"]);
 		const employee = await Employee.findOne({ email: req.body.email }).populate([
 			"role",
 			"company"
