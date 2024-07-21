@@ -41,6 +41,7 @@ exports.login = async (req, res) => {
 				message: "Invalid email"
 			});
 		}
+		console.log(admin);
 		console.log(req.body.password, admin.password);
 		const isPasswordValid = await bcrypt.compare(req.body.password, admin.password);
 		console.log(isPasswordValid);

@@ -235,6 +235,7 @@ exports.updateCompany = async (req, res) => {
 
 exports.updateCompanyImage = async (req, res) => {
 	try {
+		const companyImages = await companyModel.findById(req.user.company);
 		let updateFields = {};
 
 		// console.log(req.files);
@@ -244,6 +245,11 @@ exports.updateCompanyImage = async (req, res) => {
 				...updateFields,
 				profile
 			};
+		} else {
+			updateFields = {
+				...updateFields,
+				profile: companyImages.images.profile
+			};
 		}
 
 		if (req.files?.cover) {
@@ -251,6 +257,11 @@ exports.updateCompanyImage = async (req, res) => {
 			updateFields = {
 				...updateFields,
 				cover
+			};
+		} else {
+			updateFields = {
+				...updateFields,
+				cover: companyImages.images.cover
 			};
 		}
 
