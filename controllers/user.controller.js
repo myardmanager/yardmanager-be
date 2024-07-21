@@ -64,7 +64,11 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
 	try {
-		const user = await User.findOne({ email: req.body.email }).populate(["company"]);
+		let user = await User.findOne({ email: req.body.email });
+		if (user) {
+			const company = await companyModel.find({ owner: user._id });
+			user = { ...user.toObject(), company: company[0] };
+		}
 		const employee = await Employee.findOne({ email: req.body.email }).populate([
 			"role",
 			"company"
