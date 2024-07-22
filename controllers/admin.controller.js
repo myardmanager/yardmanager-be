@@ -34,15 +34,14 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
 	try {
-		const admin = await Admin.findOne({ email: req.body.email });
+		const admin = await Admin.findOne({ email: req.body.email }).select("+password");
 		if (!admin) {
 			return res.status(400).json({
 				success: false,
 				message: "Invalid email"
 			});
 		}
-		console.log(admin);
-		console.log(req.body.password, admin.password);
+
 		const isPasswordValid = await bcrypt.compare(req.body.password, admin.password);
 		console.log(isPasswordValid);
 		if (!isPasswordValid) {
