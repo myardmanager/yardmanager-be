@@ -82,6 +82,7 @@ exports.updateVehicle = async (req, res) => {
     //   // 	req.body.images = JSON.parse(JSON.stringify(req.body.images));
     //   // }
     // }
+	if (req.body.images === undefined) req.body.images = []
 	if (typeof req.body.images === "string" && req.body.images.length > 0) req.body.images = [req.body.images]
     if (req.files && req.files.length > 0) {
       let newImages = [];
