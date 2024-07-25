@@ -71,17 +71,17 @@ exports.updateVehicle = async (req, res) => {
     // req.body.model = JSON.parse(req.body.model);
     // req.body.variant = JSON.parse(req.body.variant);
     // Check if images are provided
-    if (!req.body.images) {
-      let images = await Vehicle.findOne({
-        _id: req.params.id,
-        company: req.user.company,
-      }).select("images");
-      req.body.images = images.images;
-    } else {
-      // if (req.body.images) {
-      // 	req.body.images = JSON.parse(JSON.stringify(req.body.images));
-      // }
-    }
+    // if (!req.body.images) {
+    //   let images = await Vehicle.findOne({
+    //     _id: req.params.id,
+    //     company: req.user.company,
+    //   }).select("images");
+    //   req.body.images = images.images;
+    // } else {
+    //   // if (req.body.images) {
+    //   // 	req.body.images = JSON.parse(JSON.stringify(req.body.images));
+    //   // }
+    // }
     if (req.files && req.files.length > 0) {
       let newImages = [];
       for (let i = 0; i < req.files.length; i++) {

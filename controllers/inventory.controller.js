@@ -116,17 +116,17 @@ exports.updateInventory = async (req, res) => {
       if (!part.part.color) req.body.color = null;
     }
     // Check if images are provided
-    if (!req.body.images) {
-      let images = await Inventory.findOne({
-        _id: req.params.id,
-        company: req.user.company,
-      }).select("images");
-      req.body.images = images.images;
-    } else {
-    //   console.log(req.body);
-    //   req.body.images = JSON.parse(req.body.images);
-    //   console.log(req.body);
-    }
+    // if (!req.body.images) {
+    //   let images = await Inventory.findOne({
+    //     _id: req.params.id,
+    //     company: req.user.company,
+    //   }).select("images");
+    //   req.body.images = images.images;
+    // } else {
+    // //   console.log(req.body);
+    // //   req.body.images = JSON.parse(req.body.images);
+    // //   console.log(req.body);
+    // }
 
     if (req.files && req.files.length > 0) {
       let newImages = [];
