@@ -43,7 +43,6 @@ exports.login = async (req, res) => {
 		}
 
 		const isPasswordValid = await bcrypt.compare(req.body.password, admin.password);
-		console.log(isPasswordValid);
 		if (!isPasswordValid) {
 			return res.status(400).json({
 				success: false,
