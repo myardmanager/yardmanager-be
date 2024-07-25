@@ -121,10 +121,11 @@ exports.updateInventory = async (req, res) => {
       }).select("images");
       req.body.images = images.images;
     } else {
-      if (req.body.images) {
-        req.body.images = JSON.parse(req.body.images);
-      }
+      console.log(req.body);
+      req.body.images = JSON.parse(req.body.images);
+      console.log(req.body);
     }
+
     if (req.files && req.files.length > 0) {
       let newImages = [];
       for (let i = 0; i < req.files.length; i++) {
