@@ -69,7 +69,7 @@ exports.updateVehicle = async (req, res) => {
 			req.body.images = images.images;
 		} else {
 			if (req.body.images) {
-				req.body.images = JSON.parse(req.body.images);
+				req.body.images = JSON.parse(JSON.stringify(req.body.images));
 			}
 		}
 		if (req.files && req.files.length > 0) {
@@ -107,8 +107,8 @@ exports.updateVehicle = async (req, res) => {
 	} catch (error) {
 		res.status(500).json({
 			success: false,
-			message: "Internal server error",
-			error: error.message
+			message: error.message,
+			error: error
 		});
 	}
 };
