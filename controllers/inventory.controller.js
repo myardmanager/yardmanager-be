@@ -130,7 +130,7 @@ exports.updateInventory = async (req, res) => {
 
     if (req.files && req.files.length > 0) {
       let newImages = [];
-      for (let i = 0; i < req.files.length; i++) {C
+      for (let i = 0; i < req.files.length; i++) {
         let image = await uploadFile(req.files[i]);
         newImages.push(image);
       }
