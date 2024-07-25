@@ -104,10 +104,12 @@ exports.updateInventory = async (req, res) => {
   try {
     req.body.deleted = false;
     // Check if part exists and color is required
+	console.log(req.body)
     const part = await Inventory.findOne({
       _id: req.params.id,
       company: req.user.company,
     }).populate("part");
+	console.log(part)
     if (!part.part) {
       return res.status(404).json({ message: "Part not found" });
     } else {
@@ -121,14 +123,14 @@ exports.updateInventory = async (req, res) => {
       }).select("images");
       req.body.images = images.images;
     } else {
-      console.log(req.body);
-      req.body.images = JSON.parse(req.body.images);
-      console.log(req.body);
+    //   console.log(req.body);
+    //   req.body.images = JSON.parse(req.body.images);
+    //   console.log(req.body);
     }
 
     if (req.files && req.files.length > 0) {
       let newImages = [];
-      for (let i = 0; i < req.files.length; i++) {
+      for (let i = 0; i < req.files.length; i++) {C
         let image = await uploadFile(req.files[i]);
         newImages.push(image);
       }
