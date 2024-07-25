@@ -115,6 +115,7 @@ exports.updateInventory = async (req, res) => {
     } else {
       if (!part.part.color) req.body.color = null;
     }
+	if (typeof req.body.images === "string") req.body.images = [req.body.images]
     // Check if images are provided
     // if (!req.body.images) {
     //   let images = await Inventory.findOne({
