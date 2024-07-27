@@ -45,8 +45,10 @@ exports.createVehicle = async (req, res) => {
     }
 
     if (req.files && req.files.length > 0) {
+      req.body.images = [];
       for (let i = 0; i < req.files.length; i++) {
-        req.body.images = await uploadFile(req.files[0]);
+        let image = await uploadFile(req.files[i]);
+        req.body.images.push(image);
       }
     }
     const vehicle = new Vehicle(req.body);
