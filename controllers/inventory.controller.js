@@ -109,7 +109,7 @@ exports.updateInventory = async (req, res) => {
     const part = await partModel.findOne({
       _id: req.body.part,
       company: req.user.company,
-    }).populate("part");
+    });
 	console.log(part)
     if (!part) {
       return res.status(404).json({ message: "Part not found" });
