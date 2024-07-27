@@ -1,4 +1,5 @@
 const Inventory = require("../models/inventory.model");
+const partModel = require("../models/part.model");
 const Part = require("../models/part.model");
 const { uploadFile } = require("../services/backblaze.service");
 
@@ -105,15 +106,15 @@ exports.updateInventory = async (req, res) => {
     req.body.deleted = false;
     // Check if part exists and color is required
 	console.log(req.body)
-    const part = await Inventory.findOne({
-      _id: req.params.id,
+    const part = await partModel.findOne({
+      _id: req.body.part,
       company: req.user.company,
     }).populate("part");
 	console.log(part)
-    if (!part.part) {
+    if (!part) {
       return res.status(404).json({ message: "Part not found" });
     } else {
-      if (!part.part.color) req.body.color = null;
+      if (!part.color) req.body.color = null;
     }
 	if (req.body.images === undefined) req.body.images = []
 	if (typeof req.body.images === "string" && req.body.images.length > 0) req.body.images = [req.body.images]
