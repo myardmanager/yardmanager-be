@@ -4,6 +4,7 @@ const Employee = require("../models/employee.model");
 const { uploadFile } = require("../services/backblaze.service");
 const companyModel = require("../models/company.model");
 const jwt = require("jsonwebtoken");
+const employeeModel = require("../models/employee.model");
 
 // User CRUD operations
 exports.register = async (req, res) => {
@@ -208,8 +209,10 @@ exports.updateCompany = async (req, res) => {
 		}
 		req.body.owner = undefined;
 
+		// const employee = await employeeModel.findOne({_id: req.user.id, company: req.user.company});
+		// const condition = {}
 		const company = await companyModel.findOneAndUpdate(
-			{ _id: req.user.company, owner: req.user.id },
+			{ _id: req.user.company },
 			req.body,
 			{ new: true }
 		);
