@@ -17,6 +17,7 @@ const invoiceRoutes = require("./routes/invoice.routes");
 const employeeRoutes = require("./routes/employee.routes");
 const vehicleRoutes = require("./routes/vehicle.routes");
 const analyticsRoutes = require("./routes/analytics.routes");
+const companyRoutes = require("./routes/company.routes");
 
 mongoose
 	.connect(process.env.MONGODB_URI)
@@ -66,6 +67,7 @@ app.use("/api/invoices", invoiceRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/vehicles", vehicleRoutes);
+app.use("/api/company", companyRoutes);
 
 app.listen(port, () => {
 	console.log(`Server is running on port ${port}`);

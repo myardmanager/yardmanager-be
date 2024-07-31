@@ -21,7 +21,7 @@ exports.createCompany = async (req, res) => {
 
 exports.getCompany = async (req, res) => {
 	try {
-		const company = await companyModel.findOne({ _id: req.params.id });
+		const company = await companyModel.findOne({ _id: req.params.id }).populate('owner');
 		res.status(201).json({
 			success: true,
 			message: "Company retrieved successfully",
@@ -72,11 +72,32 @@ exports.deleteCompany = async (req, res) => {
 
 exports.getAllCompanies = async (req, res) => {
 	try {
-		const companies = await companyModel.find();
+		const companies = await companyModel.find({}).populate('owner');
 		res.status(201).json({
 			success: true,
 			message: "Companies retrieved successfully",
 			data: companies
+		});
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+			error: error.message
+		});
+	}
+};
+
+exports.pagination = async (req, res) => {
+	try {
+		const { page = 1, limit = 10 } = req.query;
+		const offset = (page - 1) * limit;
+		const companies = await companyModel.find({}).populate('owner').skip(offset).limit(limit);
+		const total = await companyModel.countDocuments({});
+		res.status(201).json({
+			success: true,
+			message: "Companies retrieved successfully",
+			data: companies,
+			meta: { total, page, limit }
 		});
 	} catch (error) {
 		res.status(500).json({
