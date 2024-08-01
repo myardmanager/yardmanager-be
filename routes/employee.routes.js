@@ -14,12 +14,13 @@ const {
 const { runValidation } = require("../validators");
 const { validateEmployee, validateUpdateEmployee } = require("../validators/employee.validator");
 const uploadMulter = require("../middlewares/upload");
+const checkRole = require("../middlewares/permission");
 
-router.get("/all", verifyToken, getAllEmployees);
-router.get("/s/:id", verifyToken, getEmployee);
+router.get("/all", verifyToken, checkRole({companyId: true}), getAllEmployees);
+router.get("/s/:id", verifyToken, checkRole({companyId: true}), getEmployee);
 router.post(
 	"/new",
-	verifyToken,
+	verifyToken, checkRole({companyId: true}),
 	uploadMulter.any(),
 	validateEmployee,
 	runValidation,
@@ -27,14 +28,14 @@ router.post(
 );
 router.put(
 	"/s/:id",
-	verifyToken,
+	verifyToken, checkRole({companyId: true}),
 	uploadMulter.any(),
 	validateUpdateEmployee,
 	runValidation,
 	updateEmployee
 );
-router.delete("/s/:id", verifyToken, deleteEmployee);
-router.get("/paginate", verifyToken, paginateEmployees);
+router.delete("/s/:id", verifyToken, checkRole({companyId: true}), deleteEmployee);
+router.get("/paginate", verifyToken, checkRole({companyId: true}), paginateEmployees);
 // router.post("/login", login);
 
 module.exports = router;

@@ -14,14 +14,15 @@ const { runValidation } = require("../validators");
 const { validateVehicle, validateVehicleUpdate } = require("../validators/vehicle.validator");
 const { verifyToken } = require("../middlewares/authorization");
 const uploadMulter = require("../middlewares/upload");
+const checkRole = require("../middlewares/permission");
 
-router.get("/all", verifyToken, getAllVehicles);
-router.get("/s/:id", verifyToken, getVehicle);
-router.post("/new", verifyToken, uploadMulter.any(), validateVehicle, runValidation, createVehicle);
-router.put("/s/:id", verifyToken, uploadMulter.any(), validateVehicleUpdate, runValidation, updateVehicle);
-router.delete("/s/:id", verifyToken, deleteVehicle);
-router.get("/paginate", verifyToken, paginateVehicles);
-router.get("/decode/:vin", verifyToken, decodeVin);
-router.get("/s/:id/inventory", verifyToken, addVehicleToInventory);
+router.get("/all", verifyToken, checkRole({companyId:true}), getAllVehicles);
+router.get("/s/:id", verifyToken, checkRole({companyId:true}), getVehicle);
+router.post("/new", verifyToken, checkRole({companyId:true}), uploadMulter.any(), validateVehicle, runValidation, createVehicle);
+router.put("/s/:id", verifyToken, checkRole({companyId:true}), uploadMulter.any(), validateVehicleUpdate, runValidation, updateVehicle);
+router.delete("/s/:id", verifyToken, checkRole({companyId:true}), deleteVehicle);
+router.get("/paginate", verifyToken, checkRole({companyId:true}), paginateVehicles);
+router.get("/decode/:vin", verifyToken, checkRole({companyId:true}), decodeVin);
+router.get("/s/:id/inventory", verifyToken, checkRole({companyId:true}), addVehicleToInventory);
 
 module.exports = router;
