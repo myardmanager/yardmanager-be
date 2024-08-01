@@ -121,7 +121,7 @@ exports.updateEmployee = async (req, res) => {
     }
 
     const password = req.body.password;
-    const name = req.body.name.first + " " + req.body.name.last;
+    const name = req.body?.name?.first + " " + req.body?.name?.last;
 
     const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -136,11 +136,13 @@ exports.updateEmployee = async (req, res) => {
       "role",
       "company",
     ]);
-    
+
     let newHtml = html.replace("{{password}}", password);
     newHtml = newHtml.replace("{{name}}", name);
-    const response = await Email.send(employee.email, "Invitation", newHtml);
-    console.log(response)
+    if (password && name) {
+      const response = await Email.send(employee.email, "Invitation", newHtml);
+    }
+    console.log(response);
 
     res.status(200).json({
       success: true,
