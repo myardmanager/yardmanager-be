@@ -303,6 +303,7 @@ exports.getInventoryByName = async (req, res) => {
     const inventory = await Inventory.find({
       name: { $regex: req.query.search, $options: "i" },
       company: req.user.company,
+      deleted: false,
     }).populate([
       { path: "location", select: "location" },
       { path: "part", select: ["name", "variant", "color"] },
