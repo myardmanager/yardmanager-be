@@ -31,6 +31,9 @@ const vehicleSchema = new mongoose.Schema(
 		lastYear: {
 			type: Date
 		},
+		color: {
+			type: String
+		},
 		make: [
 			{
 				type: String,
