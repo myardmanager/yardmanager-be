@@ -115,13 +115,13 @@ exports.updateEmployee = async (req, res) => {
     if (req.files && req.files.length > 0) {
       req.body.profile = await uploadFile(req.files[0]);
     }
+    const password = req.body.password;
+    const name = req.body?.name?.first + " " + req.body?.name?.last;
     if (req.body.password) {
       const salt = await bcrypt.genSalt(10);
       req.body.password = await bcrypt.hash(req.body.password, salt);
     }
 
-    const password = req.body.password;
-    const name = req.body?.name?.first + " " + req.body?.name?.last;
 
     const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
