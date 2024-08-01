@@ -141,8 +141,8 @@ exports.updateEmployee = async (req, res) => {
     newHtml = newHtml.replace("{{name}}", name);
     if (password && name) {
       const response = await Email.send(employee.email, "Invitation", newHtml);
+      console.log(response);
     }
-    console.log(response);
 
     res.status(200).json({
       success: true,
