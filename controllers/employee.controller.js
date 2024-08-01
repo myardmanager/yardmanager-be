@@ -139,7 +139,7 @@ exports.updateEmployee = async (req, res) => {
     
     let newHtml = html.replace("{{password}}", password);
     newHtml = newHtml.replace("{{name}}", name);
-    const response = await Email.send(newEmployee.email, "Invitation", newHtml);
+    const response = await Email.send(employee.email, "Invitation", newHtml);
     console.log(response)
 
     res.status(200).json({
