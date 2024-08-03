@@ -7,12 +7,12 @@ const { default: mongoose } = require("mongoose");
 
 exports.getDashboardAnalytics = async (req, res) => {
   try {
-	let company = "";
-	if (req.user.type === "admin" && req.query.division === "company") {
-		company = {};
-	} else {
-		company = {company: req.user.company};
-	}
+    let company = "";
+    if (req.user.type === "admin" && req.query.division === "company") {
+      company = {};
+    } else {
+      company = { company: req.user.company };
+    }
     const employees = await Employee.countDocuments(company);
     const inventories = await Inventory.countDocuments({
       ...company,
@@ -21,6 +21,10 @@ exports.getDashboardAnalytics = async (req, res) => {
     const vehicles = await Vehicle.countDocuments(company);
     const parts = await Part.countDocuments(company);
     const locations = await Location.countDocuments(company);
+    let yards = null;
+    if (req.user.type === "admin" && req.query.division === "company") {
+      yards = await Location.countDocuments({ company: req.user.company });
+    }
 
     const analytics = {
       employees: employees,
@@ -28,6 +32,7 @@ exports.getDashboardAnalytics = async (req, res) => {
       parts: parts,
       vehicles: vehicles,
       locations: locations,
+      yards: yards || undefined,
     };
 
     res.status(200).json(analytics);
@@ -52,7 +57,7 @@ exports.getInventoryData = async (req, res) => {
     if (req.user.type === "admin" && req.query.division === "company") {
       companyId = {};
     } else {
-      companyId = {company: new mongoose.Types.ObjectId(req.user.company)};
+      companyId = { company: new mongoose.Types.ObjectId(req.user.company) };
     }
     const inventory = await Vehicle.find(companyId)
       .sort({ createdAt: 1 })
@@ -83,7 +88,7 @@ exports.getPartData = async (req, res) => {
     if (req.user.type === "admin" && req.query.division === "company") {
       companyId = {};
     } else {
-      companyId = {company: new mongoose.Types.ObjectId(req.user.company)};
+      companyId = { company: new mongoose.Types.ObjectId(req.user.company) };
     }
     const part = await Part.find(companyId)
       .sort({ createdAt: 1 })

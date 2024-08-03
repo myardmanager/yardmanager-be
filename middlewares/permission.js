@@ -1,7 +1,7 @@
 const userModel = require("../models/role.model");
 const companyModel = require("../models/company.model");
 
-const checkRole = (companyId = false) => {
+const checkRole = (companyId = false, onlyAdmin = false) => {
   return async (req, res, next) => {
     const role = req.user.type;
     console.time("role");
