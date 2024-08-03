@@ -18,6 +18,12 @@ const adminSchema = new mongoose.Schema(
 		},
 		profile: {
 			type: String
+		},
+		profile: {
+			type: String
+		},
+		cover: {
+			type: String
 		}
 	},
 	{ timestamps: true }
