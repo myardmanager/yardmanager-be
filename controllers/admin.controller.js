@@ -145,7 +145,7 @@ exports.updateImages = async (req, res) => {
     } else {
       updateFields = {
         ...updateFields,
-        cover: adminImages.images.cover,
+        cover: adminImages.cover,
       };
     }
 
