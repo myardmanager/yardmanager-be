@@ -6,11 +6,11 @@ const { validateInvoice, validateInvoiceUpdate } = require('../validators/invoic
 const { runValidation } = require('../validators');
 const checkRole = require('../middlewares/permission');
 
-router.get('/s/:id', verifyToken, checkRole({companyId: true}), getInvoice);
-router.post('/new', verifyToken, checkRole({companyId: true}), validateInvoice, runValidation, createInvoice);
-router.get('/all', verifyToken, checkRole({companyId: true}), getAllInvoices);
-router.put('/s/:id', verifyToken, checkRole({companyId: true}), validateInvoiceUpdate, runValidation, updateInvoice);
-router.delete('/s/:id', verifyToken, checkRole({companyId: true}), deleteInvoice);
-router.get('/paginate', verifyToken, checkRole({companyId: true}), paginateInvoices);
+router.get('/s/:id', verifyToken, checkRole(true), getInvoice);
+router.post('/new', verifyToken, checkRole(true), validateInvoice, runValidation, createInvoice);
+router.get('/all', verifyToken, checkRole(true), getAllInvoices);
+router.put('/s/:id', verifyToken, checkRole(true), validateInvoiceUpdate, runValidation, updateInvoice);
+router.delete('/s/:id', verifyToken, checkRole(true), deleteInvoice);
+router.get('/paginate', verifyToken, checkRole(true), paginateInvoices);
 
 module.exports = router;

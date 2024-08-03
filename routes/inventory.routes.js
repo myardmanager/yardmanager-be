@@ -15,20 +15,20 @@ const {
 const uploadMulter = require("../middlewares/upload");
 const checkRole = require("../middlewares/permission");
 
-router.get("/all", verifyToken, checkRole({companyId: true}), getInventory);
-router.get("/s/:id", verifyToken, checkRole({companyId: true}), getInventoryById);
-router.get("/paginate", verifyToken, checkRole(), getInventoryPagination);
-router.put("/s/:id", verifyToken, checkRole({companyId: true}), uploadMulter.any(), updateInventory);
-router.post("/new", verifyToken, checkRole({companyId: true}), uploadMulter.any(), createInventory);
-router.delete("/s/:id", verifyToken, checkRole({companyId: true}), deleteInventory);
-router.get("/name", verifyToken, checkRole({companyId: true}), getInventoryByName);
-router.delete("/all", verifyToken, checkRole({companyId: true}), deleteAllInventory);
+router.get("/all", verifyToken, checkRole(true), getInventory);
+router.get("/s/:id", verifyToken, checkRole(true), getInventoryById);
+router.get("/paginate", verifyToken, checkRole(), getInventoryPagination);	
+router.put("/s/:id", verifyToken, checkRole(true), uploadMulter.any(), updateInventory);
+router.post("/new", verifyToken, checkRole(true), uploadMulter.any(), createInventory);
+router.delete("/s/:id", verifyToken, checkRole(true), deleteInventory);
+router.get("/name", verifyToken, checkRole(true), getInventoryByName);
+router.delete("/all", verifyToken, checkRole(true), deleteAllInventory);
 
 // Delete and restore inventory
 router.get(
 	"/delete/:id",
 	verifyToken,
-	checkRole({companyId: true}),
+	checkRole(true),
 	(req, res, next) => {
 		req.delete = true;
 		next();
@@ -38,7 +38,7 @@ router.get(
 router.get(
 	"/restore/:id",
 	verifyToken,
-	checkRole({companyId: true}),
+	checkRole(true),
 	(req, res, next) => {
 		req.delete = false;
 		next();
