@@ -9,8 +9,8 @@ const {
 } = require("../controllers/analytics.controller");
 const checkRole = require("../middlewares/permission");
 
-router.get("/count", verifyToken, checkRole({companyId: true}), getDashboardAnalytics);
-router.get("/inventory", verifyToken, checkRole({companyId: true}), getInventoryData);
-router.get("/part", verifyToken, checkRole({companyId: true}), getPartData);
+router.get("/count", verifyToken, checkRole(), getDashboardAnalytics);
+router.get("/inventory", verifyToken, checkRole(), getInventoryData);
+router.get("/part", verifyToken, checkRole(), getPartData);
 
 module.exports = router;
