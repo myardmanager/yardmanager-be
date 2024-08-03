@@ -72,6 +72,7 @@ exports.createEmployee = async (req, res) => {
     // Created by
     if (req.user.type === "user") req.body.createdByUser = req.user.id;
     if (req.user.type === "employee") req.body.createdByEmployee = req.user.id;
+    if (req.user.type === "admin") req.body.createdByAdmin = req.user.id;
     req.body.status = false;
 
     // Company

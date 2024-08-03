@@ -56,6 +56,10 @@ const employeeSchema = new mongoose.Schema(
 		createdByEmployee: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Employee"
+		},
+		createdByAdmin: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Admin"
 		}
 	},
 	{ timestamps: true }
@@ -64,11 +68,17 @@ const employeeSchema = new mongoose.Schema(
 employeeSchema.index({ email: 1, company: 1 }, { unique: true });
 
 employeeSchema.pre("validate", function (next) {
-	if (!this.createdByUser && !this.createdByEmployee) {
-		next(new Error("Invoice must contains soldBy from user or employee only one"));
+	if (!this.createdByUser && !this.createdByEmployee && !this.createdByAdmin) {
+		next(new Error("Employee must contains createdBy from user, employee or admin only one"));
 	}
 	if (this.createdByUser && this.createdByEmployee) {
-		next(new Error("Invoice must contains soldBy from user or employee only one"));
+		next(new Error("Employee must contains createdBy from user, employee or admin only one"));
+	}
+	if (this.createdByUser && this.createdByAdmin) {
+		next(new Error("Employee must contains createdBy from user, employee or admin only one"));
+	}
+	if (this.createdByEmployee && this.createdByAdmin) {
+		next(new Error("Employee must contains createdBy from user, employee or admin only one"));
 	}
 	next();
 });
