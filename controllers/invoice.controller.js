@@ -152,7 +152,7 @@ exports.paginateInvoices = async (req, res) => {
 				{ email: { $regex: search, $options: "i" } },
 				{ phone: { $regex: search, $options: "i" } },
 				//asds
-				{ _id: { $regex: search } },
+				// { _id: search },
 			]
 		})
 			.skip(skip)
