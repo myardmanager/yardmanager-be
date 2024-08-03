@@ -155,7 +155,8 @@ exports.updateImages = async (req, res) => {
         message: "At least one image (profile or cover) is required",
       });
     }
-    const admin = await Admin.findByIdAndUpdate(req.user.id, req.body, {
+	console.log(req.body);
+    const admin = await Admin.findByIdAndUpdate(req.user.id, updateFields, {
       new: true,
     });
     res.status(200).json({
