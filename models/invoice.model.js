@@ -22,6 +22,10 @@ const invoiceSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Employee"
 		},
+		soldByAdmin: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Admin"
+		},
 		products: [
 			{
 				product: {
@@ -79,11 +83,17 @@ const invoiceSchema = new mongoose.Schema(
 );
 
 invoiceSchema.pre("validate", function (next) {
-	if (!this.soldByUser && !this.soldByEmployee) {
-		next(new Error("Invoice must contains soldBy from user or employee only one"));
+	if (!this.soldByUser && !this.soldByEmployee && !this.soldByAdmin) {
+		next(new Error("Invoice must contains soldBy from user, employee or admin only one"));
 	}
 	if (this.soldByUser && this.soldByEmployee) {
-		next(new Error("Invoice must contains soldBy from user or employee only one"));
+		next(new Error("Invoice must contains soldBy from user, employee or admin only one"));
+	}
+	if (this.soldByUser && this.soldByAdmin) {
+		next(new Error("Invoice must contains soldBy from user, employee or admin only one"));
+	}
+	if (this.soldByEmployee && this.soldByAdmin) {
+		next(new Error("Invoice must contains soldBy from user, employee or admin only one"));
 	}
 	next();
 });
