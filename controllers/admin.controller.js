@@ -122,7 +122,7 @@ exports.updateImages = async (req, res) => {
     const adminImages = await Admin.findById(req.user.id);
     let updateFields = {};
 
-    // console.log(req.files);
+    console.log(req.files);
     if (req.files?.profile) {
       const profile = await uploadFile(req.files.profile[0]);
       updateFields = {
