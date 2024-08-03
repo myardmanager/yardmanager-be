@@ -4,6 +4,7 @@ const Part = require("../models/part.model");
 const Vehicle = require("../models/vehicle.model");
 const Location = require("../models/location.model");
 const { default: mongoose } = require("mongoose");
+const companyModel = require("../models/company.model");
 
 exports.getDashboardAnalytics = async (req, res) => {
   try {
@@ -23,7 +24,7 @@ exports.getDashboardAnalytics = async (req, res) => {
     const locations = await Location.countDocuments(company);
     let yards = null;
     if (req.user.type === "admin" && req.query.division === "company") {
-      yards = await Location.countDocuments({ company: req.user.company });
+      yards = await companyModel.countDocuments({});
     }
 
     const analytics = {
