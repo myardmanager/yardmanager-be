@@ -8,11 +8,11 @@ const checkRole = ({ companyId = false }) => {
     console.log("Checking role ", role);
     if (role === "admin") {
       console.log("admin");
-      if (companyId) {
+      if (companyId || req.query.company) {
         if (!req.query.company || req.query.company.length !== 24) {
           return res
             .status(403)
-            .json({ success: false, message: "Company is required." });
+            .json({ success: false, message: "Invalid or missing company id. Please provide a valid 24 character hexadecimal string." });
         }
         const company = await companyModel.findById(req.query.company);
         if (!company) {

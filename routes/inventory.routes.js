@@ -17,7 +17,7 @@ const checkRole = require("../middlewares/permission");
 
 router.get("/all", verifyToken, checkRole({companyId: true}), getInventory);
 router.get("/s/:id", verifyToken, checkRole({companyId: true}), getInventoryById);
-router.get("/paginate", verifyToken, checkRole({companyId: true}), getInventoryPagination);
+router.get("/paginate", verifyToken, checkRole(), getInventoryPagination);
 router.put("/s/:id", verifyToken, checkRole({companyId: true}), uploadMulter.any(), updateInventory);
 router.post("/new", verifyToken, checkRole({companyId: true}), uploadMulter.any(), createInventory);
 router.delete("/s/:id", verifyToken, checkRole({companyId: true}), deleteInventory);

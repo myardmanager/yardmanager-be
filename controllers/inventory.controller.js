@@ -105,19 +105,20 @@ exports.updateInventory = async (req, res) => {
   try {
     req.body.deleted = false;
     // Check if part exists and color is required
-	console.log(req.body)
+    console.log(req.body);
     const part = await partModel.findOne({
       _id: req.body.part,
       company: req.user.company,
     });
-	console.log(part)
+    console.log(part);
     if (!part) {
       return res.status(404).json({ message: "Part not found" });
     } else {
       if (!part.color) req.body.color = null;
     }
-	if (req.body.images === undefined) req.body.images = []
-	if (typeof req.body.images === "string" && req.body.images.length > 0) req.body.images = [req.body.images]
+    if (req.body.images === undefined) req.body.images = [];
+    if (typeof req.body.images === "string" && req.body.images.length > 0)
+      req.body.images = [req.body.images];
     // Check if images are provided
     // if (!req.body.images) {
     //   let images = await Inventory.findOne({
@@ -222,12 +223,18 @@ exports.getInventoryPagination = async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
     const offset = (page - 1) * limit;
     const search = req.query.search || "";
+    let company = "";
+    if (req.user.type == "admin" && req.query.division) {
+      company = {};
+    } else {
+      company = { company: req.user.company };
+    }
     // const s_years = req.query.filter_s || "";
     // const e_years = req.query.filter_e || "";
 
     if (typeof req.query.deleted === "undefined") req.query.deleted = false;
     const inventory = await Inventory.find({
-      company: req.user.company,
+      ...company,
       deleted: req.query.deleted,
       $or: [
         { name: { $regex: search, $options: "i" } },
@@ -244,7 +251,8 @@ exports.getInventoryPagination = async (req, res) => {
       .limit(limit)
       .exec();
     const count = await Inventory.countDocuments({
-      company: req.user.company,
+      // company: req.user.company,
+      ...company,
       deleted: req.query.deleted,
       $or: [
         { name: { $regex: search, $options: "i" } },
@@ -275,8 +283,14 @@ exports.getInventoryPagination = async (req, res) => {
 
 exports.setInventoryDeleteMark = async (req, res) => {
   try {
+    let company = {};
+    if (req.user.type == "admin" && req.query.division) {
+      company = {};
+    } else {
+      company = { company: req.user.company };
+    }
     const deleted = await Inventory.findOneAndUpdate(
-      { _id: req.params.id, company: req.user.company },
+      { _id: req.params.id, ...company },
       { deleted: req.delete },
       { new: true }
     ).populate([
