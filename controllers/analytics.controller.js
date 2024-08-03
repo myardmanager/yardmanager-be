@@ -7,20 +7,20 @@ const { default: mongoose } = require("mongoose");
 
 exports.getDashboardAnalytics = async (req, res) => {
   try {
-    const employees = await Employee.countDocuments({
-      company: req.user.company,
-    });
+	let company = "";
+	if (req.user.type === "admin" && req.query.division === "company") {
+		company = {};
+	} else {
+		company = {company: req.user.company};
+	}
+    const employees = await Employee.countDocuments(company);
     const inventories = await Inventory.countDocuments({
-      company: req.user.company,
+      ...company,
       deleted: false,
     });
-    const vehicles = await Vehicle.countDocuments({
-      company: req.user.company,
-    });
-    const parts = await Part.countDocuments({ company: req.user.company });
-    const locations = await Location.countDocuments({
-      company: req.user.company,
-    });
+    const vehicles = await Vehicle.countDocuments(company);
+    const parts = await Part.countDocuments(company);
+    const locations = await Location.countDocuments(company);
 
     const analytics = {
       employees: employees,
@@ -52,7 +52,7 @@ exports.getInventoryData = async (req, res) => {
     if (req.user.type === "admin" && req.query.division === "company") {
       companyId = {};
     } else {
-      companyId = new mongoose.Types.ObjectId(req.user.company);
+      companyId = {company: new mongoose.Types.ObjectId(req.user.company)};
     }
     const inventory = await Vehicle.find(companyId)
       .sort({ createdAt: 1 })
@@ -83,7 +83,7 @@ exports.getPartData = async (req, res) => {
     if (req.user.type === "admin" && req.query.division === "company") {
       companyId = {};
     } else {
-      companyId = new mongoose.Types.ObjectId(req.user.company);
+      companyId = {company: new mongoose.Types.ObjectId(req.user.company)};
     }
     const part = await Part.find(companyId)
       .sort({ createdAt: 1 })
