@@ -8,7 +8,7 @@ const { default: mongoose } = require("mongoose");
 exports.getDashboardAnalytics = async (req, res) => {
 	try {
 		const employees = await Employee.countDocuments({ company: req.user.company });
-		const inventories = await Inventory.countDocuments({ deleted: false });
+		const inventories = await Inventory.countDocuments({ company: req.user.company, deleted: false });
 		const vehicles = await Vehicle.countDocuments({ company: req.user.company });
 		const parts = await Part.countDocuments({ company: req.user.company });
 		const locations = await Location.countDocuments({ company: req.user.company });
