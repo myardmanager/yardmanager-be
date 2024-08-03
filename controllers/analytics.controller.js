@@ -5,6 +5,7 @@ const Vehicle = require("../models/vehicle.model");
 const Location = require("../models/location.model");
 const { default: mongoose } = require("mongoose");
 const companyModel = require("../models/company.model");
+const inventoryModel = require("../models/inventory.model");
 
 exports.getDashboardAnalytics = async (req, res) => {
   try {
@@ -51,7 +52,7 @@ function getWeekNumber(date) {
 }
 
 // Get Inventory data ordered by date with filter option
-exports.getInventoryData = async (req, res) => {
+exports.getVehicleData = async (req, res) => {
   try {
     // let companyId = new mongoose.Types.ObjectId(req.user.company);
     let companyId = "";
@@ -111,3 +112,36 @@ exports.getPartData = async (req, res) => {
     res.status(500).json({ msg: "Internal server error" });
   }
 };
+
+exports.getInventoryData = async (req, res) => {
+	try {
+	  // let companyId = new mongoose.Types.ObjectId(req.user.company);
+	  let companyId = "";
+	  if (req.user.type === "admin" && req.query.division === "company") {
+		companyId = {};
+	  } else {
+		companyId = { company: new mongoose.Types.ObjectId(req.user.company) };
+	  }
+	  const inventory = await inventoryModel.find(companyId)
+		.sort({ createdAt: 1 })
+		.then((inventory) => {
+		  const data = inventory.map((item) => {
+			return {
+			  year: item.createdAt.getFullYear(),
+			  month: item.createdAt.getMonth() + 1,
+			  day: item.createdAt.getDate(),
+			  week: getWeekNumber(item.createdAt),
+			  count: 1,
+			};
+		  });
+		  return data;
+		});
+  
+	  console.log(inventory);
+	  res.status(200).json(inventory);
+	} catch (err) {
+	  console.log(err);
+	  res.status(500).json({ msg: "Internal server error" });
+	}
+  };
+  
