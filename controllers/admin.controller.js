@@ -132,7 +132,7 @@ exports.updateImages = async (req, res) => {
     } else {
       updateFields = {
         ...updateFields,
-        profile: adminImages.images.profile,
+        profile: adminImages.profile,
       };
     }
 
