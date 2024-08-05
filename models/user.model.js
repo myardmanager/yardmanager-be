@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema(
 				required: true
 			}
 		},
-		username_1: {
+		username: {
 			type: String,
 			default: "",
 			unique: false
@@ -38,6 +38,5 @@ const userSchema = new mongoose.Schema(
 
 userSchema.clearIndexes();
 userSchema.index(false);
-userSchema.index({ email: 1 });
 
 module.exports = mongoose.model("User", userSchema);
