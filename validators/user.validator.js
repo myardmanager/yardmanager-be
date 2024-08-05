@@ -3,13 +3,13 @@ const { check } = require("express-validator");
 exports.validateUserWithCompany = [
 	check("user.name.first").notEmpty().withMessage("First name is required"),
 	check("user.name.last").notEmpty().withMessage("Last name is required"),
-	check("user.username")
-		.notEmpty()
-		.withMessage("Username is required")
-		.isLength({ min: 5 })
-		.withMessage("Username must be at least 5 characters long")
-		.isAlphanumeric()
-		.withMessage("Username must contain only letters and numbers"),
+	// check("user.username")
+	// 	.notEmpty()
+	// 	.withMessage("Username is required")
+	// 	.isLength({ min: 5 })
+	// 	.withMessage("Username must be at least 5 characters long")
+	// 	.isAlphanumeric()
+	// 	.withMessage("Username must contain only letters and numbers"),
 	check("user.email")
 		.notEmpty()
 		.withMessage("Email is required")
