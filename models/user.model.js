@@ -12,11 +12,6 @@ const userSchema = new mongoose.Schema(
 				required: true
 			}
 		},
-		// username: {
-		// 	type: String,
-		// 	// required: true,
-		// 	// unique: true
-		// },
 		email: {
 			type: String,
 			required: true,
@@ -36,7 +31,5 @@ const userSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
-userSchema.index(false);
-userSchema.index({ email: 1 });
-
 module.exports = mongoose.model("User", userSchema);
+
