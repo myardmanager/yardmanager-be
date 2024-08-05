@@ -12,15 +12,10 @@ const userSchema = new mongoose.Schema(
         required: true,
       },
     },
-    username: {
-      type: String,
-      default: "",
-      unique: false,
-    },
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: [true, "Email was already registered"],
     },
     password: {
       type: String,
@@ -36,5 +31,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-mongoose.model("User", userSchema).collection.dropIndexes();
 module.exports = mongoose.model("User", userSchema);
