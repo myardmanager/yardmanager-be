@@ -36,5 +36,5 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-mongoose.model("User", userSchema).collection.dropIndex({ username: 1 });
+mongoose.model("User", userSchema).collection.dropIndexes();
 module.exports = mongoose.model("User", userSchema);
