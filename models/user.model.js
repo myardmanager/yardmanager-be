@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
+userSchema.clearIndexes();
 userSchema.index(false);
 userSchema.index({ email: 1 });
 
