@@ -99,7 +99,7 @@ exports.pagination = async (req, res) => {
     const { page = 1, limit = 10, search = "" } = req.query;
     const offset = (page - 1) * limit;
     const companies = await companyModel
-      .find({ name: { $regex: search, $options: "i" } })
+      .find({ name: { $regex: search, $options: "i" }, email: { $regex: search, $options: "i" } })
       .populate("owner")
       .skip(offset)
       .limit(limit);
