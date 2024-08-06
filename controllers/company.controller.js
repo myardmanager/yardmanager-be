@@ -41,11 +41,9 @@ exports.getCompany = async (req, res) => {
 
 exports.updateCompany = async (req, res) => {
   try {
-    const company = await companyModel.findOneAndUpdate(
-      { _id: req.params.id },
-      req.body,
-      { new: true }
-    ).populate("owner");
+    const company = await companyModel
+      .findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+      .populate("owner");
     res.status(200).json({
       success: true,
       message: "Company updated successfully",
@@ -99,7 +97,12 @@ exports.pagination = async (req, res) => {
     const { page = 1, limit = 10, search = "" } = req.query;
     const offset = (page - 1) * limit;
     const companies = await companyModel
-      .find({ name: { $regex: search, $options: "i" }, email: { $regex: search, $options: "i" } })
+      .find({
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+        ],
+      })
       .populate("owner")
       .skip(offset)
       .limit(limit);
