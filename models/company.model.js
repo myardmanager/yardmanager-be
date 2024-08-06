@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const databaseBackup = require("../cron/databaseBackup.cron");
 
 const companySchema = new mongoose.Schema(
   {
@@ -31,11 +32,11 @@ const companySchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    price: {
+    image: {
       type: Boolean,
       default: false,
     },
-    image: {
+    active: {
       type: Boolean,
       default: false,
     },
@@ -44,5 +45,14 @@ const companySchema = new mongoose.Schema(
 );
 
 companySchema.index({ owner: 1 }, { unique: true });
+
+companySchema.post(/Update$/, function (doc) {
+  if (doc.active) {
+    // databaseBackup.feeGenerator.start();
+    databaseBackup.feeGenerator.stop();
+  } else {
+    databaseBackup.feeGenerator.stop();
+  }
+});
 
 module.exports = mongoose.model("Company", companySchema);

@@ -28,6 +28,14 @@ const adminSchema = new mongoose.Schema(
     cover: {
       type: String,
     },
+    backup: {
+      type: Boolean,
+      default: false,
+    },
+    approval: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

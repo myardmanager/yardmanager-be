@@ -5,7 +5,7 @@ const { MongoClient } = require("mongodb");
 const fs = require("fs");
 
 exports.feeGenerator = cron.schedule(
-  "0 * * * * *",
+  "0 0 0 1 * *",
   async () => {
     console.log("Running a backup task");
 
