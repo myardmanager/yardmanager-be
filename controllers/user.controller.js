@@ -86,7 +86,7 @@ exports.login = async (req, res) => {
 
     if (user) {
       isPasswordValid = await bcrypt.compare(req.body.password, user.password);
-      company = await companyModel.find({ owner: user._id });
+      company = await companyModel.findOne({ owner: user._id });
       dataSign = {
         id: user._id.toString(),
         email: user.email,
@@ -106,8 +106,8 @@ exports.login = async (req, res) => {
         company: employee.company._id,
       };
     }
-		console.log(company[0].active, typeof company[0].active);
-    if (!company[0].active) {
+		console.log(company.active, typeof company.active);
+    if (!company.active) {
       return res.status(400).json({
         success: false,
         message: "Company is not active",
