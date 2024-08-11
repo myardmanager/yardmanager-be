@@ -12,13 +12,15 @@ const vinDecoder = async (vin) => {
       }
     );
     // const response = { data: { make: "Toyota", model: "Corolla", year: 2019 } };
+		// console.log(response.data);
     return {
-      make: response.manufacturer,
-      model: response.model,
-      year: response.year,
+      make: response.data.manufacturer,
+      model: response.data.model,
+      year: response.data.year,
+			// ...response.data,
     };
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     throw error;
   }
 };
