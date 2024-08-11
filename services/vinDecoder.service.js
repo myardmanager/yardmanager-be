@@ -7,7 +7,7 @@ const vinDecoder = async (vin) => {
       `https://api.api-ninjas.com/v1/vinlookup?vin=${vin}`,
       {
         headers: {
-          "X-Api-Key": process.env.VIN_API_KEY,
+          "x-api-key": process.env.VIN_API_KEY,
         },
       }
     );
