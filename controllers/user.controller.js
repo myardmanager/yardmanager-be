@@ -91,7 +91,7 @@ exports.login = async (req, res) => {
         id: user._id.toString(),
         email: user.email,
         type: "user",
-        company: company[0]._id,
+        company: company._id,
       };
     } else {
       isPasswordValid = await bcrypt.compare(
@@ -149,10 +149,11 @@ exports.login = async (req, res) => {
       },
     });
   } catch (error) {
+    // console.log(error)
     res.status(500).json({
       success: false,
-      message: error.message,
-      error: error,
+      message: "Internal server error",
+      error: error.message,
     });
   }
 };
