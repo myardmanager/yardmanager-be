@@ -199,6 +199,9 @@ exports.decodeVin = async (req, res) => {
   const { vin } = req.params;
   try {
     const vehicle = await vinDecoder.vinDecoder(vin);
+    if (!vehicle.make || !vehicle.model || !vehicle.year) {
+      return res.status(404).json({ success: false, message: "Vehicle not found" });
+    }
     return res.status(200).json({ success: true, data: vehicle });
   } catch (error) {
     res
