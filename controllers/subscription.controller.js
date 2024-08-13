@@ -15,7 +15,7 @@ exports.subscribeCustomer = async (req, res) => {
     const hashedPassword = await bcrypt.hash(user.password, salt);
     const checkUser = await userModel.findOne({ email: email });
     if (checkUser) {
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({ success: false, error: "User already exists" });
     }
     const newUser = await userModel.create({
       ...user,
@@ -27,7 +27,7 @@ exports.subscribeCustomer = async (req, res) => {
     }
     const customer = await customers.createCustomer(email, meta);
     const newSubscription = await subscriptions.subscribeCustomer(customer.id, priceId, email);
-    res.status(200).json({ subscription: newSubscription, user: newUser });
+    res.status(200).json({ success: true, subscription: newSubscription, user: newUser });
   } catch (error) {
     console.log(error)
     res.status(400).json({ success: false, message: error.message, error: error });
