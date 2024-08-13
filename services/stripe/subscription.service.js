@@ -23,15 +23,18 @@ exports.subscribeCustomer = async (customerId, priceId, email) => {
         limit: 1
       })
     }
+    console.log(price)
 
+    console.log(customerId, email, price)
     const newSubscription = await stripe.subscriptions.create({
       customer: customerId,
       email: email,
-      items: [{ price: priceId }],
+      items: [{ price: price }],
       expand: ["latest_invoice.payment_intent"],
       collection_method: "charge_automatically",
       payment_behavior: "default_incomplete",
     });
+    console.log(newSubscription)
 
     return newSubscription;
   } catch (error) {
