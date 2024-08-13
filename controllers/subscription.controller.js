@@ -8,8 +8,9 @@ const companyModel = require("../models/company.model");
 
 exports.subscribeCustomer = async (req, res) => {
   try {
-    const { priceId, email, user } = req.body;
+    const { priceId, user } = req.body;
 
+    let email = user.email;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(user.password, salt);
     const checkUser = await userModel.findOne({ email: email });
@@ -17,8 +18,7 @@ exports.subscribeCustomer = async (req, res) => {
       return res.status(400).json({ error: "User already exists" });
     }
     const newUser = await userModel.create({
-      user,
-      email: email,
+      ...user,
       password: hashedPassword,
     });
     let meta = {
