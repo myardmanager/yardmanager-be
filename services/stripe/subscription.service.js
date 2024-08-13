@@ -14,22 +14,22 @@ exports.subscribeCustomer = async (customerId, priceId, email) => {
     let price = null;
     if (priceId === "monthly") {
       price = await stripe.prices.list({
-        name: "Subscription_Monthly",
+        product: "prod_QcTtPlDs2CImd0",
         limit: 1
       })
     } else if (priceId === "yearly") {
       price = await stripe.prices.list({
-        name: "Subscription_Yearly",
+        product: "prod_QeYjdLc6STWYK9",
         limit: 1
       })
     }
     console.log(price)
 
-    console.log(customerId, email, price)
+    console.log(customerId, email, price.data[0]?.id)
     const newSubscription = await stripe.subscriptions.create({
       customer: customerId,
-      email: email,
-      items: [{ price: price }],
+      // email: email,
+      items: [{ price: price.data[0]?.id }],
       expand: ["latest_invoice.payment_intent"],
       collection_method: "charge_automatically",
       payment_behavior: "default_incomplete",
@@ -38,6 +38,8 @@ exports.subscribeCustomer = async (customerId, priceId, email) => {
 
     return newSubscription;
   } catch (error) {
+    console.log("\n\nerror")
+    console.log(error)
     throw new Error(`Failed to subscribe customer: ${error.message}`);
   }
 };

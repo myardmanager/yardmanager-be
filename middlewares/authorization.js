@@ -29,7 +29,7 @@ exports.verifyToken = (req, res, next) => {
 
 exports.verifyRole = (role) => {
 	return (req, res, next) => {
-		console.log(req.user.role, roles[req.user.role]);
+		// console.log(req.user.role, roles[req.user.role]);
 		// logMiddleware(req, res, next);
 		// if (req.user && roles[req.user.role] >= roles[role]) {
 		if (req.user.role === "superadmin") {
