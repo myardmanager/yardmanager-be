@@ -14,12 +14,12 @@ exports.subscribeCustomer = async (customerId, priceId, email) => {
     let price = null;
     if (priceId === "monthly") {
       price = await stripe.prices.list({
-        name: "Monthly",
+        name: "Subscription_Monthly",
         limit: 1
       })
     } else if (priceId === "yearly") {
       price = await stripe.prices.list({
-        name: "Yearly",
+        name: "Subscription_Yearly",
         limit: 1
       })
     }
