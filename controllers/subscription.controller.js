@@ -26,7 +26,7 @@ exports.subscribeCustomer = async (req, res) => {
     const newSubscription = await subscribeCustomer(customerId, priceId, email);
     res.status(200).json({ subscription: newSubscription, user: newUser });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ success: false, message: error.message, error: error });
   }
 };
 
