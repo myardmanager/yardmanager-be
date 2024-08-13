@@ -106,7 +106,7 @@ exports.login = async (req, res) => {
         company: employee.company._id,
       };
     }
-		console.log(company.active, typeof company.active);
+    console.log(company.active, typeof company.active);
     if (!company.active) {
       return res.status(400).json({
         success: false,
@@ -377,4 +377,8 @@ exports.getUser = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+exports.getUserbyEmail = (email) => {
+  return User.findOne({ email: email });
 };

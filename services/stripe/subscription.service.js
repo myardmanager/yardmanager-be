@@ -1,9 +1,9 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-exports.subscribeCustomer = async (customerId, priceId) => {
+exports.subscribeCustomer = async (customerId, priceId, email) => {
   try {
     const [subscription] = await stripe.subscriptions.list({
-      customer: customerId,
+      email: email,
       limit: 1,
     });
 
@@ -11,13 +11,28 @@ exports.subscribeCustomer = async (customerId, priceId) => {
       throw new Error("Customer already has an active subscription");
     }
 
+    let price = null;
+    if (priceId === "monthly") {
+      price = await stripe.prices.list({
+        name: "Monthly",
+        limit: 1
+      })
+    } else if (priceId === "yearly") {
+      price = await stripe.prices.list({
+        name: "Yearly",
+        limit: 1
+      })
+    }
+
     const newSubscription = await stripe.subscriptions.create({
       customer: customerId,
+      email: email,
       items: [{ price: priceId }],
       expand: ["latest_invoice.payment_intent"],
       collection_method: "charge_automatically",
       payment_behavior: "default_incomplete",
     });
+
     return newSubscription;
   } catch (error) {
     throw new Error(`Failed to subscribe customer: ${error.message}`);
