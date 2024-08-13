@@ -21,6 +21,13 @@ exports.subscribeCustomer = async (req, res) => {
       ...user,
       password: hashedPassword,
     });
+    const newCompany = await companyModel.create({
+      ...user.company,
+      name: 'Company',
+      phone: '123456789',
+      address: 'Company Address',
+      owner: newUser._id,
+    })
     let meta = {
       id: newUser._id.toString(),
       email: newUser.email,
