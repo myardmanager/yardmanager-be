@@ -1,4 +1,9 @@
-const { subscribeCustomer, getSubscriptions, getSubscription, cancelSubscription } = require("../services/stripe/subscription.service");
+const {
+  subscribeCustomer,
+  getSubscriptions,
+  getSubscription,
+  cancelSubscription,
+} = require("../services/stripe/subscription.service");
 const bcrypt = require("bcryptjs");
 const userModel = require("../models/user.model");
 const companyModel = require("../models/company.model");
@@ -17,9 +22,9 @@ exports.subscribeCustomer = async (req, res) => {
       user,
       email: email,
       password: hashedPassword,
-    })
+    });
     const newSubscription = await subscribeCustomer(customerId, priceId, email);
-    res.status(200).json(newSubscription);
+    res.status(200).json({ subscription: newSubscription, user: newUser });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
