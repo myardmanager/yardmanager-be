@@ -39,7 +39,7 @@ app.use((req, res, next) => {
 		const codeStr = `${color}${res.statusCode}\x1b[0m`;
 		// const url = req.originalUrl.substring(5);
 		var output = [req.method, req.originalUrl, req.ip, req.user?.id, req.user?.role, res.body];
-		console.log(codeStr, output.join(" "));
+		// console.log(codeStr, output.join(" "));
 		// if (req.method && req.method !== "GET") {
 		// 	const log = logsModel.create({
 		// 		action: req.method,
