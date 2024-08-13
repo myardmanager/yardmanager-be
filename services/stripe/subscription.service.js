@@ -2,14 +2,14 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 exports.subscribeCustomer = async (customerId, priceId, email) => {
   try {
-    const [subscription] = await stripe.subscriptions.list({
-      email: email,
-      limit: 1,
-    });
+    // const [subscription] = await stripe.subscriptions.list({
+    //   email: email,
+    //   limit: 1,
+    // });
 
-    if (subscription) {
-      throw new Error("Customer already has an active subscription");
-    }
+    // if (subscription) {
+    //   throw new Error("Customer already has an active subscription");
+    // }
 
     let price = null;
     if (priceId === "monthly") {
