@@ -60,13 +60,20 @@ exports.getSubscription = async (req, res) => {
       return res.status(400).json({ error: "User not found" });
     }
     if (req.user.type === "user") {
-      email = await userModel.findOne({ _id: req.user.id }).email;
+      const user = await userModel.findOne({ _id: req.user.id });
+      email = user.email;
+      console.log(email);
     } else if (req.user.type === "employee") {
       const employee = await employeeModel.findOne({ _id: req.user.id }).populate({path: "company", populate: {path: "owner", select: "email"}});
       email = employee.company.owner.email;
+      console.log(employee);
     }
+    console.log('\n\n', email);
     const customer = await customers.getCustomer(email);
     console.log(customer);
+    if (!customer) {
+      return res.status(400).json({ error: "Customer not found" });
+    }
     const subscription = await subscriptions.getSubscription(customer.id);
     res.status(200).json(subscription);
   } catch (error) {
