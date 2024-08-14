@@ -1,6 +1,6 @@
 const customers = require("./customer.service");
 const subscriptions = require("./subscription.service");
-// const invoices = require("./invoice.service");
+const invoices = require("./invoice.service");
 // const plans = require("./plan.service");
 // const products = require("./product.service");
 // const events = require("./event.service");
@@ -8,7 +8,7 @@ const subscriptions = require("./subscription.service");
 
 exports.customers = customers;
 exports.subscriptions = subscriptions;
-// exports.invoices = invoices;
+exports.invoices = invoices;
 // exports.plans = plans;
 // exports.products = products;
 // exports.events = events;

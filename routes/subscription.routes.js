@@ -6,7 +6,7 @@ const {
 	subscribeCustomer,
 	getSubscriptions,
 	getSubscription,
-  getTransactions,
+  getInvoices,
 	// updateSubscription,
 	cancelSubscription,
     // resumeSubscription,
@@ -16,7 +16,7 @@ const checkRole = require("../middlewares/permission");
 
 router.post("/new", subscribeCustomer);
 router.get("/all", verifyToken, checkRole(false, true), getSubscriptions);
-router.get("/transactions", getTransactions);
+router.get("/invoices", verifyToken, getInvoices);
 router.get("/subscription", verifyToken, checkRole(false, true), getSubscription);
 // router.put("/s/:id", verifyToken, checkRole(false, true), updateSubscription);
 router.put("/cancel/:id", verifyToken, checkRole(false, true), cancelSubscription);
