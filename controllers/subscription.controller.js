@@ -5,6 +5,7 @@ const {
 const bcrypt = require("bcryptjs");
 const userModel = require("../models/user.model");
 const companyModel = require("../models/company.model");
+const employeeModel = require("../models/employee.model");
 
 exports.subscribeCustomer = async (req, res) => {
   try {
@@ -52,8 +53,21 @@ exports.getSubscriptions = async (req, res) => {
 
 exports.getSubscription = async (req, res) => {
   try {
-    const { customerId } = req.params;
-    const subscription = await subscriptions.getSubscription(customerId);
+    // const { id } = req.params;
+    // const user = req.user;
+    let email = "";
+    if (!req.user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    if (req.user.type === "user") {
+      email = await userModel.findOne({ _id: req.user.id }).email;
+    } else if (req.user.type === "employee") {
+      const employee = await employeeModel.findOne({ _id: req.user.id }).populate({path: "company", populate: {path: "owner", select: "email"}});
+      email = employee.company.owner.email;
+    }
+    const customer = await customers.getCustomer(email);
+    console.log(customer);
+    const subscription = await subscriptions.getSubscription(customer.id);
     res.status(200).json(subscription);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -65,6 +79,15 @@ exports.cancelSubscription = async (req, res) => {
     const { subscriptionId } = req.params;
     const subscription = await subscriptions.cancelSubscription(subscriptionId);
     res.status(200).json(subscription);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+exports.getTransactions = async (req, res) => {
+  try {
+    const transactions = await subscriptions.getTransactions();
+    res.status(200).json(transactions);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
