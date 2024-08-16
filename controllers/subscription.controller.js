@@ -1,4 +1,4 @@
-const { subscriptions, customers, invoices } = require("../services/stripe");
+const { subscriptions, customers, invoices, cardService } = require("../services/stripe");
 const bcrypt = require("bcryptjs");
 const userModel = require("../models/user.model");
 const companyModel = require("../models/company.model");
@@ -136,6 +136,24 @@ exports.getInvoices = async (req, res) => {
     res.status(200).json({ success: true, result: invoiceList });
   } catch (error) {
     console.log(error);
+    res.status(400).json({ error: error.message });
+  }
+};
+
+exports.getCards = async (req, res) => {
+  try {
+    let email = req.user.email;
+    if (req.user.type === "employee") {
+      const user = await employeeModel.findById(req.user.id).populate({
+        path: "company",
+        populate: { path: "owner", select: "email" },
+      });
+      email = user.company.owner.email;
+    }
+    const customer = await customers.getCustomer(email);
+    const cards = await cardService.listCards(customer.id);
+    res.status(200).json(cards);
+  } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };

@@ -7,6 +7,7 @@ const {
 	getSubscriptions,
 	getSubscription,
   getInvoices,
+	getCards,
 	// updateSubscription,
 	cancelSubscription,
     // resumeSubscription,
@@ -20,6 +21,7 @@ router.get("/all", verifyToken, checkRole(false, true), getSubscriptions);
 router.get("/invoices", verifyToken, getInvoices);
 router.get("/subscription", verifyToken, checkRole(false, true), getSubscription);
 router.get("/subscription/:plan", verifyToken, checkRole(false, true), getSubscription);
+router.get("/cards", verifyToken, checkRole(false, true), getCards);
 // router.put("/s/:id", verifyToken, checkRole(false, true), updateSubscription);
 router.get("/cancel/:id", verifyToken, checkRole(false, true), cancelSubscription);
 // router.put("/resume/:id", verifyToken, checkRole(false, true), resumeSubscription);
