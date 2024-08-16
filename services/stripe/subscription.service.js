@@ -46,7 +46,7 @@ exports.subscribeCustomer = async (customerId, priceId, email) => {
 
 exports.cancelSubscription = async (subscriptionId) => {
   try {
-    const subscription = await stripe.subscriptions.del(subscriptionId);
+    const subscription = await stripe.subscriptions.cancel(subscriptionId);
     return subscription;
   } catch (error) {
     throw new Error(`Failed to cancel subscription: ${error.message}`);
