@@ -1,5 +1,10 @@
 const companyModel = require("../models/company.model");
+const employeeModel = require("../models/employee.model");
 const inventoryModel = require("../models/inventory.model");
+const locationModel = require("../models/location.model");
+const roleModel = require("../models/role.model");
+const userModel = require("../models/user.model");
+const vehicleModel = require("../models/vehicle.model");
 
 // Company CRUD operations
 exports.createCompany = async (req, res) => {
@@ -65,6 +70,43 @@ exports.deleteCompany = async (req, res) => {
       success: true,
       message: "Company deleted successfully",
       data: company,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    const user = await userModel.findOne({ _id: req.params.id });
+    const company = await companyModel.findOneAndDelete({ _id: req.params.id });
+    const inventory = await inventoryModel.deleteMany({
+      company: req.params.id,
+    });
+    const location = await locationModel.deleteMany({
+      company: req.params.id,
+    });
+    const invoice = await invoiceModel.deleteMany({
+      company: req.params.id,
+    });
+    const employees = await employeeModel.deleteMany({
+      company: req.params.id,
+    });
+    const roles = roleModel.deleteMany({
+      company: req.params.id,
+    });
+    const vehicle = await vehicleModel.deleteMany({
+      company: req.params.id,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "User and company permanently deleted successfully",
+      result: company,
     });
   } catch (error) {
     res.status(500).json({
