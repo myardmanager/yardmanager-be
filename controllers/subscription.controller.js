@@ -88,14 +88,14 @@ exports.getSubscription = async (req, res) => {
     }
     let subscription = await subscriptions.getSubscription(customer.id);
     console.log(subscription);
-    let id = subscription.id;
-    if (!subscription && plan) {
+    let id = subscription.data[0].id;
+    if (!id && plan) {
       subscription = await subscriptions.subscribeCustomer(
         customer.id,
         plan,
         email
       );
-    } else if (subscription && plan) {
+    } else if (id && plan) {
       console.log(id, plan);
       subscription = await subscriptions.updateSubscription(id, plan);
     }
