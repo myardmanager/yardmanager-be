@@ -44,6 +44,32 @@ exports.subscribeCustomer = async (customerId, priceId, email) => {
   }
 };
 
+exports.updateSubscription = async (subscriptionId, priceId) => {
+  try {
+    let price = null;
+    if (priceId === "monthly") {
+      price = await stripe.prices.list({
+        product: "prod_QcTtPlDs2CImd0",
+        limit: 1,
+      });
+    } else if (priceId === "yearly") {
+      price = await stripe.prices.list({
+        product: "prod_QeYjdLc6STWYK9",
+        limit: 1,
+      });
+    }
+    const subscription = await stripe.subscriptions.update(subscriptionId, {
+      items: [{ price: price.data[0]?.id }],
+      expand: ["latest_invoice.payment_intent"],
+      collection_method: "charge_automatically",
+      payment_behavior: "default_incomplete",
+    });
+    return subscription;
+  } catch (error) {
+    throw new Error(`Failed to update subscription: ${error.message}`);
+  } 
+};
+
 exports.cancelSubscription = async (subscriptionId) => {
   try {
     const subscription = await stripe.subscriptions.cancel(subscriptionId);

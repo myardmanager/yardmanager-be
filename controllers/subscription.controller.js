@@ -93,6 +93,12 @@ exports.getSubscription = async (req, res) => {
         plan,
         email
       );
+    } else if (id) {
+      subscription = await subscriptions.updateSubscription(
+        customer.id,
+        plan,
+        email
+      );
     }
 
     res.status(200).json(subscription);
