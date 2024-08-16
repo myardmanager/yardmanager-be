@@ -87,6 +87,7 @@ exports.getSubscription = async (req, res) => {
       return res.status(400).json({ error: "Customer not found" });
     }
     let subscription = await subscriptions.getSubscription(customer.id);
+    console.log(subscription);
     let id = subscription.id;
     if (!subscription && plan) {
       subscription = await subscriptions.subscribeCustomer(
