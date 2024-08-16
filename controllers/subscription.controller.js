@@ -95,8 +95,8 @@ exports.getSubscription = async (req, res) => {
 
 exports.cancelSubscription = async (req, res) => {
   try {
-    const { subscriptionId } = req.params;
-    const subscription = await subscriptions.cancelSubscription(subscriptionId);
+    const { id } = req.params;
+    const subscription = await subscriptions.cancelSubscription(id);
     res.status(200).json(subscription);
   } catch (error) {
     res.status(400).json({ error: error.message });
