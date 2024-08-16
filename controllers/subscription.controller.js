@@ -94,12 +94,9 @@ exports.getSubscription = async (req, res) => {
         plan,
         email
       );
-    } else if (plan) {
-      subscription = await subscriptions.updateSubscription(
-        id,
-        plan,
-        email
-      );
+    } else if (subscription && plan) {
+      console.log(id, plan);
+      subscription = await subscriptions.updateSubscription(id, plan);
     }
 
     res.status(200).json(subscription);
