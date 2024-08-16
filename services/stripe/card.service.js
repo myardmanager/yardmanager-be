@@ -2,9 +2,12 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 exports.listCards = async (customerId) => {
   try {
-    const cards = await stripe.customers.listSources(customerId, {
-      object: "card",
+		console.log(customerId);
+    const cards = await stripe.paymentMethods.list({
+      type: "card",
+			customer: customerId
     });
+		console.log(cards);
     return cards;
   } catch (error) {
     throw error;
