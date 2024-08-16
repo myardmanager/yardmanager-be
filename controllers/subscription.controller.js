@@ -60,7 +60,7 @@ exports.getSubscriptions = async (req, res) => {
 
 exports.getSubscription = async (req, res) => {
   try {
-    // const { id } = req.params;
+    const { plan } = req.params;
     // const user = req.user;
     let email = "";
     if (!req.user) {
@@ -86,7 +86,15 @@ exports.getSubscription = async (req, res) => {
     if (!customer) {
       return res.status(400).json({ error: "Customer not found" });
     }
-    const subscription = await subscriptions.getSubscription(customer.id);
+    let subscription = await subscriptions.getSubscription(customer.id);
+    if (!subscription && id) {
+      subscription = await subscriptions.subscribeCustomer(
+        customer.id,
+        plan,
+        email
+      );
+    }
+
     res.status(200).json(subscription);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -107,12 +115,10 @@ exports.getInvoices = async (req, res) => {
   try {
     let email = req.user.email;
     if (req.user.type === "employee") {
-      const user = await employeeModel
-        .findById(req.user.id)
-        .populate({
-          path: "company",
-          populate: { path: "owner", select: "email" },
-        });
+      const user = await employeeModel.findById(req.user.id).populate({
+        path: "company",
+        populate: { path: "owner", select: "email" },
+      });
       email = user.company.owner.email;
     }
     if (!email) {
