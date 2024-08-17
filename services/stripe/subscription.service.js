@@ -92,7 +92,7 @@ exports.getSubscription = async (customerId) => {
   }
 };
 
-exports.getSubscriptions = async (limit = 10, offset = undefined) => {
+exports.getSubscriptions = async (limit = 10, offset = 1) => {
   try {
     let subscriptionsList = []
     let has_more = true
@@ -104,8 +104,9 @@ exports.getSubscriptions = async (limit = 10, offset = undefined) => {
       subscriptionsList.push(...subscriptions.data)
       has_more = subscriptions[subscriptions.length - 1]?.has_more
     }
-    const start_after = subscriptionsList[(offset - 1) * limit - 1].id;
-    console.log((offset - 1) * limit - 1, '\n ', start_after, '\n\n');
+    const checkOffset = subscriptionsList.length > (offset - 1) * limit - 1 ? (offset - 1) * limit - 1 : subscriptionsList.length - 1
+    const start_after = subscriptionsList[checkOffset]?.id;
+    console.log(checkOffset, '\n ', start_after, '\n\n');
     for (let i = 0; i < subscriptionsList.length; i++) {
       console.log(subscriptionsList[i].id);
     }
