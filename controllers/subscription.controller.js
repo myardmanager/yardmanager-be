@@ -1,4 +1,9 @@
-const { subscriptions, customers, invoices, cardService } = require("../services/stripe");
+const {
+  subscriptions,
+  customers,
+  invoices,
+  cardService,
+} = require("../services/stripe");
 const bcrypt = require("bcryptjs");
 const userModel = require("../models/user.model");
 const companyModel = require("../models/company.model");
@@ -51,7 +56,8 @@ exports.subscribeCustomer = async (req, res) => {
 
 exports.getSubscriptions = async (req, res) => {
   try {
-    const subscriptionList = await subscriptions.getSubscriptions();
+    const { limit = 10, offset } = req.query;
+    const subscriptionList = await subscriptions.getSubscriptions(limit, offset);
     res.status(200).json(subscriptionList);
   } catch (error) {
     res.status(400).json({ error: error.message });

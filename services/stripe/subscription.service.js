@@ -92,9 +92,28 @@ exports.getSubscription = async (customerId) => {
   }
 };
 
-exports.getSubscriptions = async () => {
+exports.getSubscriptions = async (limit = 10, offset = undefined) => {
   try {
-    const subscriptions = await stripe.subscriptions.list({});
+    let subscriptionsList = []
+    let has_more = true
+
+    while (has_more) {
+      const subscriptions = await stripe.subscriptions.list({
+        limit: 100,
+      })
+      subscriptionsList.push(...subscriptions.data)
+      has_more = subscriptions[subscriptions.length - 1]?.has_more
+    }
+    const start_after = subscriptionsList[(offset - 1) * limit - 1].id;
+    console.log((offset - 1) * limit - 1, '\n ', start_after, '\n\n');
+    for (let i = 0; i < subscriptionsList.length; i++) {
+      console.log(subscriptionsList[i].id);
+    }
+    
+    const subscriptions = await stripe.subscriptions.list({
+      limit: limit,
+      starting_after: start_after,
+    });
     return subscriptions;
   } catch (error) {
     throw new Error(`Failed to get subscriptions: ${error.message}`);
