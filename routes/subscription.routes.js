@@ -19,7 +19,7 @@ router.post("/new", subscribeCustomer);
 // router.post("/subscription", verifyToken, subscribeCustomer);
 router.get("/all", verifyToken, checkRole(false, true), getSubscriptions);
 router.get("/invoices", verifyToken, getInvoices);
-router.get("/subscription", verifyToken, checkRole(false, true), getSubscription);
+router.get("/subscription", verifyToken, checkRole(true), getSubscription);
 router.get("/subscription/:plan", verifyToken, checkRole(false, true), getSubscription);
 router.get("/cards", verifyToken, checkRole(false, true), getCards);
 // router.put("/s/:id", verifyToken, checkRole(false, true), updateSubscription);
