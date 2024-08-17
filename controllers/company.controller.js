@@ -82,8 +82,9 @@ exports.updateCompany = async (req, res) => {
 
 exports.deleteCompany = async (req, res) => {
   try {
-    const user = await userModel.findOne({ _id: req.params.id });
+    // const user = await userModel.findOne({ _id: req.params.id });
     const company = await companyModel.findOneAndDelete({ _id: req.params.id });
+    const user = await userModel.findOne({ _id: company.owner });
     const inventory = await inventoryModel.deleteMany({
       company: req.params.id,
     });
