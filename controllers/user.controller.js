@@ -188,6 +188,7 @@ exports.getInfo = async (req, res) => {
 exports.updateInfo = async (req, res) => {
   try {
     // req.body.name = JSON.parse(req.body.name);
+    const userId = req.params?.id ? req.params.id : req.user.id
     console.log(req.body);
     if (req.files && req.files.length > 0) {
       req.body.profile = await uploadFile(req.files[0]);
@@ -196,7 +197,7 @@ exports.updateInfo = async (req, res) => {
       const salt = await bcrypt.genSalt(10);
       req.body.password = await bcrypt.hash(req.body.password, salt);
     }
-    const user = await User.findByIdAndUpdate(req.user.id, req.body, {
+    const user = await User.findByIdAndUpdate(userId, req.body, {
       new: true,
     });
     if (!user) {
