@@ -63,24 +63,24 @@ exports.updateCompany = async (req, res) => {
   }
 };
 
-exports.deleteCompany = async (req, res) => {
-  try {
-    const company = await companyModel.findOneAndDelete({ _id: req.params.id });
-    res.status(201).json({
-      success: true,
-      message: "Company deleted successfully",
-      data: company,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    });
-  }
-};
+// exports.deleteCompany = async (req, res) => {
+//   try {
+//     const company = await companyModel.findOneAndDelete({ _id: req.params.id });
+//     res.status(201).json({
+//       success: true,
+//       message: "Company deleted successfully",
+//       data: company,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Internal server error",
+//       error: error.message,
+//     });
+//   }
+// };
 
-exports.delete = async (req, res) => {
+exports.deleteCompany = async (req, res) => {
   try {
     const user = await userModel.findOne({ _id: req.params.id });
     const company = await companyModel.findOneAndDelete({ _id: req.params.id });
@@ -106,13 +106,14 @@ exports.delete = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "User and company permanently deleted successfully",
-      result: company,
+      result: {company, user, inventory, location, invoice, employees, roles, vehicle},
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Internal server error",
-      error: error.message,
+      error: error,
     });
   }
 };

@@ -51,8 +51,8 @@ exports.subscribeCustomer = async (req, res) => {
 
 exports.getSubscriptions = async (req, res) => {
   try {
-    const subscriptions = await subscriptions.getSubscriptions();
-    res.status(200).json(subscriptions);
+    const subscriptionList = await subscriptions.getSubscriptions();
+    res.status(200).json(subscriptionList);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
