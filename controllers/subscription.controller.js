@@ -67,7 +67,9 @@ exports.getSubscription = async (req, res) => {
       return res.status(400).json({ error: "User not found" });
     }
     if (req.user.type === "admin") {
-      const company = await companyModel.findById(req.user.company);
+      const company = await companyModel.findById(req.user.company).populate({
+        path: "owner",
+      });
       email = company?.owner?.email;
     } else if (req.user.type === "user") {
       const user = await userModel.findOne({ _id: req.user.id });
