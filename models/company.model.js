@@ -46,13 +46,13 @@ const companySchema = new mongoose.Schema(
 
 companySchema.index({ owner: 1 }, { unique: true });
 
-companySchema.post(/Update$/, function (doc) {
-  if (doc.active) {
-    // databaseBackup.feeGenerator.start();
-    databaseBackup.feeGenerator.stop();
-  } else {
-    databaseBackup.feeGenerator.stop();
-  }
-});
+// companySchema.post(/Update$/, function (doc) {
+//   if (doc.active) {
+//     // databaseBackup.feeGenerator.start();
+//     databaseBackup.feeGenerator.stop();
+//   } else {
+//     databaseBackup.feeGenerator.stop();
+//   }
+// });
 
 module.exports = mongoose.model("Company", companySchema);

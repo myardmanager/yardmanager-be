@@ -16,6 +16,7 @@ const uploadMulter = require("../middlewares/upload");
 const { validateUserWithCompany } = require("../validators/user.validator");
 const { runValidation } = require("../validators");
 const { sendOtp, verifyOtp, changePassword } = require("../controllers/otp.controller");
+const checkRole = require("../middlewares/permission");
 
 router.get("/all", getAllUsers);
 router.get("/info", verifyToken, getInfo);
@@ -35,7 +36,7 @@ router.post(
 	runValidation,
 	register
 );
-router.put("/company", verifyToken, updateCompany);
+router.put("/company", verifyToken, checkRole(true), updateCompany);
 router.put("/company-image", verifyToken, uploadMulter.fields([{ name: "profile", maxCount: 1 }, { name: "cover", maxCount: 1 }]), updateCompanyImage);
 router.post("/forgot-password", sendOtp);
 router.post("/verify-otp", verifyOtp);

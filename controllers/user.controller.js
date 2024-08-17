@@ -221,10 +221,10 @@ exports.updateInfo = async (req, res) => {
 
 exports.updateCompany = async (req, res) => {
   try {
-    if (req.body.password) {
-      const salt = await bcrypt.genSalt(10);
-      req.body.password = await bcrypt.hash(req.body.password, salt);
-    }
+    // if (req.body.password) {
+    //   const salt = await bcrypt.genSalt(10);
+    //   req.body.password = await bcrypt.hash(req.body.password, salt);
+    // }
     req.body.owner = undefined;
 
     // const employee = await employeeModel.findOne({_id: req.user.id, company: req.user.company});
