@@ -162,7 +162,12 @@ exports.pagination = async (req, res) => {
     );
 
     console.log(result);
-    const total = await companyModel.countDocuments({});
+    const total = await companyModel.countDocuments({
+      $or: [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ],
+    });
     res.status(201).json({
       success: true,
       message: "Companies retrieved successfully",
