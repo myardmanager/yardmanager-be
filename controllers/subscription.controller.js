@@ -169,6 +169,7 @@ exports.newCard = async (req, res) => {
 
 exports.deleteCard = async (req, res) => {
   try {
+    let { id } = req.params;
     let email = req.user.email;
     if (req.user.type === "employee") {
       const user = await employeeModel.findById(req.user.id).populate({
@@ -178,7 +179,11 @@ exports.deleteCard = async (req, res) => {
       email = user.company.owner.email;
     }
     const customer = await customers.getCustomer(email);
-    const card = await cardService.deleteCard(customer.id, req.body);
+    const preCard = await cardService.listCards(customer.id);
+    if (preCard.data.length <= 1) {
+      return res.status(400).json({ error: "Cannot delete last card" });
+    }
+    const card = await cardService.deleteCard(id);
     res.status(200).json(card);
   } catch (error) {
     res.status(400).json({ error: error.message });
