@@ -5,6 +5,7 @@ exports.validateCard = [
 	check("number")
 		.notEmpty()
 		.withMessage("Card number is required")
+		.trim()
 		.isCreditCard()
 		.withMessage("Card number must be a credit card number"),
 	check("cvc")
