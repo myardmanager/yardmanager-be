@@ -1,6 +1,21 @@
 // validators\subscription.validator.js
 const { check } = require("express-validator");
 
+exports.validateSubscription = [
+	check("company")
+		.notEmpty()
+		.withMessage("Company is required")
+		.isMongoId()
+		.withMessage("Company must be a valid MongoDB ObjectId"),
+	check("priceId")
+		.notEmpty()
+		.withMessage("Plan is required")
+		.isString()
+		.withMessage("Plan must be String")
+		.contains(["monthly", "yearly"])
+		.withMessage("Plan must be one of 'monthly' or 'yearly'"),
+];
+
 exports.validateCard = [
 	check("number")
 		.notEmpty()

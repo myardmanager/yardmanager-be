@@ -54,10 +54,36 @@ exports.subscribeCustomer = async (req, res) => {
   }
 };
 
+exports.newCustomerSubscription = async (req, res) => {
+  try {
+    const { priceId, company } = req.body;
+    const companyInfo = await companyModel.findById(company).populate({path: "owner", select: "email"});
+    if (!companyInfo?.owner) {
+      return res.status(400).json({ error: "Company not found" });
+    }
+    const customer = await customers.getCustomer(companyInfo.owner.email);
+    const subscription = await subscriptions.getSubscription(customer.id);
+    if (subscription.data.length > 0) {
+      return res.status(400).json({ error: "Customer already has an active subscription" });
+    }
+    const newSubscription = await subscriptions.subscribeCustomer(
+      customer.id,
+      priceId,
+      email
+    );
+    res.status(200).json({ success: true, message: "Subscription created successfully", subscription: newSubscription });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 exports.getSubscriptions = async (req, res) => {
   try {
     const { limit = 10, offset } = req.query;
-    const subscriptionList = await subscriptions.getSubscriptions(limit, offset);
+    const subscriptionList = await subscriptions.getSubscriptions(
+      limit,
+      offset
+    );
     res.status(200).json(subscriptionList);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -165,7 +191,7 @@ exports.newCard = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-}
+};
 
 exports.deleteCard = async (req, res) => {
   try {
@@ -188,7 +214,7 @@ exports.deleteCard = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-}
+};
 
 exports.getCards = async (req, res) => {
   try {
