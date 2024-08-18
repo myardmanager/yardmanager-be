@@ -12,8 +12,8 @@ exports.validateCard = [
 		.withMessage("CVC is required")
 		.isInt()
 		.withMessage("CVC must be a number")
-    .length({ min: 3, max: 3 })
-    .withMessage("CVC must be a three-digit number"),
+		.isLength({ min: 3, max: 3 })
+		.withMessage("CVC must be a three-digit number"),
 	check("exp_month")
 		.notEmpty()
 		.withMessage("Expiration month is required")

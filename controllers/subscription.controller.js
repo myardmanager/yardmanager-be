@@ -167,6 +167,24 @@ exports.newCard = async (req, res) => {
   }
 }
 
+exports.deleteCard = async (req, res) => {
+  try {
+    let email = req.user.email;
+    if (req.user.type === "employee") {
+      const user = await employeeModel.findById(req.user.id).populate({
+        path: "company",
+        populate: { path: "owner", select: "email" },
+      });
+      email = user.company.owner.email;
+    }
+    const customer = await customers.getCustomer(email);
+    const card = await cardService.deleteCard(customer.id, req.body);
+    res.status(200).json(card);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
 exports.getCards = async (req, res) => {
   try {
     let email = req.user.email;
