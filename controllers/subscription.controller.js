@@ -58,10 +58,13 @@ exports.newCustomerSubscription = async (req, res) => {
   try {
     const { priceId, company } = req.body;
     const companyInfo = await companyModel.findById(company).populate({path: "owner", select: "email"});
+    let email = '';
     if (!companyInfo?.owner) {
       return res.status(400).json({ error: "Company not found" });
+    } else {
+      email = companyInfo.owner.email
     }
-    const customer = await customers.getCustomer(companyInfo.owner.email);
+    const customer = await customers.getCustomer(email);
     const subscription = await subscriptions.getSubscription(customer.id);
     if (subscription.data.length > 0) {
       return res.status(400).json({ error: "Customer already has an active subscription" });
