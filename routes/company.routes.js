@@ -21,6 +21,6 @@ router.post("/new", verifyToken, uploadMulter.any(), runValidation, createCompan
 router.put("/s/:id", verifyToken, runValidation, updateCompany);
 router.delete("/s/:id", verifyToken, deleteCompany);
 router.get("/paginate", verifyToken, pagination);
-router.get("/name/:id", verifyToken, getCompaniesByName);
+router.get("/name/:name", verifyToken, getCompaniesByName);
 
 module.exports = router;
