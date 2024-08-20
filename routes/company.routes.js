@@ -8,7 +8,8 @@ const {
 	createCompany,
 	updateCompany,
 	deleteCompany,
-    pagination
+	getCompaniesByName,
+	pagination
 } = require("../controllers/company.controller");
 // const { validateCompany } = require("../validators/company.validator");
 const { runValidation } = require("../validators");
@@ -20,5 +21,6 @@ router.post("/new", verifyToken, uploadMulter.any(), runValidation, createCompan
 router.put("/s/:id", verifyToken, runValidation, updateCompany);
 router.delete("/s/:id", verifyToken, deleteCompany);
 router.get("/paginate", verifyToken, pagination);
+router.get("/name/:id", verifyToken, getCompaniesByName);
 
 module.exports = router;

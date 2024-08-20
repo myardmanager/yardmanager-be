@@ -183,3 +183,22 @@ exports.pagination = async (req, res) => {
     });
   }
 };
+
+exports.getCompaniesByName = async (req, res) => {
+  try {
+    const companies = await companyModel
+      .find({ name: { $regex: req.params.name, $options: "i" } })
+      .populate("owner");
+    res.status(201).json({
+      success: true,
+      message: "Companies retrieved successfully",
+      data: companies,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
