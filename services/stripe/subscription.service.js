@@ -100,6 +100,7 @@ exports.getSubscriptions = async (limit = 10, offset = 1) => {
     while (has_more) {
       const subscriptions = await stripe.subscriptions.list({
         limit: 100,
+        expand: ["customer"],
       })
       subscriptionsList.push(...subscriptions.data)
       has_more = subscriptions[subscriptions.length - 1]?.has_more
