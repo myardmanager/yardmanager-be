@@ -86,6 +86,12 @@ exports.deleteCompany = async (req, res) => {
     // const user = await userModel.findOne({ _id: req.params.id });
     const company = await companyModel.findOneAndDelete({ _id: req.params.id });
     console.log(company)
+    if (!company) {
+      return res.status(404).json({
+        success: false,
+        message: "Company not found",
+      });
+    }
     const user = await userModel.findByIdAndDelete(company.owner);
     const inventory = await inventoryModel.deleteMany({
       company: req.params.id,
