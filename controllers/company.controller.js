@@ -1,6 +1,7 @@
 const companyModel = require("../models/company.model");
 const employeeModel = require("../models/employee.model");
 const inventoryModel = require("../models/inventory.model");
+const invoiceModel = require("../models/invoice.model");
 const locationModel = require("../models/location.model");
 const roleModel = require("../models/role.model");
 const userModel = require("../models/user.model");
@@ -84,7 +85,8 @@ exports.deleteCompany = async (req, res) => {
   try {
     // const user = await userModel.findOne({ _id: req.params.id });
     const company = await companyModel.findOneAndDelete({ _id: req.params.id });
-    const user = await userModel.findOne({ _id: company.owner });
+    console.log(company)
+    const user = await userModel.findByIdAndDelete(company.owner);
     const inventory = await inventoryModel.deleteMany({
       company: req.params.id,
     });
