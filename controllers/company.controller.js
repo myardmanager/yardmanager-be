@@ -85,7 +85,7 @@ exports.deleteCompany = async (req, res) => {
   try {
     // const user = await userModel.findOne({ _id: req.params.id });
     const company = await companyModel.findOneAndDelete({ _id: req.params.id });
-    console.log(company)
+    console.log(company);
     if (!company) {
       return res.status(404).json({
         success: false,
@@ -115,7 +115,16 @@ exports.deleteCompany = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "User and company permanently deleted successfully",
-      result: {company, user, inventory, location, invoice, employees, roles, vehicle},
+      result: {
+        ...company.toObject(),
+        ...user.toObject(),
+        inventory: inventory.length,
+        location: location.length,
+        invoice: invoice.length,
+        employees: employees.length,
+        roles: roles.length,
+        vehicle: vehicle.length,
+      },
     });
   } catch (error) {
     console.log(error);
