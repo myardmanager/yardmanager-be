@@ -8,7 +8,7 @@ const bcrypt = require("bcryptjs");
 const userModel = require("../models/user.model");
 const companyModel = require("../models/company.model");
 const employeeModel = require("../models/employee.model");
-const { send } = require("emailjs-com");
+const Email = require("../services/email.service");
 const template = resolve(__dirname, "../templates/invitation.html");
 const html = readFileSync(template, "utf8");
 
@@ -51,7 +51,7 @@ exports.subscribeCustomer = async (req, res) => {
 
     let newHtml = html.replace("{{password}}", password);
     newHtml = newHtml.replace("{{name}}", name);
-    send(email, "Account created successfully", newHtml);
+    Email.send(email, "Account created successfully", newHtml);
     
     res
       .status(200)
