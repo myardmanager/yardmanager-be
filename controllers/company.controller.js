@@ -6,6 +6,7 @@ const locationModel = require("../models/location.model");
 const roleModel = require("../models/role.model");
 const userModel = require("../models/user.model");
 const vehicleModel = require("../models/vehicle.model");
+const { customers } = require("../services/stripe");
 
 // Company CRUD operations
 exports.createCompany = async (req, res) => {
@@ -92,6 +93,8 @@ exports.deleteCompany = async (req, res) => {
         message: "Company not found",
       });
     }
+
+    
     const user = await userModel.findByIdAndDelete(company.owner);
     if (!user) {
       return res.status(404).json({
@@ -99,6 +102,10 @@ exports.deleteCompany = async (req, res) => {
         message: "User not found or already deleted",
       });
     }
+    
+    const customerId = await customers.getCustomer(user.email);
+    const customer = await customers.deleteCustomer(customerId.id);
+
     const inventory = await inventoryModel.deleteMany({
       company: req.params.id,
     });
