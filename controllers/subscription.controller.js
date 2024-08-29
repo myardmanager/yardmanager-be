@@ -9,12 +9,16 @@ const userModel = require("../models/user.model");
 const companyModel = require("../models/company.model");
 const employeeModel = require("../models/employee.model");
 const { send } = require("emailjs-com");
+const template = resolve(__dirname, "../templates/invitation.html");
+const html = readFileSync(template, "utf8");
 
 exports.subscribeCustomer = async (req, res) => {
   try {
     const { priceId, user } = req.body;
 
     let email = user.email;
+    let password = user.password;
+    let name = user.name;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(user.password, salt);
     const checkUser = await userModel.findOne({ email: email });
@@ -29,7 +33,7 @@ exports.subscribeCustomer = async (req, res) => {
     });
     const newCompany = await companyModel.create({
       ...user.company,
-      name: "Company",
+      // name: "Company",
       phone: "123456789",
       address: "Company Address",
       owner: newUser._id,
@@ -45,7 +49,9 @@ exports.subscribeCustomer = async (req, res) => {
       email
     );
 
-    send(email, "Account created successfully", newSubscription.data[0]?.invoice_pdf);
+    let newHtml = html.replace("{{password}}", password);
+    newHtml = newHtml.replace("{{name}}", name);
+    send(email, "Account created successfully", newHtml);
     
     res
       .status(200)
