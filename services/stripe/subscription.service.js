@@ -33,6 +33,8 @@ exports.subscribeCustomer = async (customerId, priceId, email) => {
       expand: ["latest_invoice.payment_intent"],
       collection_method: "charge_automatically",
       payment_behavior: "default_incomplete",
+      status: "incomplete",
+
     });
     console.log(newSubscription);
 
