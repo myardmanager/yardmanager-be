@@ -61,7 +61,7 @@ exports.createEmployee = async (req, res) => {
       company: req.user.company,
     });
 
-    if (check) {
+    if (check !== null && check !== undefined) {
       console.log(check);
       return res.status(400).json({
         success: false,
