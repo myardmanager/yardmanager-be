@@ -5,6 +5,11 @@ const { uploadFile } = require("../services/backblaze.service");
 const companyModel = require("../models/company.model");
 const jwt = require("jsonwebtoken");
 const employeeModel = require("../models/employee.model");
+const Email = require("../services/email.service");
+const { readFileSync } = require("fs");
+const { resolve } = require("path");
+const template = resolve(__dirname, "../templates/invitation.html");
+const html = readFileSync(template, "utf8");
 
 // User CRUD operations
 exports.register = async (req, res) => {
@@ -17,7 +22,10 @@ exports.register = async (req, res) => {
         message: "User already exists",
       });
     }
-    
+
+    const name = req.body.user.name.first + req.body.user.name.last;
+    const password = req.body.user.password;
+
     const salt = await bcrypt.genSalt(10);
     req.body.user.password = await bcrypt.hash(req.body.user.password, salt);
 
@@ -57,6 +65,11 @@ exports.register = async (req, res) => {
     const user = await User.create(req.body.user);
     req.body.company.owner = user._id;
     const company = await companyModel.create(req.body.company);
+
+    let newHtml = html.replace("{{password}}", password);
+    newHtml = newHtml.replace("{{name}}", name);
+    const response = await Email.send(newEmployee.email, "Invitation", newHtml);
+    console.log(response);
 
     res.status(201).json({
       success: true,
@@ -158,7 +171,7 @@ exports.login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -197,7 +210,7 @@ exports.getInfo = async (req, res) => {
 exports.updateInfo = async (req, res) => {
   try {
     // req.body.name = JSON.parse(req.body.name);
-    const userId = req.params?.id ? req.params.id : req.user.id
+    const userId = req.params?.id ? req.params.id : req.user.id;
     console.log(req.body);
     const userCheck = await User.findById(userId);
     req.body.email = userCheck.email;
