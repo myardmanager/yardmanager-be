@@ -9,6 +9,7 @@ const userModel = require("../models/user.model");
 const companyModel = require("../models/company.model");
 const employeeModel = require("../models/employee.model");
 const Email = require("../services/email.service");
+const { resolve } = require("path");
 const template = resolve(__dirname, "../templates/invitation.html");
 const html = readFileSync(template, "utf8");
 
