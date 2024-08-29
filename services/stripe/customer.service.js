@@ -11,7 +11,7 @@ exports.createCustomer = async (email, meta) => {
       limit: 1,
     });
     if (existingCustomer.data.length > 0) {
-      throw new Error(`Customer with email ${req.body.email} already exists.`);
+      throw new Error(`Customer with email ${email} already exists.`);
     }
     const customer = await stripe.customers.create({
       email: email,
