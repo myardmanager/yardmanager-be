@@ -57,14 +57,21 @@ exports.subscribeCustomer = async (req, res) => {
 exports.newCustomerSubscription = async (req, res) => {
   try {
     const { priceId, company } = req.body;
-    const companyInfo = await companyModel.findById(company).populate({path: "owner", select: "email"});
+    const companyInfo = await companyModel.findById(company).populate({path: "owner"});
     let email = '';
     if (!companyInfo?.owner) {
       return res.status(400).json({ error: "Company not found" });
     } else {
       email = companyInfo.owner.email
     }
-    const customer = await customers.getCustomer(email);
+    let customer = await customers.getCustomer(email);
+    if (!customer) {
+      customer = await customers.createCustomer(email, {
+        email: companyInfo.owner.email,
+        id: companyInfo.owner._id.toString(),
+        name: companyInfo.owner.name.first + ' ' + companyInfo.owner.name.last
+      });
+    }
     const subscription = await subscriptions.getSubscription(customer.id);
     if (subscription.data.length > 0) {
       return res.status(400).json({ error: "Customer already has an active subscription" });
