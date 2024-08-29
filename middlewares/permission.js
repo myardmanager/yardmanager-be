@@ -4,8 +4,8 @@ const companyModel = require("../models/company.model");
 const checkRole = (companyId = false, onlyAdmin = false) => {
   return async (req, res, next) => {
     const role = req.user.type;
-    console.time("role");
-    console.log("Checking role ", role);
+    // console.time("role");
+    // console.log("Checking role ", role);
     if (role === "admin") {
       console.log("admin");
       if (companyId || req.query.company) {
@@ -28,11 +28,11 @@ const checkRole = (companyId = false, onlyAdmin = false) => {
       }
       next();
     } else if (role === "user" || role === "employee") {
-      console.log("user or employee");
+      // console.log("user or employee");
       next();
     }
-    console.timeEnd("role");
-    console.log("done with checking role");
+    // console.timeEnd("role");
+    // console.log("done with checking role");
   };
 };
 

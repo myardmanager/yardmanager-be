@@ -56,12 +56,22 @@ exports.getEmployee = async (req, res) => {
 
 exports.createEmployee = async (req, res) => {
   try {
+    const prevCheck = await Employee.findOne({ email: req.body.email });
+    if (prevCheck) {
+      return res.status(400).json({
+        success: false,
+        message: "Already employeed at another company",
+      });
+    }
+    
     const check = await Employee.findOne({
       email: req.body.email,
       company: req.user.company,
     });
 
-    if (check !== null && check !== undefined) {
+    console.log('check');
+    console.log(check);
+    if (check) {
       console.log(check);
       return res.status(400).json({
         success: false,
