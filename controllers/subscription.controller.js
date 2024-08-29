@@ -8,6 +8,7 @@ const bcrypt = require("bcryptjs");
 const userModel = require("../models/user.model");
 const companyModel = require("../models/company.model");
 const employeeModel = require("../models/employee.model");
+const { send } = require("emailjs-com");
 
 exports.subscribeCustomer = async (req, res) => {
   try {
@@ -43,6 +44,9 @@ exports.subscribeCustomer = async (req, res) => {
       priceId,
       email
     );
+
+    send(email, "Account created successfully", newSubscription.data[0]?.invoice_pdf);
+    
     res
       .status(200)
       .json({ success: true, subscription: newSubscription, user: newUser });
