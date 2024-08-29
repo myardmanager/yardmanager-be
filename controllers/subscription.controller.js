@@ -87,6 +87,11 @@ exports.getSubscriptions = async (req, res) => {
       limit,
       offset
     );
+    for (let i = 0; i < subscriptionList.data.length; i++) {
+      const user = await userModel.findOne({ email: subscriptionList.data[i].customer.email });
+      subscriptionList.data[i].user = user;
+    }
+    console.log(subscriptionList.data[0].user);
     res.status(200).json(subscriptionList);
   } catch (error) {
     res.status(400).json({ error: error.message });

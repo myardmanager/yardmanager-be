@@ -114,6 +114,7 @@ exports.getSubscriptions = async (limit = 10, offset = 1) => {
     const subscriptions = await stripe.subscriptions.list({
       limit: limit,
       starting_after: start_after,
+      expand: ["data.customer"],
     });
     return subscriptions;
   } catch (error) {
