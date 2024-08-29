@@ -69,10 +69,7 @@ exports.createEmployee = async (req, res) => {
       company: req.user.company,
     });
 
-    console.log('check');
-    console.log(check);
     if (check) {
-      console.log(check);
       return res.status(400).json({
         success: false,
         message: "Employee already exists",
