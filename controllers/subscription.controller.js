@@ -51,7 +51,7 @@ exports.subscribeCustomer = async (req, res) => {
 
     let newHtml = html.replace("{{password}}", password);
     newHtml = newHtml.replace("{{name}}", name);
-    Email.send(email, "Account created successfully", newHtml);
+    await Email.send(email, "Account created successfully", newHtml);
     
     res
       .status(200)
