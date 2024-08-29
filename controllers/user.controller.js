@@ -9,6 +9,15 @@ const employeeModel = require("../models/employee.model");
 // User CRUD operations
 exports.register = async (req, res) => {
   try {
+    const check = await User.findOne({ email: req.body.user.email });
+
+    if (check) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
+    }
+    
     const salt = await bcrypt.genSalt(10);
     req.body.user.password = await bcrypt.hash(req.body.user.password, salt);
 
