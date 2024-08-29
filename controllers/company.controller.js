@@ -84,7 +84,7 @@ exports.updateCompany = async (req, res) => {
 exports.deleteCompany = async (req, res) => {
   try {
     // const user = await userModel.findOne({ _id: req.params.id });
-    const company = await companyModel.findOneAndDelete({ _id: req.params.id });
+    const company = await companyModel.findByIdAndDelete(req.params.id);
     console.log(company);
     if (!company) {
       return res.status(404).json({
@@ -93,6 +93,12 @@ exports.deleteCompany = async (req, res) => {
       });
     }
     const user = await userModel.findByIdAndDelete(company.owner);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found or already deleted",
+      });
+    }
     const inventory = await inventoryModel.deleteMany({
       company: req.params.id,
     });
