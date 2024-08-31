@@ -9,7 +9,7 @@ const vehicleSchema = new mongoose.Schema(
 		},
 		sku: {
 			type: Number,
-			default: 0
+			default: 1
 		},
 		name: {
 			type: String

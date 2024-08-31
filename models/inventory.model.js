@@ -47,7 +47,8 @@ const inventorySchema = new mongoose.Schema(
 			}
 		],
 		sku: {
-			type: Number
+			type: Number,
+			default: 1
 		},
 		color: [{
 			type: String
