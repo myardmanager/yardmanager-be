@@ -305,7 +305,7 @@ exports.getInventoryPagination = async (req, res) => {
         $skip: offset,
       },
       {
-        $limit: limit,
+        $limit: parseInt(limit),
       },
     ]);
 
