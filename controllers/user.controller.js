@@ -39,6 +39,8 @@ exports.register = async (req, res) => {
       if (req.files.cover) {
         let cover = await uploadFile(req.files.cover[0]);
         req.body.company.images = { cover };
+      } else {
+        req.body.company.images = {};
       }
 
       if (req.files.companyImage) {
