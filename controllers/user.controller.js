@@ -16,6 +16,7 @@ exports.register = async (req, res) => {
   try {
     const check = await User.findOne({ email: req.body.user.email });
 
+    console.log(check);
     if (check !== null && check.email !== undefined) {
       return res.status(400).json({
         success: false,
