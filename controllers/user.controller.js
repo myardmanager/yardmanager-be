@@ -56,7 +56,7 @@ exports.register = async (req, res) => {
 
     let newHtml = html.replace("{{password}}", password);
     newHtml = newHtml.replace("{{name}}", name);
-    const response = await Email.send(newEmployee.email, "Invitation", newHtml);
+    const response = await Email.send(user.email, "Invitation", newHtml);
     console.log(response);
 
     res.status(201).json({
