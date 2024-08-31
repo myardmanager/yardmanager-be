@@ -125,7 +125,7 @@ exports.getInventoryData = async (req, res) => {
       companyId = { company: new mongoose.Types.ObjectId(req.user.company) };
     }
     const inventory = await inventoryModel
-      .find(companyId)
+      .find({...companyId, deleted: false})
       .sort({ createdAt: 1 })
       .then((inventory) => {
         const data = inventory.map((item) => {
