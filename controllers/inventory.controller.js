@@ -228,7 +228,7 @@ exports.getInventoryPagination = async (req, res) => {
     if (req.user.type == "admin" && req.query.division) {
       company = {};
     } else {
-      company = { company: req.user.company };
+      company = { company: mongoose.Types.ObjectId(req.user.company) };
     }
 
     if (typeof req.query.deleted === "undefined") req.query.deleted = false;
@@ -253,9 +253,7 @@ exports.getInventoryPagination = async (req, res) => {
     const pipeline = [
       {
         $match: {
-          company: company?.company
-            ? new mongoose.Types.ObjectId(company.company)
-            : null,
+          ...company,
         },
       },
       {
