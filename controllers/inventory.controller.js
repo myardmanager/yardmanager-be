@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Inventory = require("../models/inventory.model");
 const partModel = require("../models/part.model");
 const Part = require("../models/part.model");
@@ -229,39 +230,104 @@ exports.getInventoryPagination = async (req, res) => {
     } else {
       company = { company: req.user.company };
     }
-    // const s_years = req.query.filter_s || "";
-    // const e_years = req.query.filter_e || "";
 
     if (typeof req.query.deleted === "undefined") req.query.deleted = false;
-    const inventory = await Inventory.find({
-      ...company,
-      deleted: req.query.deleted,
-      $or: [
-        { name: { $regex: search, $options: "i" } },
-        { color: { $regex: search, $options: "i" } },
-        { variant: { $regex: search, $options: "i" } },
-        { model: { $regex: search, $options: "i" } },
-        { make: { $regex: search, $options: "i" } },
-      ],
-    })
-      .populate("part", "name")
-      .populate("location", "location")
-      .sort({ createdAt: -1 })
-      .skip(offset)
-      .limit(limit)
-      .exec();
-    const count = await Inventory.countDocuments({
-      // company: req.user.company,
-      ...company,
-      deleted: req.query.deleted,
-      $or: [
-        { name: { $regex: search, $options: "i" } },
-        { color: { $regex: search, $options: "i" } },
-        { variant: { $regex: search, $options: "i" } },
-        { model: { $regex: search, $options: "i" } },
-        { make: { $regex: search, $options: "i" } },
-      ],
-    }).exec();
+    // const inventory = await Inventory.find({
+    //   ...company,
+    //   deleted: req.query.deleted,
+    //   $or: [
+    //     { name: { $regex: search, $options: "i" } },
+    //     { color: { $regex: search, $options: "i" } },
+    //     { variant: { $regex: search, $options: "i" } },
+    //     { model: { $regex: search, $options: "i" } },
+    //     { make: { $regex: search, $options: "i" } },
+    //   ],
+    // })
+    //   .populate({path: "part", select: "name", match: {name: {$regex: search, $options: "i"}}})
+    //   .populate("location", "location")
+    //   .sort({ createdAt: -1 })
+    //   .skip(offset)
+    //   .limit(limit)
+    //   .exec();
+
+    const pipeline = [
+      {
+        $match: {
+          company: company?.company
+            ? new mongoose.Types.ObjectId(company.company)
+            : null,
+        },
+      },
+      {
+        $lookup: {
+          from: "parts", // Assuming the collection name is 'parts'
+          localField: "part",
+          foreignField: "_id",
+          as: "part",
+        },
+      },
+      {
+        $unwind: { path: "$part", preserveNullAndEmptyArrays: true },
+      },
+      {
+        $lookup: {
+          from: "locations", // Assuming the collection name is 'locations'
+          localField: "location",
+          foreignField: "_id",
+          as: "location",
+        },
+      },
+      {
+        $unwind: { path: "$location", preserveNullAndEmptyArrays: true },
+      },
+      {
+        $match: {
+          deleted: req.query.deleted,
+          $or: [
+            { "part.name": { $regex: search, $options: "i" } },
+            { "location.location": { $regex: search, $options: "i" } },
+            { name: { $regex: search, $options: "i" } },
+            { color: { $regex: search, $options: "i" } },
+            { variant: { $regex: search, $options: "i" } },
+            { model: { $regex: search, $options: "i" } },
+            { make: { $regex: search, $options: "i" } },
+          ],
+        },
+      },
+    ];
+
+    const inventory = await Inventory.aggregate([
+      ...pipeline,
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $skip: offset,
+      },
+      {
+        $limit: limit,
+      },
+    ]);
+
+    const count = await Inventory.aggregate([
+      ...pipeline,
+      {
+        $count: "count",
+      },
+    ])
+    
+    // const count = await Inventory.countDocuments({
+    //   // company: req.user.company,
+    //   ...company,
+    //   deleted: req.query.deleted,
+    //   $or: [
+    //     { name: { $regex: search, $options: "i" } },
+    //     { color: { $regex: search, $options: "i" } },
+    //     { variant: { $regex: search, $options: "i" } },
+    //     { model: { $regex: search, $options: "i" } },
+    //     { make: { $regex: search, $options: "i" } },
+    //   ],
+    // }).exec();
     res.status(200).json({
       success: true,
       message: "Inventory fetched successfully",
@@ -269,7 +335,7 @@ exports.getInventoryPagination = async (req, res) => {
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
-        total: count,
+        total: count[0]?.count || 0,
       },
     });
   } catch (error) {

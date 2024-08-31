@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const inventorySchema = new mongoose.Schema(
 	{
-		name: {
-			type: String,
-			required: true
-		},
 		location: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Location",
@@ -53,9 +49,9 @@ const inventorySchema = new mongoose.Schema(
 		sku: {
 			type: Number
 		},
-		color: {
+		color: [{
 			type: String
-		},
+		}],
 		deleted: {
 			type: Boolean,
 			default: false
