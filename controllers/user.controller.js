@@ -34,31 +34,16 @@ exports.register = async (req, res) => {
       if (req.files.profile) {
         let profile = await uploadFile(req.files.profile[0]);
         req.body.user.profile = profile;
-      } else {
-        res.status(400).json({
-          success: false,
-          message: "Profile image is required",
-        });
       }
 
       if (req.files.cover) {
         let cover = await uploadFile(req.files.cover[0]);
         req.body.company.images = { cover };
-      } else {
-        res.status(400).json({
-          success: false,
-          message: "Cover image is required",
-        });
       }
 
       if (req.files.companyImage) {
         let companyImage = await uploadFile(req.files.companyImage[0]);
         req.body.company.images.profile = companyImage;
-      } else {
-        res.status(400).json({
-          success: false,
-          message: "Company image is required",
-        });
       }
     }
 
