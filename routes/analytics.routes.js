@@ -6,7 +6,8 @@ const {
 	getDashboardAnalytics,
 	getInventoryData,
 	getVehicleData,
-	getPartData
+	getPartData,
+	getUserData
 } = require("../controllers/analytics.controller");
 const checkRole = require("../middlewares/permission");
 
@@ -14,5 +15,6 @@ router.get("/count", verifyToken, checkRole(), getDashboardAnalytics);
 router.get("/inventory", verifyToken, checkRole(), getInventoryData);
 router.get("/part", verifyToken, checkRole(), getPartData);
 router.get("/vehicle", verifyToken, checkRole(), getVehicleData);
+router.get("/user", verifyToken, checkRole(), getUserData);
 
 module.exports = router;

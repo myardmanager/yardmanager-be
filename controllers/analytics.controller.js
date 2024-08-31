@@ -6,6 +6,8 @@ const Location = require("../models/location.model");
 const { default: mongoose } = require("mongoose");
 const companyModel = require("../models/company.model");
 const inventoryModel = require("../models/inventory.model");
+const employeeModel = require("../models/employee.model");
+const userModel = require("../models/user.model");
 
 exports.getDashboardAnalytics = async (req, res) => {
   try {
@@ -114,34 +116,60 @@ exports.getPartData = async (req, res) => {
 };
 
 exports.getInventoryData = async (req, res) => {
-	try {
-	  // let companyId = new mongoose.Types.ObjectId(req.user.company);
-	  let companyId = "";
-	  if (req.user.type === "admin" && req.query.division === "company") {
-		companyId = {};
-	  } else {
-		companyId = { company: new mongoose.Types.ObjectId(req.user.company) };
-	  }
-	  const inventory = await inventoryModel.find(companyId)
-		.sort({ createdAt: 1 })
-		.then((inventory) => {
-		  const data = inventory.map((item) => {
-			return {
-			  year: item.createdAt.getFullYear(),
-			  month: item.createdAt.getMonth() + 1,
-			  day: item.createdAt.getDate(),
-			  week: getWeekNumber(item.createdAt),
-			  count: 1,
-			};
-		  });
-		  return data;
-		});
-  
-	  console.log(inventory);
-	  res.status(200).json(inventory);
-	} catch (err) {
-	  console.log(err);
-	  res.status(500).json({ msg: "Internal server error" });
-	}
-  };
-  
+  try {
+    // let companyId = new mongoose.Types.ObjectId(req.user.company);
+    let companyId = "";
+    if (req.user.type === "admin" && req.query.division === "company") {
+      companyId = {};
+    } else {
+      companyId = { company: new mongoose.Types.ObjectId(req.user.company) };
+    }
+    const inventory = await inventoryModel
+      .find(companyId)
+      .sort({ createdAt: 1 })
+      .then((inventory) => {
+        const data = inventory.map((item) => {
+          return {
+            year: item.createdAt.getFullYear(),
+            month: item.createdAt.getMonth() + 1,
+            day: item.createdAt.getDate(),
+            week: getWeekNumber(item.createdAt),
+            count: 1,
+          };
+        });
+        return data;
+      });
+
+    console.log(inventory);
+    res.status(200).json(inventory);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+};
+
+exports.getUserData = async (req, res) => {
+  try {
+    if (req.user.type !== "admin") {
+      return res.status(401).json({ status: false, message: "Unauthorized" });
+    }
+    const user = await userModel.find({})
+      .sort({ createdAt: 1 })
+      .then((usr) => {
+        const data = usr.map((item) => {
+          return {
+            year: item.createdAt.getFullYear(),
+            month: item.createdAt.getMonth() + 1,
+            day: item.createdAt.getDate(),
+            week: getWeekNumber(item.createdAt),
+            count: 1,
+          };
+        });
+        return data;
+      });
+    res.status(200).json(user);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ msg: "Internal server error" });
+  }
+};
