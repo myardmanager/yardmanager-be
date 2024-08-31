@@ -5,7 +5,7 @@ const vehicleSchema = new mongoose.Schema(
 		vin: {
 			type: String,
 			required: true,
-			unique: true
+			// unique: true
 		},
 		sku: {
 			type: Number,
