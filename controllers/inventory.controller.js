@@ -284,7 +284,7 @@ exports.getInventoryPagination = async (req, res) => {
           $or: [
             { "part.name": { $regex: search, $options: "i" } },
             { "location.location": { $regex: search, $options: "i" } },
-            { name: { $regex: search, $options: "i" } },
+            // { name: { $regex: search, $options: "i" } },
             { color: { $regex: search, $options: "i" } },
             { variant: { $regex: search, $options: "i" } },
             { model: { $regex: search, $options: "i" } },
