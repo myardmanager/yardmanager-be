@@ -5,6 +5,7 @@ const inventoryModel = require("../models/inventory.model");
 const Vehicle = require("../models/vehicle.model");
 const { uploadFile } = require("../services/backblaze.service");
 const vinDecoder = require("./../services/vinDecoder.service");
+const partModel = require("../models/part.model");
 
 exports.getAllVehicles = async (req, res) => {
   try {
@@ -84,7 +85,14 @@ exports.updateVehicle = async (req, res) => {
     //   // 	req.body.images = JSON.parse(JSON.stringify(req.body.images));
     //   // }
     // }
-	if (req.body.images === undefined) req.body.images = []
+  const part = await partModel.findById(req.body.part);
+  if (!part) {
+    return res.status(404).json({ message: "Part not found" });
+  } else {
+    if (!part.color) req.body.color = null;
+  }
+
+  if (req.body.images === undefined) req.body.images = []
 	if (typeof req.body.images === "string" && req.body.images.length > 0) req.body.images = [req.body.images]
     if (req.files && req.files.length > 0) {
       let newImages = [];
