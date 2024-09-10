@@ -81,9 +81,8 @@ exports.cancelSubscription = async (subscriptionId) => {
 
 exports.getSubscription = async (customerId) => {
   try {
-    const subscription = await stripe.subscriptions.list({
-      customer: customerId,
-      limit: 1,
+    const subscription = await stripe.subscriptions.search({
+      query: `customer:"${customerId}"`,
       expand: ["data.latest_invoice.payment_intent"],
     });
     return subscription;
