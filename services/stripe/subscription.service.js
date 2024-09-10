@@ -72,7 +72,10 @@ exports.updateSubscription = async (subscriptionId, priceId) => {
 
 exports.cancelSubscription = async (subscriptionId) => {
   try {
-    const subscription = await stripe.subscriptions.cancel(subscriptionId);
+    // const subscription = await stripe.subscriptions.cancel(subscriptionId);
+    const subscription = await stripe.subscriptions.update(subscriptionId, {
+      cancel_at_period_end: true,
+    })
     return subscription;
   } catch (error) {
     throw new Error(`Failed to cancel subscription: ${error.message}`);
@@ -81,8 +84,9 @@ exports.cancelSubscription = async (subscriptionId) => {
 
 exports.getSubscription = async (customerId) => {
   try {
-    const subscription = await stripe.subscriptions.search({
-      query: `customer:"${customerId}"`,
+    const subscription = await stripe.subscriptions.list({
+      customer: customerId,
+      limit: 1,
       expand: ["data.latest_invoice.payment_intent"],
     });
     return subscription;
