@@ -32,18 +32,18 @@ exports.getVehicle = async (req, res) => {
 exports.createVehicle = async (req, res) => {
   try {
     req.body.company = req.user.company;
-    if (req.body.vin) {
-      const check = await Vehicle.findOne({
-        vin: req.body.vin,
-        company: req.user.company,
-      });
-      if (check) {
-        return res.status(400).json({
-          success: false,
-          message: "Vehicle already exists",
-        });
-      }
-    }
+    // if (req.body.vin) {
+    //   const check = await Vehicle.findOne({
+    //     vin: req.body.vin,
+    //     company: req.user.company,
+    //   });
+    //   if (check) {
+    //     return res.status(400).json({
+    //       success: false,
+    //       message: "Vehicle already exists",
+    //     });
+    //   }
+    // }
 
     if (req.files && req.files.length > 0) {
       req.body.images = [];

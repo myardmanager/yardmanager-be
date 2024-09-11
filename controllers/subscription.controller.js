@@ -261,3 +261,13 @@ exports.getCards = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+exports.updateSubscription = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const subscription = await subscriptions.updateSubscription(id, req.body.priceId);
+    res.status(200).json(subscription);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
