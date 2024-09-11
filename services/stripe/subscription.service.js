@@ -58,13 +58,20 @@ exports.updateSubscription = async (subscriptionId, priceId) => {
         limit: 1,
       });
     }
-    const subscription = await stripe.subscriptions.update(subscriptionId, {
-      items: [{ price: price.data[0]?.id }],
+
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+    const updateSubscription = await stripe.subscriptions.update(subscriptionId, {
+      items: [{
+        id: subscription.items.data[0].id,
+        price: price.data[0].id
+      }],
       expand: ["latest_invoice.payment_intent"],
-      collection_method: "charge_automatically",
+      // collection_method: "charge_automatically",
+      proration_behavior: 'create_prorations',
       payment_behavior: "default_incomplete",
     });
-    return subscription;
+    return updateSubscription;
   } catch (error) {
     throw new Error(`Failed to update subscription: ${error.message}`);
   } 
