@@ -66,6 +66,7 @@ exports.updateSubscription = async (subscriptionId, priceId) => {
         id: subscription.items.data[0].id,
         price: price.data[0].id
       }],
+      cancel_at_period_end: false,
       expand: ["latest_invoice.payment_intent"],
       // collection_method: "charge_automatically",
       proration_behavior: 'create_prorations',
@@ -102,7 +103,7 @@ exports.getSubscription = async (customerId) => {
   }
 };
 
-exports.getSubscriptions = async (limit = 10, offset = 1) => {
+exports.getSubscriptions = async (limit = 10, offset = 1, search = null) => {
   try {
     let subscriptionsList = []
     let has_more = true
