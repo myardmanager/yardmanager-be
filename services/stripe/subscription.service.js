@@ -131,3 +131,25 @@ exports.getSubscriptions = async (limit = 10, offset = 1) => {
     throw new Error(`Failed to get subscriptions: ${error.message}`);
   }
 };
+
+exports.getCountSubscriptions = async () => {
+  try {
+    let count = 0
+    let subscriptions = await stripe.subscriptions.list({
+      limit: 100,
+    });
+    count += subscriptions.data.length
+    while (subscriptions.data[subscriptions.data.length - 1]?.has_more) {
+      const lastId = subscriptions.data[subscriptions.data.length - 1].id;
+      subscriptions = await stripe.subscriptions.list({
+        limit: 100,
+        starting_after: lastId,
+      });
+      count += subscriptions.data.length
+    }
+    
+    return count;
+  } catch (error) {
+    throw new Error(`Failed to get subscriptions: ${error.message}`);
+  }
+}

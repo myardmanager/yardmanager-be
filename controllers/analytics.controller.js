@@ -8,12 +8,15 @@ const companyModel = require("../models/company.model");
 const inventoryModel = require("../models/inventory.model");
 const employeeModel = require("../models/employee.model");
 const userModel = require("../models/user.model");
+const { getCountSubscriptions } = require("../services/stripe/subscription.service");
 
 exports.getDashboardAnalytics = async (req, res) => {
   try {
     let company = "";
+    let countsSubscriptions = null;
     if (req.user.type === "admin" && req.query.division === "company") {
       company = {};
+      countsSubscriptions = await getCountSubscriptions();
     } else {
       company = { company: req.user.company };
     }
@@ -37,6 +40,7 @@ exports.getDashboardAnalytics = async (req, res) => {
       vehicles: vehicles,
       locations: locations,
       yards: yards || undefined,
+      subscriptions: countsSubscriptions,
     };
 
     res.status(200).json(analytics);
