@@ -226,9 +226,18 @@ exports.getInventoryPagination = async (req, res) => {
     const search = req.query.search || "";
     let company = "";
     if (req.user.type == "admin" && req.query.division) {
-      company = {};
+      company = {
+        $lookup: {
+          from: "company", // Assuming the collection name is 'locations'
+          localField: "company",
+          foreignField: "_id",
+          as: "company",
+        },
+      };
     } else {
-      company = { company: new mongoose.Types.ObjectId(req.user.company) };
+      company = {
+        $match: { company: new mongoose.Types.ObjectId(req.user.company) },
+      };
     }
 
     if (typeof req.query.deleted === "undefined") req.query.deleted = false;
@@ -252,9 +261,9 @@ exports.getInventoryPagination = async (req, res) => {
 
     const pipeline = [
       {
-        $match: {
-          ...company,
-        },
+        ...company,
+        // $match: {
+        // },
       },
       {
         $lookup: {
@@ -312,8 +321,8 @@ exports.getInventoryPagination = async (req, res) => {
       {
         $count: "count",
       },
-    ])
-    
+    ]);
+
     // const count = await Inventory.countDocuments({
     //   // company: req.user.company,
     //   ...company,
