@@ -11,8 +11,7 @@ exports.validateVehicle = [
 	check("startYear")
 		.notEmpty()
 		.withMessage("Year is required")
-		.isISO8601()
-		.toDate()
+		.toString()
 		.withMessage("Year must be a valid date"),
 	check("make")
 		.notEmpty()
