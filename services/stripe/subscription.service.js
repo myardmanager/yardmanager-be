@@ -60,39 +60,40 @@ exports.updateSubscription = async (subscriptionId, priceId) => {
       });
     }
 
-    // const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-
-    // const updateSubscription = await stripe.subscriptions.update(subscriptionId, {
-    //   items: [{
-    //     id: subscription.items.data[0].id,
-    //     price: price.data[0].id
-    //   }],
-    //   cancel_at_period_end: false,
-    //   expand: ["latest_invoice.payment_intent"],
-    //   // collection_method: "charge_automatically",
-    //   proration_behavior: 'create_prorations',
-    //   payment_behavior: "default_incomplete",
-    // });
-    // return updateSubscription;
-
-    // Retrieve the current subscription details
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
-    // Update the subscription, apply proration behavior, and set the proration date
-    const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
+    const updateSubscription = await stripe.subscriptions.update(subscriptionId, {
       items: [{
-        id: subscription.items.data[0].id, // ID of the current subscription item
-        price: price, // The new yearly price ID
+        id: subscription.items.data[0].id,
+        price: price.data[0].id
       }],
-      proration_behavior: 'create_prorations', // Create prorations for unused time
-      proration_date: Math.floor(Date.now() / 1000), // Use the current timestamp for proration
-      // Optionally, you can set proration date to current_period_end to calculate remaining time:
-      // proration_date: currentPeriodEnd,
-      expand: ['latest_invoice.payment_intent'], // Expand to get the latest invoice details
+      cancel_at_period_end: false,
+      expand: ["latest_invoice.payment_intent"],
+      // collection_method: "charge_automatically",
+      proration_behavior: 'create_prorations',
+      payment_behavior: "default_incomplete",
+      proration_date: Math.floor(Date.now() / 1000),
     });
+    return updateSubscription;
 
-    // Return the updated subscription with prorated amounts
-    return updatedSubscription;
+    // // Retrieve the current subscription details
+    // const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+    // // Update the subscription, apply proration behavior, and set the proration date
+    // const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
+    //   items: [{
+    //     id: subscription.items.data[0].id, // ID of the current subscription item
+    //     price: price, // The new yearly price ID
+    //   }],
+    //   proration_behavior: 'create_prorations', // Create prorations for unused time
+    //   proration_date: Math.floor(Date.now() / 1000), // Use the current timestamp for proration
+    //   // Optionally, you can set proration date to current_period_end to calculate remaining time:
+    //   // proration_date: currentPeriodEnd,
+    //   expand: ['latest_invoice.payment_intent'], // Expand to get the latest invoice details
+    // });
+
+    // // Return the updated subscription with prorated amounts
+    // return updatedSubscription;
   } catch (error) {
     console.log(error)
     throw new Error(`Failed to update subscription: ${error.message}`);
