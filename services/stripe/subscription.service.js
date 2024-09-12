@@ -82,7 +82,7 @@ exports.updateSubscription = async (subscriptionId, priceId) => {
     const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
       items: [{
         id: subscription.items.data[0].id, // ID of the current subscription item
-        price: newPriceId, // The new yearly price ID
+        price: price, // The new yearly price ID
       }],
       proration_behavior: 'create_prorations', // Create prorations for unused time
       proration_date: Math.floor(Date.now() / 1000), // Use the current timestamp for proration
