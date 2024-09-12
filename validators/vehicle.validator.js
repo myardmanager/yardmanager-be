@@ -12,7 +12,7 @@ exports.validateVehicle = [
 		.notEmpty()
 		.withMessage("Year is required")
 		.isString()
-		.withMessage("Year must be a valid date"),
+		.withMessage("Year must be a valid string year"),
 	check("make")
 		.notEmpty()
 		.withMessage("Make is required")
@@ -51,7 +51,7 @@ exports.validateVehicleUpdate = [
 		.withMessage("VIN must be a string")
 		.isLength({ min: 17, max: 17 })
 		.withMessage("VIN must be exactly 17 characters long"),
-	check("startYear").optional().isISO8601().toDate().withMessage("Year must be a valid date"),
+	check("startYear").optional().isString().withMessage("Year must be a string year"),
 	check("make").optional().isArray().withMessage("Make must be an array"),
 	// .custom((value) => {
 	//   for (let i = 0; i < value.length; i++) {
