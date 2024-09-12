@@ -228,7 +228,7 @@ exports.getInventoryPagination = async (req, res) => {
     if (req.user.type == "admin" && req.query.division) {
       company = {
         $lookup: {
-          from: "companys", // Assuming the collection name is 'locations'
+          from: "companies", // Assuming the collection name is 'locations'
           localField: "company",
           foreignField: "_id",
           as: "company",
