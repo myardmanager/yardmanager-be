@@ -78,51 +78,20 @@ exports.updateSubscription = async (subscriptionId, priceId) => {
     // Retrieve the current subscription details
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
-    // Get the current subscription item and plan details
-    const currentItem = subscription.items.data[0];
-    // const currentPriceId = currentItem.price.id;
+    // Update the subscription, apply proration behavior, and set the proration date
+    const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
+      items: [{
+        id: subscription.items.data[0].id, // ID of the current subscription item
+        price: newPriceId, // The new yearly price ID
+      }],
+      proration_behavior: 'create_prorations', // Create prorations for unused time
+      proration_date: Math.floor(Date.now() / 1000), // Use the current timestamp for proration
+      // Optionally, you can set proration date to current_period_end to calculate remaining time:
+      // proration_date: currentPeriodEnd,
+      expand: ['latest_invoice.payment_intent'], // Expand to get the latest invoice details
+    });
 
-    // Get the current billing period (start and end dates)
-    const currentPeriodEnd = subscription.current_period_end; // Unix timestamp
-    const currentPeriodStart = subscription.current_period_start; // Unix timestamp
-
-    // Calculate the remaining days in the current period
-    const currentTime = moment().unix();
-    const remainingDays =
-      (currentPeriodEnd - currentTime) /
-      (currentPeriodEnd - currentPeriodStart);
-
-    // Calculate the prorated amount of unused time on the current monthly plan
-    const monthlyAmount = currentItem.price.unit_amount;
-    const proratedAmount = remainingDays * monthlyAmount;
-
-    // Switch to the new yearly price and apply the prorated credit
-    const updatedSubscription = await stripe.subscriptions.update(
-      subscriptionId,
-      {
-        items: [
-          {
-            id: currentItem.id, // Keep the same subscription item
-            price: price, // Update to yearly plan
-          },
-        ],
-        cancel_at_period_end: false,
-        proration_behavior: "create_prorations", // Automatically prorates the remaining amount
-        // Apply the prorated credit by adding it to the current invoice's discount
-        invoice_settings: {
-          custom_fields: [
-            {
-              name: "Prorated Credit",
-              value: `${(proratedAmount / 100).toFixed(
-                2
-              )} USD applied as credit`,
-            },
-          ],
-        },
-        expand: ["latest_invoice.payment_intent"],
-      }
-    );
-
+    // Return the updated subscription with prorated amounts
     return updatedSubscription;
   } catch (error) {
     throw new Error(`Failed to update subscription: ${error.message}`);
