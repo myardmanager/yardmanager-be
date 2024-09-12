@@ -94,6 +94,7 @@ exports.updateSubscription = async (subscriptionId, priceId) => {
     // Return the updated subscription with prorated amounts
     return updatedSubscription;
   } catch (error) {
+    console.log(error)
     throw new Error(`Failed to update subscription: ${error.message}`);
   }
 };
