@@ -52,15 +52,23 @@ exports.createVehicle = async (req, res) => {
         req.body.images.push(image);
       }
     }
+
+    const lastVehicle = await Vehicle.findOne({
+      company: req.user.company,
+    }).sort({ sku: -1 });
+    if (lastVehicle) {
+      req.body.registration = lastVehicle.sku + 1;
+    } else {
+      req.body.registration = 1;
+    }
+
     const vehicle = new Vehicle(req.body);
     const newVehicle = await vehicle.save();
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Vehicle created successfully.",
-        data: newVehicle,
-      });
+    res.status(201).json({
+      success: true,
+      message: "Vehicle created successfully.",
+      data: newVehicle,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -85,15 +93,16 @@ exports.updateVehicle = async (req, res) => {
     //   // 	req.body.images = JSON.parse(JSON.stringify(req.body.images));
     //   // }
     // }
-  const part = await partModel.findById(req.body.part);
-  if (!part) {
-    return res.status(404).json({ message: "Part not found" });
-  } else {
-    if (!part.color) req.body.color = null;
-  }
+    const part = await partModel.findById(req.body.part);
+    if (!part) {
+      return res.status(404).json({ message: "Part not found" });
+    } else {
+      if (!part.color) req.body.color = null;
+    }
 
-  if (req.body.images === undefined) req.body.images = []
-	if (typeof req.body.images === "string" && req.body.images.length > 0) req.body.images = [req.body.images]
+    if (req.body.images === undefined) req.body.images = [];
+    if (typeof req.body.images === "string" && req.body.images.length > 0)
+      req.body.images = [req.body.images];
     if (req.files && req.files.length > 0) {
       let newImages = [];
       for (let i = 0; i < req.files.length; i++) {
@@ -142,13 +151,11 @@ exports.deleteVehicle = async (req, res) => {
       _id: id,
       company: req.user.company,
     });
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Vehicle deleted successfully.",
-        data: vehicle,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Vehicle deleted successfully.",
+      data: vehicle,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -171,10 +178,7 @@ exports.paginateVehicles = async (req, res) => {
     })
       .skip(skip)
       .limit(Number(limit))
-      .populate([
-        { path: "location", select: "location" },
-        { path: "part" },
-      ]);
+      .populate([{ path: "location", select: "location" }, { path: "part" }]);
     const total = await Vehicle.countDocuments({
       company: req.user.company,
       $or: [
@@ -208,7 +212,9 @@ exports.decodeVin = async (req, res) => {
   try {
     const vehicle = await vinDecoder.vinDecoder(vin);
     if (!vehicle.make || !vehicle.model || !vehicle.year) {
-      return res.status(404).json({ success: false, message: "Vehicle not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Vehicle not found" });
     }
     return res.status(200).json({ success: true, data: vehicle });
   } catch (error) {
@@ -260,6 +266,16 @@ exports.addVehicleToInventory = async (req, res) => {
       return res.status(404).json({ message: "Vehicle not found" });
     }
 
+    const lastInventory = await inventoryModel
+      .findOne({ part: vehicle._id })
+      .sort({ sku: -1 });
+
+    if (lastInventory) {
+      vehicle.sku = lastInventory.sku + 1;
+    } else {
+      vehicle.sku = 1;
+    }
+
     const archivedVehicle = new inventoryModel(vehicle.toObject());
 
     await archivedVehicle.validate();
@@ -269,12 +285,10 @@ exports.addVehicleToInventory = async (req, res) => {
     await session.commitTransaction();
     session.endSession();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Vehicle added to inventory successfully",
-      });
+    res.status(200).json({
+      success: true,
+      message: "Vehicle added to inventory successfully",
+    });
   } catch (err) {
     await session.abortTransaction();
     session.endSession();
