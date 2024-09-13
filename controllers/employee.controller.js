@@ -103,7 +103,7 @@ exports.createEmployee = async (req, res) => {
 
     let newHtml = html.replace("{{password}}", password);
     newHtml = newHtml.replace("{{name}}", name);
-    newHtml = newHtml.replace("{{company}}", company.name);
+    newHtml = newHtml.replaceAll("{{company}}", company.name);
     const response = await Email.send(newEmployee.email, "Invitation", newHtml);
     console.log(response);
 
@@ -151,7 +151,7 @@ exports.updateEmployee = async (req, res) => {
 
     let newHtml = html.replace("{{password}}", password);
     newHtml = newHtml.replace("{{name}}", name);
-    newHtml = newHtml.replace("{{company}}", company.name);
+    newHtml = newHtml.replaceAll("{{company}}", company.name);
     if (password && name) {
       const response = await Email.send(employee.email, "Invitation", newHtml);
       console.log(response);
