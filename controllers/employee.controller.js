@@ -147,9 +147,11 @@ exports.updateEmployee = async (req, res) => {
       "role",
       "company",
     ]);
+    const company = await Company.findById(req.user.company);
 
     let newHtml = html.replace("{{password}}", password);
     newHtml = newHtml.replace("{{name}}", name);
+    newHtml = newHtml.replace("{{company}}", company.name);
     if (password && name) {
       const response = await Email.send(employee.email, "Invitation", newHtml);
       console.log(response);
