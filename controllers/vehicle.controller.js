@@ -56,12 +56,14 @@ exports.createVehicle = async (req, res) => {
     const lastVehicle = await Vehicle.findOne({
       company: req.user.company,
     }).sort({ sku: -1 });
+    console.log(lastVehicle);
     if (lastVehicle) {
-      req.body.registration = lastVehicle.sku + 1;
+      req.body.sku = lastVehicle.sku + 1;
     } else {
-      req.body.registration = 1;
+      req.body.sku = 1;
     }
 
+    // console.log(req.body)
     const vehicle = new Vehicle(req.body);
     const newVehicle = await vehicle.save();
     res.status(201).json({
@@ -70,6 +72,7 @@ exports.createVehicle = async (req, res) => {
       data: newVehicle,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
