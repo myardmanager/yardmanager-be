@@ -2,6 +2,7 @@ const { uploadFile } = require("../services/backblaze.service");
 const Employee = require("../models/employee.model");
 const Email = require("../services/email.service");
 const bcrypt = require("bcryptjs");
+const Company = require("../models/company.model");
 const jwt = require("jsonwebtoken");
 const { readFileSync } = require("fs");
 const { resolve } = require("path");
@@ -98,9 +99,11 @@ exports.createEmployee = async (req, res) => {
 
     const employee = await Employee.create(req.body);
     const newEmployee = await employee.populate(["role", "company"]);
+    const company = await Company.findById(req.user.company);
 
     let newHtml = html.replace("{{password}}", password);
     newHtml = newHtml.replace("{{name}}", name);
+    newHtml = newHtml.replace("{{company}}", company.name);
     const response = await Email.send(newEmployee.email, "Invitation", newHtml);
     console.log(response);
 
