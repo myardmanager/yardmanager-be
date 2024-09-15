@@ -53,17 +53,17 @@ exports.createVehicle = async (req, res) => {
       }
     }
 
-    // const lastVehicle = await Vehicle.findOne({
-    //   company: req.user.company,
-    // }).sort({ sku: -1 });
-    // console.log(lastVehicle);
-    // if (lastVehicle) {
-    //   req.body.sku = lastVehicle.sku + 1;
-    // } else {
-    //   req.body.sku = 1;
-    // }
+    const lastVehicle = await Vehicle.findOne({
+      company: req.user.company,
+    }).sort({ sku: -1 });
+    console.log(lastVehicle);
+    if (lastVehicle) {
+      req.body.sku = lastVehicle.sku + 1;
+    } else {
+      req.body.sku = 1;
+    }
 
-    const part = await partModel.findById(req.body.part, {$inc: {sku: 1}});
+    const part = await partModel.findById(req.body.part);
     if (!part) {
       return res.status(404).json({ message: "Part not found" });
     }
