@@ -53,15 +53,21 @@ exports.createVehicle = async (req, res) => {
       }
     }
 
-    const lastVehicle = await Vehicle.findOne({
-      company: req.user.company,
-    }).sort({ sku: -1 });
-    console.log(lastVehicle);
-    if (lastVehicle) {
-      req.body.sku = lastVehicle.sku + 1;
-    } else {
-      req.body.sku = 1;
+    // const lastVehicle = await Vehicle.findOne({
+    //   company: req.user.company,
+    // }).sort({ sku: -1 });
+    // console.log(lastVehicle);
+    // if (lastVehicle) {
+    //   req.body.sku = lastVehicle.sku + 1;
+    // } else {
+    //   req.body.sku = 1;
+    // }
+
+    const part = await partModel.findById(req.body.part, {$inc: {sku: 1}});
+    if (!part) {
+      return res.status(404).json({ message: "Part not found" });
     }
+    req.body.variant = part.variant;
 
     // console.log(req.body)
     const vehicle = new Vehicle(req.body);
@@ -270,7 +276,7 @@ exports.addVehicleToInventory = async (req, res) => {
     }
 
     const lastInventory = await inventoryModel
-      .findOne({ part: vehicle._id })
+      .findOne({ company: req.user.company })
       .sort({ sku: -1 });
 
     if (lastInventory) {
@@ -299,3 +305,44 @@ exports.addVehicleToInventory = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+exports.deleteAllVehicles = async (req, res) => {
+  try {
+    const vehicles = await Vehicle.deleteMany({ company: req.user.company });
+    res.status(200).json({
+      success: true,
+      message: "All vehicles deleted successfully.",
+      data: vehicles,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.addAllVehiclesToInventory = async (req, res) => {
+  try {
+    const vehicles = await Vehicle.find({ company: req.user.company });
+    for (const vehicle of vehicles) {
+      const lastInventory = await inventoryModel
+        .findOne({ company: req.user.company })
+        .sort({ sku: -1 });
+      if (lastInventory) {
+        vehicle.sku = lastInventory.sku + 1;
+      } else {
+        vehicle.sku = 1;
+      }
+
+      const archivedVehicle = new inventoryModel(vehicle.toObject());
+      await archivedVehicle.save();
+    }
+
+    await Vehicle.deleteMany({ company: req.user.company });
+
+    res.status(200).json({
+      success: true,
+      message: "All vehicles added to inventory successfully.",
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
