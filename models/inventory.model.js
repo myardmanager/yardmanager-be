@@ -5,7 +5,7 @@ const inventorySchema = new mongoose.Schema(
 		location: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Location",
-			required: true
+			required: [true, "Location is required"]
 		},
 		part: {
 			type: mongoose.Schema.Types.ObjectId,
