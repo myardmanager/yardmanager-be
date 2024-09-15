@@ -162,7 +162,7 @@ exports.deleteVehicle = async (req, res) => {
     });
     res.status(200).json({
       success: true,
-      message: "Vehicle deleted successfully.",
+      message: "Part deleted successfully.",
       data: vehicle,
     });
   } catch (error) {
@@ -311,7 +311,7 @@ exports.deleteAllVehicles = async (req, res) => {
     const vehicles = await Vehicle.deleteMany({ company: req.user.company });
     res.status(200).json({
       success: true,
-      message: "All vehicles deleted successfully.",
+      message: "All parts deleted successfully.",
       data: vehicles,
     });
   } catch (error) {
