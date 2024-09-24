@@ -56,7 +56,7 @@ exports.register = async (req, res) => {
 
     let newHtml = html.replace("{{password}}", password);
     newHtml = newHtml.replace("{{name}}", name);
-    newHtml = newHtml.replace("{{company}}", company.name);
+    newHtml = newHtml.replaceAll("{{company}}", company.name);
     const response = await Email.send(user.email, "Invitation", newHtml);
     console.log(response);
 
