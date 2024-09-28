@@ -221,7 +221,7 @@ exports.deleteAllInventory = async (req, res) => {
 
 exports.getInventoryPagination = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, deleted = false } = req.query;
     const offset = (page - 1) * limit;
     const search = req.query.search || "";
     let company = "";
@@ -289,7 +289,7 @@ exports.getInventoryPagination = async (req, res) => {
       },
       {
         $match: {
-          deleted: req.query.deleted,
+          deleted: deleted === "true" || deleted === true,
           $or: [
             { "part.name": { $regex: search, $options: "i" } },
             { "location.location": { $regex: search, $options: "i" } },
