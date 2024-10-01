@@ -90,7 +90,7 @@ exports.createInventory = async (req, res) => {
     ]);
     res.status(201).json({
       success: true,
-      message: "Inventory created successfully",
+      message: "Part Successfuly Added", //Part Successfuly Added
       data: newInventory,
     });
   } catch (error) {
@@ -161,7 +161,7 @@ exports.updateInventory = async (req, res) => {
     // Send response
     res.status(200).json({
       success: true,
-      message: "Inventory updated successfully",
+      message: "Part Successfuly Updated",
       data: inventory,
     });
   } catch (error) {
