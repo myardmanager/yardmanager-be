@@ -182,12 +182,12 @@ exports.deleteInventory = async (req, res) => {
     if (!inventory) {
       return res.status(404).json({
         success: false,
-        message: "Inventory not found",
+        message: "Part not found",
       });
     }
     res.status(200).json({
       success: true,
-      message: "Inventory deleted successfully",
+      message: "Part deleted successfully",
       data: inventory,
     });
   } catch (error) {
@@ -207,7 +207,7 @@ exports.deleteAllInventory = async (req, res) => {
     });
     res.status(200).json({
       success: true,
-      message: "Inventory deleted successfully",
+      message: "Part deleted successfully",
       data: inventory,
     });
   } catch (error) {
@@ -372,7 +372,7 @@ exports.setInventoryDeleteMark = async (req, res) => {
     ]);
     res.status(200).json({
       success: true,
-      message: `Inventory ${req.delete ? "deleted" : "restored"} successfully`,
+      message: `Part ${req.delete ? "deleted" : "restored"} successfully`,
       data: deleted,
     });
   } catch (error) {
@@ -397,7 +397,7 @@ exports.getInventoryByName = async (req, res) => {
     ]);
     res.status(200).json({
       success: true,
-      message: "Inventory fetched successfully",
+      message: "Part fetched successfully",
       data: inventory,
     });
   } catch (error) {
