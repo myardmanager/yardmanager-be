@@ -158,7 +158,7 @@ exports.paginateInvoices = async (req, res) => {
 		})
 			.skip(skip)
 			.limit(limit)
-			.populate(["soldByUser", "soldByEmployee", "products.product"]);
+			.populate(["soldByUser", "soldByEmployee", {path: "products.product", populate: "part"}]);
 		const total = await Invoice.countDocuments({
 			company: req.user.company,
 			$or: [
