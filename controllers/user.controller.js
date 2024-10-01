@@ -24,7 +24,7 @@ exports.register = async (req, res) => {
       });
     }
 
-    const name = req.body.user.name.first + req.body.user.name.last;
+    const name = req.body.user.name.first + " " + req.body.user.name.last;
     const password = req.body.user.password;
 
     const salt = await bcrypt.genSalt(10);
