@@ -204,7 +204,7 @@ exports.paginateVehicles = async (req, res) => {
         { model: { $regex: search, $options: "i" } },
       ],
     })
-      .sort({ sku: -1 })
+      .sort({ sku: 1 })
       .skip(skip)
       .limit(Number(limit))
       .populate([{ path: "location", select: "location" }, { path: "part" }]);
