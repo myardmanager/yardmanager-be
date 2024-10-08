@@ -65,11 +65,6 @@ const vehicleSchema = new mongoose.Schema(
 			ref: "Company",
 			required: true
 		},
-		company: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "Company",
-			required: true
-		}
 	},
 	{ timestamps: true }
 );

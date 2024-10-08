@@ -144,6 +144,19 @@ exports.updateVehicle = async (req, res) => {
       });
     }
 
+    // Update all other vehicles with same vin number
+    await Vehicle.updateMany(
+      {
+        vin: inventory.vin,
+        _id: { $ne: req.params.id },
+        company: req.user.company,
+      },
+      {
+        location: inventory.location._id,
+        end_year: inventory.end_year,
+      }
+    );
+
     // Send response
     res.status(200).json({
       success: true,
