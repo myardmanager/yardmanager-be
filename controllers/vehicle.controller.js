@@ -70,6 +70,7 @@ exports.createVehicle = async (req, res) => {
       for (let i = 0; i < variants.length; i++) {
         const vehicle = new Vehicle({
           ...req.body,
+          sku: req.body.sku + i,
           variant: variants[i],
         });
         vehicles.push(vehicle);
