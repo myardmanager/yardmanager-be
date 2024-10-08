@@ -6,10 +6,6 @@ exports.validateInvoice = [
     .withMessage("Name is required")
     .isString()
     .withMessage("Name must be a string"),
-  check("email", "phone")
-    .not()
-    .isEmpty()
-    .withMessage("One of email or phone is required"),
 
   check("phone").optional().isString().withMessage("Phone must be a string"),
   check("products")
