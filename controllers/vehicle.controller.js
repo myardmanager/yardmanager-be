@@ -153,7 +153,7 @@ exports.updateVehicle = async (req, res) => {
       },
       {
         location: inventory.location._id,
-        end_year: inventory.end_year,
+        lastYear: inventory.lastYear,
       }
     );
 
