@@ -7,13 +7,11 @@ exports.validateInvoice = [
 		.isString()
 		.withMessage("Name must be a string"),
 	check("email")
-		.notEmpty()
-		.withMessage("Email is required")
+		.optional()
 		.isEmail()
 		.withMessage("Please enter a valid email address"),
 	check("phone")
-		.notEmpty()
-		.withMessage("Phone is required")
+		.optional()
 		.isString()
 		.withMessage("Phone must be a string"),
 	check("products")
