@@ -55,23 +55,33 @@ exports.createVehicle = async (req, res) => {
     if (!part) {
       return res.status(404).json({ message: "Part not found" });
     }
-    const variants = part.variant;
-    const vehicles = [];
-
-    for (let i = 0; i < variants.length; i++) {
-      const vehicle = new Vehicle({
-        ...req.body,
-        variant: variants[i],
+    if (!part.variant || part.variant.length === 0) {
+      const vehicle = new Vehicle(req.body);
+      const newVehicle = await vehicle.save();
+      res.status(201).json({
+        success: true,
+        message: "Vehicle created successfully.",
+        data: newVehicle,
       });
-      vehicles.push(vehicle);
-    }
+    } else {
+      const variants = part.variant;
+      const vehicles = [];
 
-    const newVehicles = await Vehicle.insertMany(vehicles);
-    res.status(201).json({
-      success: true,
-      message: "Vehicles created successfully.",
-      data: newVehicles,
-    });
+      for (let i = 0; i < variants.length; i++) {
+        const vehicle = new Vehicle({
+          ...req.body,
+          variant: variants[i],
+        });
+        vehicles.push(vehicle);
+      }
+
+      const newVehicles = await Vehicle.insertMany(vehicles);
+      res.status(201).json({
+        success: true,
+        message: "Vehicles created successfully.",
+        data: newVehicles,
+      });
+    }
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
