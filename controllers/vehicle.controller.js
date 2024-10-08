@@ -346,21 +346,21 @@ exports.addAllVehiclesToInventory = async (req, res) => {
   try {
     const vehicles = await Vehicle.find({ company: req.user.company });
 
+    const lastInventory = await inventoryModel
+      .findOne({ company: req.user.company })
+      .sort({ sku: -1 })
+      .session(session);
+
+    let sku = lastInventory ? lastInventory.sku + 1 : 1;
+
     for (const vehicle of vehicles) {
       try {
-        const archivedVehicle = new inventoryModel(vehicle.toObject());
+        const archivedVehicle = new inventoryModel({
+          ...vehicle.toObject(),
+          sku,
+        });
         await archivedVehicle.validate();
-
-        const lastInventory = await inventoryModel
-          .findOne({ company: req.user.company })
-          .sort({ sku: -1 })
-          .session(session);
-
-        if (lastInventory) {
-          vehicle.sku = lastInventory.sku + 1;
-        } else {
-          vehicle.sku = 1;
-        }
+        sku += 1;
 
         await archivedVehicle.save({ session });
         await Vehicle.findByIdAndDelete(vehicle._id).session(session);
@@ -387,3 +387,4 @@ exports.addAllVehiclesToInventory = async (req, res) => {
     });
   }
 };
+
