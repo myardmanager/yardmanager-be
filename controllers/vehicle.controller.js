@@ -55,15 +55,22 @@ exports.createVehicle = async (req, res) => {
     if (!part) {
       return res.status(404).json({ message: "Part not found" });
     }
-    req.body.variant = part.variant;
+    const variants = part.variant;
+    const vehicles = [];
 
-    // console.log(req.body)
-    const vehicle = new Vehicle(req.body);
-    const newVehicle = await vehicle.save();
+    for (let i = 0; i < variants.length; i++) {
+      const vehicle = new Vehicle({
+        ...req.body,
+        variant: variants[i],
+      });
+      vehicles.push(vehicle);
+    }
+
+    const newVehicles = await Vehicle.insertMany(vehicles);
     res.status(201).json({
       success: true,
-      message: "Vehicle created successfully.",
-      data: newVehicle,
+      message: "Vehicles created successfully.",
+      data: newVehicles,
     });
   } catch (error) {
     console.log(error);
@@ -309,12 +316,18 @@ exports.deleteAllVehicles = async (req, res) => {
 };
 
 exports.addAllVehiclesToInventory = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const vehicles = await Vehicle.find({ company: req.user.company });
+
     for (const vehicle of vehicles) {
       const lastInventory = await inventoryModel
         .findOne({ company: req.user.company })
-        .sort({ sku: -1 });
+        .sort({ sku: -1 })
+        .session(session);
+
       if (lastInventory) {
         vehicle.sku = lastInventory.sku + 1;
       } else {
@@ -322,10 +335,12 @@ exports.addAllVehiclesToInventory = async (req, res) => {
       }
 
       const archivedVehicle = new inventoryModel(vehicle.toObject());
-      await archivedVehicle.save();
+      await archivedVehicle.save({ session });
+      await Vehicle.findByIdAndDelete(vehicle._id).session(session);
     }
 
-    await Vehicle.deleteMany({ company: req.user.company });
+    await session.commitTransaction();
+    session.endSession();
 
     res.status(200).json({
       success: true,
@@ -336,7 +351,14 @@ exports.addAllVehiclesToInventory = async (req, res) => {
     console.log(error.errors);
     console.log(error._message);
     console.log(Object.keys(error.errors));
-    
-    res.status(500).json({ success: false, message: error.errors[Object.keys(error.errors)[0]].properties.message + ' in all vehicles' ?? error.message });
+
+    res
+      .status(500)
+      .json({
+        success: false,
+        message:
+          error.errors[Object.keys(error.errors)[0]].properties.message +
+            " in all vehicles" ?? error.message,
+      });
   }
-}
+};
