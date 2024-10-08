@@ -371,18 +371,13 @@ exports.addAllVehiclesToInventory = async (req, res) => {
       message: "All vehicles added to inventory successfully.",
     });
   } catch (error) {
-    console.log(error.errors[Object.keys(error.errors)[0]].properties.message);
-    console.log(error.errors);
-    console.log(error._message);
-    console.log(Object.keys(error.errors));
+    const errorMessages = Object.keys(error.errors).map(
+      (key) => error.errors[key].properties.message
+    );
 
-    res
-      .status(500)
-      .json({
-        success: false,
-        message:
-          error.errors[Object.keys(error.errors)[0]].properties.message +
-            " in all vehicles" ?? error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: errorMessages.join(", ") ?? error.message,
+    });
   }
 };
