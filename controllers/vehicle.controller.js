@@ -58,7 +58,7 @@ exports.createVehicle = async (req, res) => {
     if (!part.variant || part.variant.length === 0) {
       const vehicle = new Vehicle({
         ...req.body,
-        createdBy: req.user._id,
+        createdBy: req.user.id,
         createdByType: req.user.type.charAt(0).toUpperCase() + req.user.type.slice(1),
       });
       const newVehicle = await vehicle.save();
@@ -76,7 +76,7 @@ exports.createVehicle = async (req, res) => {
           ...req.body,
           sku: req.body.sku + i,
           variant: variants[i],
-          createdBy: req.user._id,
+          createdBy: req.user.id,
           createdByType: req.user.type.charAt(0).toUpperCase() + req.user.type.slice(1),
         });
         vehicles.push(vehicle);
