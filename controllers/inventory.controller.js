@@ -83,10 +83,14 @@ exports.createInventory = async (req, res) => {
     } else {
       req.body.sku = 1;
     }
+    req.body.createdByType = req.user.type.charAt(0).toUpperCase() + req.user.type.slice(1);
+    req.body.createdBy = req.user._id;
+
     const inventory = await Inventory.create(req.body);
-    const newInventory = await inventory.populate([
+      const newInventory = await inventory.populate([
       { path: "location" },
       { path: "part" },
+      { path: "createdBy", select: "name email" },
     ]);
     res.status(201).json({
       success: true,
@@ -275,6 +279,17 @@ exports.getInventoryPagination = async (req, res) => {
       },
       {
         $unwind: { path: "$part", preserveNullAndEmptyArrays: true },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "createdBy",
+          foreignField: "_id",
+          as: "createdBy",
+        },
+      },
+      {
+        $unwind: { path: "$createdBy", preserveNullAndEmptyArrays: true },
       },
       {
         $lookup: {

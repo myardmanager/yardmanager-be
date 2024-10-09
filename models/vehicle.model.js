@@ -65,6 +65,16 @@ const vehicleSchema = new mongoose.Schema(
 			ref: "Company",
 			required: true
 		},
+		createdBy: {
+			type: mongoose.Schema.Types.ObjectId,
+			refPath: "createdByType",
+			required: true
+		},
+		createdByType: {
+			type: String,
+			enum: ["User", "Employee"],
+			required: true
+		}
 	},
 	{ timestamps: true }
 );

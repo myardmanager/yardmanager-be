@@ -56,7 +56,11 @@ exports.createVehicle = async (req, res) => {
       return res.status(404).json({ message: "Part not found" });
     }
     if (!part.variant || part.variant.length === 0) {
-      const vehicle = new Vehicle(req.body);
+      const vehicle = new Vehicle({
+        ...req.body,
+        createdBy: req.user._id,
+        createdByType: req.user.type.charAt(0).toUpperCase() + req.user.type.slice(1),
+      });
       const newVehicle = await vehicle.save();
       res.status(201).json({
         success: true,
@@ -72,6 +76,8 @@ exports.createVehicle = async (req, res) => {
           ...req.body,
           sku: req.body.sku + i,
           variant: variants[i],
+          createdBy: req.user._id,
+          createdByType: req.user.type.charAt(0).toUpperCase() + req.user.type.slice(1),
         });
         vehicles.push(vehicle);
       }
