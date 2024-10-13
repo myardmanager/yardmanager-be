@@ -1,5 +1,6 @@
 const { uploadFile } = require("../services/backblaze.service");
 const Employee = require("../models/employee.model");
+const User = require("../models/user.model");
 const Email = require("../services/email.service");
 const bcrypt = require("bcryptjs");
 const Company = require("../models/company.model");
@@ -64,7 +65,7 @@ exports.createEmployee = async (req, res) => {
         message: "Already employeed at another company",
       });
     }
-    
+
     const check = await Employee.findOne({
       email: req.body.email,
       company: req.user.company,
@@ -126,15 +127,33 @@ exports.updateEmployee = async (req, res) => {
     if (req.files && req.files.length > 0) {
       req.body.profile = await uploadFile(req.files[0]);
     }
-    const password = req.body.password;
+    const pass = req.body.password;
     const name = req.body?.name?.first + " " + req.body?.name?.last;
-    if (req.body.password) {
-      const salt = await bcrypt.genSalt(10);
-      req.body.password = await bcrypt.hash(req.body.password, salt);
+    // if (req.body.password) {
+    //   const salt = await bcrypt.genSalt(10);
+    //   req.body.password = await bcrypt.hash(req.body.password, salt);
+    // }
+
+    const user = await User.findById(req.user.id).select("pass");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
 
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid password",
+      });
+    }
 
-    const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, {
+    const { password, ...data } = req.body.password;
+
+    const employee = await Employee.findByIdAndUpdate(req.params.id, data, {
       new: true,
     });
     if (!employee) {
