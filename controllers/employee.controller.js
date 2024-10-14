@@ -184,7 +184,8 @@ exports.updateEmployee = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Internal server error",
-      error: JSON.stringify(error),
+      error: error.message,
+      res: error,
     });
   }
 };
