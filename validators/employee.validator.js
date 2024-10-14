@@ -32,7 +32,6 @@ exports.validateUpdateEmployee = [
 	check("name.last").optional().notEmpty().withMessage("Last name is required"),
 	check("email").optional().isEmail().withMessage("Please enter a valid email address"),
 	check("password")
-		.optional()
 		.isLength({ min: 8 })
 		.withMessage("Password must be at least 8 characters long"),
 	check("role").optional().isMongoId().withMessage("Role must be a valid MongoDB ObjectId"),
