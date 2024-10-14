@@ -133,7 +133,7 @@ exports.updateEmployee = async (req, res) => {
     //   req.body.password = await bcrypt.hash(req.body.password, salt);
     // }
 
-    const user = await User.findById(req.user.id).select("pass");
+    const user = await User.findById(req.user.id).select("password");
 
     if (!user) {
       return res.status(404).json({
