@@ -167,7 +167,7 @@ exports.updateEmployee = async (req, res) => {
     ]);
     const company = await Company.findById(req.user.company);
 
-    let newHtml = html.replace("{{password}}", password);
+    let newHtml = html.replace("{{password}}", 'password');
     newHtml = newHtml.replace("{{name}}", name);
     newHtml = newHtml.replaceAll("{{company}}", company.name);
     if (password && name) {
@@ -185,7 +185,7 @@ exports.updateEmployee = async (req, res) => {
       success: false,
       message: "Internal server error",
       error: error.message,
-      res: error,
+      res: error?.error,
     });
   }
 };
