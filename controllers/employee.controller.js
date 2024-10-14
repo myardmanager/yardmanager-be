@@ -127,7 +127,6 @@ exports.updateEmployee = async (req, res) => {
     if (req.files && req.files.length > 0) {
       req.body.profile = await uploadFile(req.files[0]);
     }
-    const pass = req.body.password;
     const name = req.body?.name?.first + " " + req.body?.name?.last;
     // if (req.body.password) {
     //   const salt = await bcrypt.genSalt(10);
@@ -143,7 +142,7 @@ exports.updateEmployee = async (req, res) => {
       });
     }
 
-    const isPasswordValid = await bcrypt.compare(pass, user.password);
+    const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
@@ -151,7 +150,7 @@ exports.updateEmployee = async (req, res) => {
       });
     }
 
-    const { password, ...data } = req.body.password;
+    const { password, ...data } = req.body;
 
     const employee = await Employee.findByIdAndUpdate(req.params.id, data, {
       new: true,
