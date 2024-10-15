@@ -1,6 +1,7 @@
 const { uploadFile } = require("../services/backblaze.service");
 const Employee = require("../models/employee.model");
 const User = require("../models/user.model");
+const Admin = require("../models/admin.model");
 const Email = require("../services/email.service");
 const bcrypt = require("bcryptjs");
 const Company = require("../models/company.model");
@@ -133,16 +134,31 @@ exports.updateEmployee = async (req, res) => {
     //   req.body.password = await bcrypt.hash(req.body.password, salt);
     // }
 
-    const user = await User.findById(req.user.id).select("password");
+    let user = null;
+    if (req.user.role !== "admin") {
+      user = await User.findById(req.user.id).select("password");
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+    } else {
+      user = await Admin.findById(req.user.id).select("password");
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
     }
 
-    const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
@@ -167,7 +183,7 @@ exports.updateEmployee = async (req, res) => {
     ]);
     const company = await Company.findById(req.user.company);
 
-    let newHtml = html.replace("{{password}}", 'password');
+    let newHtml = html.replace("{{password}}", "password");
     newHtml = newHtml.replace("{{name}}", name);
     newHtml = newHtml.replaceAll("{{company}}", company.name);
     if (password && name) {
