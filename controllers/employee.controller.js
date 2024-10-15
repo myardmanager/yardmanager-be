@@ -135,7 +135,7 @@ exports.updateEmployee = async (req, res) => {
     // }
 
     let user = null;
-    if (req.user.role !== "admin") {
+    if (req.user.role === "user") {
       user = await User.findById(req.user.id).select("password");
 
       if (!user) {
@@ -150,7 +150,7 @@ exports.updateEmployee = async (req, res) => {
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: "User not found",
+          message: "User not found.",
         });
       }
     }
