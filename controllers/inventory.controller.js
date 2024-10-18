@@ -405,7 +405,7 @@ exports.getInventoryByName = async (req, res) => {
     const inventory = await Inventory.find({
       $or: [
         { name: { $regex: req.query.search, $options: "i" } },
-        { sku: { $regex: `^${req.query.search}$`, $options: "i" } },
+        { sku: parseInt(req.query.search) },
       ],
       company: req.user.company,
       deleted: false,
