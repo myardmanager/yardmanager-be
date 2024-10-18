@@ -323,7 +323,7 @@ exports.addVehicleToInventory = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Vehicle added to inventory successfully",
+      message: "Part added to inventory successfully",
     });
   } catch (err) {
     await session.abortTransaction();
