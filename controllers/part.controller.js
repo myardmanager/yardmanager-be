@@ -4,6 +4,13 @@ const Part = require("../models/part.model");
 exports.createPart = async (req, res) => {
   try {
     req.body.company = req.user.company;
+    const check = await Part.findOne({ name: req.body.name, company: req.user.company });
+    if (check) {
+      return res.status(400).json({
+        success: false,
+        message: "Part already exists",
+      });
+    }
 
     const lastPart = await Part.findOne({ company: req.user.company }).sort({
       sku: -1,

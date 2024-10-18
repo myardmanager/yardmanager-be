@@ -64,7 +64,7 @@ exports.createVehicle = async (req, res) => {
       const newVehicle = await vehicle.save();
       res.status(201).json({
         success: true,
-        message: "Vehicle created successfully.",
+        message: "Part created successfully.",
         data: newVehicle,
       });
     } else {
@@ -85,7 +85,7 @@ exports.createVehicle = async (req, res) => {
       const newVehicles = await Vehicle.insertMany(vehicles);
       res.status(201).json({
         success: true,
-        message: "Vehicles created successfully.",
+        message: "Part created successfully.",
         data: newVehicles,
       });
     }
@@ -249,7 +249,7 @@ exports.decodeVin = async (req, res) => {
     if (!vehicle.make || !vehicle.model || !vehicle.year) {
       return res
         .status(404)
-        .json({ success: false, message: "Vehicle not found" });
+        .json({ success: false, message: "Part not found" });
     }
     return res.status(200).json({ success: true, data: vehicle });
   } catch (error) {
@@ -298,7 +298,7 @@ exports.addVehicleToInventory = async (req, res) => {
     }).session(session);
 
     if (!vehicle) {
-      return res.status(404).json({ message: "Vehicle not found" });
+      return res.status(404).json({ message: "Part not found" });
     }
 
     const lastInventory = await inventoryModel
