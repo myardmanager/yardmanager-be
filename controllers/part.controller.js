@@ -4,7 +4,10 @@ const Part = require("../models/part.model");
 exports.createPart = async (req, res) => {
   try {
     req.body.company = req.user.company;
-    const check = await Part.findOne({ name: req.body.name, company: req.user.company });
+    const check = await Part.findOne({
+      name: { $regex: req.body.name, $options: "i" },
+      company: req.user.company,
+    });
     if (check) {
       return res.status(400).json({
         success: false,
