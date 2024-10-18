@@ -160,6 +160,7 @@ exports.updateVehicle = async (req, res) => {
       {
         location: inventory.location._id,
         lastYear: inventory.lastYear,
+        color: inventory.color,
       }
     );
 
