@@ -321,7 +321,7 @@ exports.getInventoryPagination = async (req, res) => {
     const inventory = await Inventory.aggregate([
       ...pipeline,
       {
-        $sort: { createdAt: -1 },
+        $sort: { sku: 1 },
       },
       {
         $skip: offset,
