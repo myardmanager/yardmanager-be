@@ -381,7 +381,7 @@ exports.addAllVehiclesToInventory = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "All parts added to inventory successfully.",
+      message: "Parts added to inventory successfully.",
     });
   } catch (error) {
     const errorMessages = Object.keys(error.errors).map(
