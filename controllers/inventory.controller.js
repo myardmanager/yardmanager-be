@@ -412,7 +412,7 @@ exports.getInventoryByName = async (req, res) => {
     }).populate([
       { path: "location", select: "location" },
       { path: "part", select: ["name", "variant", "color"] },
-    ]).sort({ sku: -1 });
+    ]).sort({ sku: 1 });
     res.status(200).json({
       success: true,
       message: "Part fetched successfully",
