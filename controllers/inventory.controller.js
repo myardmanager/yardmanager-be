@@ -437,7 +437,7 @@ exports.getInventoryByName = async (req, res) => {
         $match: {
           // $or: query,
           company: req.user.company,
-          deleted: false,
+          // deleted: false,
         },
       },
       // {
@@ -452,6 +452,7 @@ exports.getInventoryByName = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Part fetched successfully",
+      check: {query, user: req.user},
       data: inventory,
     });
   } catch (error) {
