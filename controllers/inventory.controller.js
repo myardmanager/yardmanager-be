@@ -441,6 +441,8 @@ exports.getInventoryByName = async (req, res) => {
       {
         $match: {
           $or: query,
+          company: req.user.company,
+          deleted: false,
       }},
       {
         $sort: { sku: 1 },
