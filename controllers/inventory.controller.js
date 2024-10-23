@@ -433,13 +433,13 @@ exports.getInventoryByName = async (req, res) => {
       // {
       //   $unwind: { path: "$location", preserveNullAndEmptyArrays: true },
       // },
-      {
-        $match: {
-          // $or: query,
-          company: req.user.company,
-          // deleted: false,
-        },
-      },
+      // {
+      //   $match: {
+      //     // $or: query,
+      //     company: req.user.company,
+      //     // deleted: false,
+      //   },
+      // },
       // {
       //   $addFields: {
       //     sku: { $toInt: { $toString: "$sku" } },
