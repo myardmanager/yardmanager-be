@@ -404,7 +404,7 @@ exports.getInventoryByName = async (req, res) => {
     let search = req.query.search;
     let query = [];
     query.push({ "part.name": { $regex: search, $options: "i" } });
-    query.push({ sku: { $regex: search, $options: "i" } });
+    query.push({ skuString: { $regex: search, $options: "i" } });
     const inventory = await Inventory.aggregate([
       {
         $lookup: {
@@ -438,11 +438,6 @@ exports.getInventoryByName = async (req, res) => {
           $or: query,
           company: new mongoose.Types.ObjectId(req.user.company),
           deleted: false,
-        },
-      },
-      {
-        $addFields: {
-          sku: { $toInt: { $toString: "$sku" } },
         },
       },
       {
