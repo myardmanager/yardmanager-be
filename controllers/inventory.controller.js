@@ -83,11 +83,12 @@ exports.createInventory = async (req, res) => {
     } else {
       req.body.sku = 1;
     }
-    req.body.createdByType = req.user.type.charAt(0).toUpperCase() + req.user.type.slice(1);
+    req.body.createdByType =
+      req.user.type.charAt(0).toUpperCase() + req.user.type.slice(1);
     req.body.createdBy = req.user.id;
 
     const inventory = await Inventory.create(req.body);
-      const newInventory = await inventory.populate([
+    const newInventory = await inventory.populate([
       { path: "location" },
       { path: "part" },
       { path: "createdBy", select: "name email" },
@@ -398,23 +399,12 @@ exports.setInventoryDeleteMark = async (req, res) => {
     });
   }
 };
-
 exports.getInventoryByName = async (req, res) => {
   try {
-    console.log(req.query.search);
-    const query = parseInt(req.query.search) ? [{ sku: parseInt(req.query.search) }, { 'part.name': { $regex: req.query.search, $options: "i" } }] : [{ 'part.name': { $regex: req.query.search, $options: "i" } }];
-    // const inventory = await Inventory.find({
-    //   // $or: [
-    //   //   { name: { $regex: req.query.search, $options: "i" } },
-    //   //   { sku: parseInt(req.query.search) },
-    //   // ],
-    //   $or: query,
-    //   company: req.user.company,
-    //   deleted: false,
-    // }).populate([
-    //   { path: "location", select: "location" },
-    //   { path: "part", select: ["name", "variant", "color"] },
-    // ]).sort({ sku: 1 });
+    let search = req.query.search;
+    let query = [];
+    query.push({ "part.name": { $regex: search, $options: "i" } });
+    query.push({ sku: { $regex: search, $options: "i" } });
     const inventory = await Inventory.aggregate([
       {
         $lookup: {
@@ -426,6 +416,11 @@ exports.getInventoryByName = async (req, res) => {
       },
       {
         $unwind: { path: "$part", preserveNullAndEmptyArrays: true },
+      },
+      {
+        $addFields: {
+          sku: { $toString: "$sku" },
+        },
       },
       {
         $lookup: {
@@ -443,11 +438,17 @@ exports.getInventoryByName = async (req, res) => {
           $or: query,
           company: req.user.company,
           deleted: false,
-      }},
+        },
+      },
       {
         $sort: { sku: 1 },
       },
-    ])
+      {
+        $addFields: {
+          sku: { $toInt: { $toString: "$sku" } },
+        },
+      },
+    ]);
     res.status(200).json({
       success: true,
       message: "Part fetched successfully",
