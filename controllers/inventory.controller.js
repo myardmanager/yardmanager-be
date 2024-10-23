@@ -417,11 +417,11 @@ exports.getInventoryByName = async (req, res) => {
       {
         $unwind: { path: "$part", preserveNullAndEmptyArrays: true },
       },
-      {
-        $addFields: {
-          skuString: { $toString: "$sku" },
-        },
-      },
+      // {
+      //   $addFields: {
+      //     skuString: { $toString: "$sku" },
+      //   },
+      // },
       {
         $lookup: {
           from: "locations", // Assuming the collection name is 'locations'
