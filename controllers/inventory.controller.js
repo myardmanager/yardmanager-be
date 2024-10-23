@@ -402,7 +402,7 @@ exports.setInventoryDeleteMark = async (req, res) => {
 exports.getInventoryByName = async (req, res) => {
   try {
     console.log(req.query.search);
-    const query = parseInt(req.query.search) ? [{ sku: parseInt(req.query.search) }, { 'part.name': { $regex: req.query.search, $options: "i" } }] : [{ name: { $regex: req.query.search, $options: "i" } }];
+    const query = parseInt(req.query.search) ? [{ sku: parseInt(req.query.search) }, { 'part.name': { $regex: req.query.search, $options: "i" } }] : [{ 'part.name': { $regex: req.query.search, $options: "i" } }];
     // const inventory = await Inventory.find({
     //   // $or: [
     //   //   { name: { $regex: req.query.search, $options: "i" } },
