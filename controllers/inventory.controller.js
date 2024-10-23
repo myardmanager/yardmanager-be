@@ -419,7 +419,7 @@ exports.getInventoryByName = async (req, res) => {
       },
       {
         $addFields: {
-          sku: { $toString: "$sku" },
+          skuString: { $toString: "$sku" },
         },
       },
       {
@@ -435,19 +435,19 @@ exports.getInventoryByName = async (req, res) => {
       },
       {
         $match: {
-          $or: query,
+          // $or: query,
           company: req.user.company,
           deleted: false,
         },
       },
-      {
-        $sort: { sku: 1 },
-      },
-      {
-        $addFields: {
-          sku: { $toInt: { $toString: "$sku" } },
-        },
-      },
+      // {
+      //   $addFields: {
+      //     sku: { $toInt: { $toString: "$sku" } },
+      //   },
+      // },
+      // {
+      //   $sort: { sku: 1 },
+      // },
     ]);
     res.status(200).json({
       success: true,
