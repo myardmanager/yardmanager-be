@@ -403,49 +403,49 @@ exports.getInventoryByName = async (req, res) => {
   try {
     console.log(req.query.search);
     const query = parseInt(req.query.search) ? [{ sku: parseInt(req.query.search) }, { 'part.name': { $regex: req.query.search, $options: "i" } }] : [{ 'part.name': { $regex: req.query.search, $options: "i" } }];
-    const inventory = await Inventory.find({
-      // $or: [
-      //   { name: { $regex: req.query.search, $options: "i" } },
-      //   { sku: parseInt(req.query.search) },
-      // ],
-      $or: query,
-      company: req.user.company,
-      deleted: false,
-    }).populate([
-      { path: "location", select: "location" },
-      { path: "part", select: ["name", "variant", "color"] },
-    ]).sort({ sku: 1 });
-    // const inventory = await Inventory.aggregate([
-    //   {
-    //     $lookup: {
-    //       from: "parts", // Assuming the collection name is 'parts'
-    //       localField: "part",
-    //       foreignField: "_id",
-    //       as: "part",
-    //     },
-    //   },
-    //   {
-    //     $unwind: { path: "$part", preserveNullAndEmptyArrays: true },
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "locations", // Assuming the collection name is 'locations'
-    //       localField: "location",
-    //       foreignField: "_id",
-    //       as: "location",
-    //     },
-    //   },
-    //   {
-    //     $unwind: { path: "$location", preserveNullAndEmptyArrays: true },
-    //   },
-    //   {
-    //     $match: {
-    //       $or: query,
-    //   }},
-    //   {
-    //     $sort: { sku: 1 },
-    //   },
-    // ])
+    // const inventory = await Inventory.find({
+    //   // $or: [
+    //   //   { name: { $regex: req.query.search, $options: "i" } },
+    //   //   { sku: parseInt(req.query.search) },
+    //   // ],
+    //   $or: query,
+    //   company: req.user.company,
+    //   deleted: false,
+    // }).populate([
+    //   { path: "location", select: "location" },
+    //   { path: "part", select: ["name", "variant", "color"] },
+    // ]).sort({ sku: 1 });
+    const inventory = await Inventory.aggregate([
+      {
+        $lookup: {
+          from: "parts", // Assuming the collection name is 'parts'
+          localField: "part",
+          foreignField: "_id",
+          as: "part",
+        },
+      },
+      {
+        $unwind: { path: "$part", preserveNullAndEmptyArrays: true },
+      },
+      {
+        $lookup: {
+          from: "locations", // Assuming the collection name is 'locations'
+          localField: "location",
+          foreignField: "_id",
+          as: "location",
+        },
+      },
+      {
+        $unwind: { path: "$location", preserveNullAndEmptyArrays: true },
+      },
+      {
+        $match: {
+          $or: query,
+      }},
+      {
+        $sort: { sku: 1 },
+      },
+    ])
     res.status(200).json({
       success: true,
       message: "Part fetched successfully",
