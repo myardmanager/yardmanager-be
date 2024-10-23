@@ -435,7 +435,7 @@ exports.getInventoryByName = async (req, res) => {
       },
       {
         $match: {
-          // $or: query,
+          $or: query,
           company: new mongoose.Types.ObjectId(req.user.company),
           deleted: false,
         },
