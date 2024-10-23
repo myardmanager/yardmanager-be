@@ -448,7 +448,7 @@ exports.getInventoryByName = async (req, res) => {
       // {
       //   $sort: { sku: 1 },
       // },
-    ]);
+    ]).exec();
     res.status(200).json({
       success: true,
       message: "Part fetched successfully",
