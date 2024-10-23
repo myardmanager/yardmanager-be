@@ -406,33 +406,33 @@ exports.getInventoryByName = async (req, res) => {
     query.push({ "part.name": { $regex: search, $options: "i" } });
     query.push({ sku: { $regex: search, $options: "i" } });
     const inventory = await Inventory.aggregate([
-      {
-        $lookup: {
-          from: "parts", // Assuming the collection name is 'parts'
-          localField: "part",
-          foreignField: "_id",
-          as: "part",
-        },
-      },
-      {
-        $unwind: { path: "$part", preserveNullAndEmptyArrays: true },
-      },
+      // {
+      //   $lookup: {
+      //     from: "parts", // Assuming the collection name is 'parts'
+      //     localField: "part",
+      //     foreignField: "_id",
+      //     as: "part",
+      //   },
+      // },
+      // {
+      //   $unwind: { path: "$part", preserveNullAndEmptyArrays: true },
+      // },
       // {
       //   $addFields: {
       //     skuString: { $toString: "$sku" },
       //   },
       // },
-      {
-        $lookup: {
-          from: "locations", // Assuming the collection name is 'locations'
-          localField: "location",
-          foreignField: "_id",
-          as: "location",
-        },
-      },
-      {
-        $unwind: { path: "$location", preserveNullAndEmptyArrays: true },
-      },
+      // {
+      //   $lookup: {
+      //     from: "locations", // Assuming the collection name is 'locations'
+      //     localField: "location",
+      //     foreignField: "_id",
+      //     as: "location",
+      //   },
+      // },
+      // {
+      //   $unwind: { path: "$location", preserveNullAndEmptyArrays: true },
+      // },
       {
         $match: {
           // $or: query,
