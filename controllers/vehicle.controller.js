@@ -155,7 +155,7 @@ exports.updateVehicle = async (req, res) => {
       {
         $match: {
           vin: inventory.vin,
-          _id: { $ne: mongoose.Types.ObjectId(req.params.id) },
+          _id: { $ne: new mongoose.Types.ObjectId(req.params.id) },
           company: req.user.company,
         },
       },
@@ -183,7 +183,7 @@ exports.updateVehicle = async (req, res) => {
       },
       {
         $project: {
-          location: inventory.location._id,
+          // location: inventory.location._id,
           lastYear: inventory.lastYear,
           color: 1,
         },
