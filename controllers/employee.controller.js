@@ -135,7 +135,7 @@ exports.updateEmployee = async (req, res) => {
     // }
 
     let user = null;
-    if (req.user.role === "user") {
+    if (req.user.type === "user") {
       user = await User.findById(req.user.id).select("password");
 
       if (!user) {
