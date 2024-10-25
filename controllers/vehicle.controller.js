@@ -151,18 +151,51 @@ exports.updateVehicle = async (req, res) => {
     }
 
     // Update all other vehicles with same vin number
-    await Vehicle.updateMany(
+    await Vehicle.aggregate([
       {
-        vin: inventory.vin,
-        _id: { $ne: req.params.id },
-        company: req.user.company,
+        $match: {
+          vin: inventory.vin,
+          _id: { $ne: mongoose.Types.ObjectId(req.params.id) },
+          company: req.user.company,
+        },
       },
       {
-        // location: inventory.location._id,
-        lastYear: inventory.lastYear,
-        color: inventory.color,
-      }
-    );
+        $lookup: {
+          from: "parts",
+          localField: "part",
+          foreignField: "_id",
+          as: "part",
+        },
+      },
+      {
+        $unwind: "$part",
+      },
+      {
+        $addFields: {
+          color: {
+            $cond: {
+              if: { $eq: ["$part.color", true] },
+              then: inventory.color,
+              else: "$color",
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          location: inventory.location._id,
+          lastYear: inventory.lastYear,
+          color: 1,
+        },
+      },
+      {
+        $merge: {
+          into: "vehicles",
+          on: "_id",
+          whenNotMatched: "fail",
+        },
+      },
+    ]);
 
     // Send response
     res.status(200).json({
