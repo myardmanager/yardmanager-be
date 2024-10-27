@@ -38,7 +38,19 @@ exports.getInvoice = async (req, res) => {
 		const invoice = await Invoice.findOne({
 			_id: req.params.id,
 			company: req.user.company
-		}).populate(["soldByUser", "soldByEmployee", "products.product"]);
+		}).populate([
+			"soldByUser",
+			"soldByEmployee",
+			{
+				path: "products",
+				populate: {
+					path: "product",
+					populate: {
+						path: "part",
+					},
+				},
+			},
+		]);
 		if (!invoice) {
 			return res.status(404).json({ message: "Invoice not found" });
 		}
