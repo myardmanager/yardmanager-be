@@ -193,7 +193,6 @@ exports.updateVehicle = async (req, res) => {
           into: "vehicles",
           on: "_id",
           whenMatched: "replace",
-          
           whenNotMatched: "fail",
         },
       },
