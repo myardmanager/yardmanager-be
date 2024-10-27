@@ -59,7 +59,8 @@ exports.createVehicle = async (req, res) => {
       const vehicle = new Vehicle({
         ...req.body,
         createdBy: req.user.id,
-        createdByType: req.user.type.charAt(0).toUpperCase() + req.user.type.slice(1),
+        createdByType:
+          req.user.type.charAt(0).toUpperCase() + req.user.type.slice(1),
       });
       const newVehicle = await vehicle.save();
       res.status(201).json({
@@ -77,7 +78,8 @@ exports.createVehicle = async (req, res) => {
           sku: req.body.sku + i,
           variant: variants[i],
           createdBy: req.user.id,
-          createdByType: req.user.type.charAt(0).toUpperCase() + req.user.type.slice(1),
+          createdByType:
+            req.user.type.charAt(0).toUpperCase() + req.user.type.slice(1),
         });
         vehicles.push(vehicle);
       }
@@ -151,7 +153,7 @@ exports.updateVehicle = async (req, res) => {
     }
 
     // Update all other vehicles with same vin number
-    await Vehicle.aggregate([
+    await Vehicle.updateMany(
       {
         $match: {
           vin: inventory.vin,
@@ -159,44 +161,47 @@ exports.updateVehicle = async (req, res) => {
           company: req.user.company,
         },
       },
-      {
-        $lookup: {
-          from: "parts",
-          localField: "part",
-          foreignField: "_id",
-          as: "part",
-        },
-      },
-      {
-        $unwind: "$part",
-      },
-      {
-        $addFields: {
-          color: {
-            $cond: {
-              if: { $eq: ["$part.color", true] },
-              then: inventory.color,
-              else: "$color",
-            },
+      [
+        {
+          $lookup: {
+            from: "parts",
+            localField: "part",
+            foreignField: "_id",
+            as: "part",
           },
         },
-      },
-      {
-        $project: {
-          // location: inventory.location._id,
-          lastYear: inventory.lastYear,
-          color: 1,
+        {
+          $unwind: "$part",
         },
-      },
-      {
-        $merge: {
-          into: "vehicles",
-          on: "vin",
-          whenMatched: "replace",
-          whenNotMatched: "fail",
+        {
+          $addFields: {
+            color: {
+              $cond: {
+                if: { $eq: ["$part.color", true] },
+                then: inventory.color,
+                else: "$color",
+              },
+            },
+            lastYear: inventory.lastYear,
+          },
         },
-      },
-    ]);
+        {
+          $project: {
+            // location: inventory.location._id,
+            color: 1,
+            lastYear: 1,
+          },
+        },
+        // {
+        //   $merge: {
+        //     into: "vehicles",
+        //     on: "_id",
+        //     whenMatched: "replace",
+        //     whenNotMatched: "fail",
+        //   },
+        // },
+      ]
+    );
 
     // Send response
     res.status(200).json({
@@ -428,4 +433,3 @@ exports.addAllVehiclesToInventory = async (req, res) => {
     });
   }
 };
-
