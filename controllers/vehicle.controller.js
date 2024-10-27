@@ -155,7 +155,7 @@ exports.updateVehicle = async (req, res) => {
       {
         $match: {
           vin: inventory.vin,
-          _id: { $ne: new mongoose.Types.ObjectId(req.params.id) },
+          // _id: { $ne: new mongoose.Types.ObjectId(req.params.id) },
           company: req.user.company,
         },
       },
@@ -179,29 +179,19 @@ exports.updateVehicle = async (req, res) => {
               else: "$color",
             },
           },
-          // location: inventory.location._id,
-          lastYear: inventory.lastYear,
         },
       },
       {
         $project: {
+          // location: inventory.location._id,
+          lastYear: inventory.lastYear,
           color: 1,
-          lastYear: 1,
-          // location: 1
         },
       },
-      // {
-      //   $set: {
-      //     // location: inventory.location._id,
-      //     lastYear: inventory.lastYear,
-      //     color: inventory.color,
-      //   },
-      // },
       {
         $merge: {
           into: "vehicles",
           on: "_id",
-          whenMatched: "merge",
           whenNotMatched: "fail",
         },
       },
