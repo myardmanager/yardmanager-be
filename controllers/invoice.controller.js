@@ -73,7 +73,15 @@ exports.getAllInvoices = async (req, res) => {
 		const invoices = await Invoice.find({ company: req.user.company }).populate([
 			"soldByUser",
 			"soldByEmployee",
-			"products.product"
+			{
+				path: "products",
+				populate: {
+					path: "product",
+					populate: {
+						path: "part",
+					},
+				},
+			},
 		]);
 		res.status(200).json({
 			success: true,
