@@ -184,21 +184,22 @@ exports.updateVehicle = async (req, res) => {
       {
         $project: {
           // location: inventory.location._id,
-          // lastYear: inventory.lastYear,
+          lastYear: inventory.lastYear,
           color: 1,
         },
       },
-      {
-        $set: {
-          // location: inventory.location._id,
-          lastYear: inventory.lastYear,
-          color: inventory.color,
-        },
-      },
+      // {
+      //   $set: {
+      //     // location: inventory.location._id,
+      //     lastYear: inventory.lastYear,
+      //     color: inventory.color,
+      //   },
+      // },
       {
         $merge: {
           into: "vehicles",
           on: "_id",
+          whenMatched: "merge",
           whenNotMatched: "fail",
         },
       },
