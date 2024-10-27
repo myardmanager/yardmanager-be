@@ -153,55 +153,58 @@ exports.updateVehicle = async (req, res) => {
     }
 
     // Update all other vehicles with same vin number
-    await Vehicle.updateMany(
+    const vehiclesToUpdate = await Vehicle.aggregate([
       {
         $match: {
           vin: inventory.vin,
-          // _id: { $ne: new mongoose.Types.ObjectId(req.params.id) },
           company: req.user.company,
         },
       },
-      [
-        {
-          $lookup: {
-            from: "parts",
-            localField: "part",
-            foreignField: "_id",
-            as: "part",
-          },
+      {
+        $lookup: {
+          from: "parts",
+          localField: "part",
+          foreignField: "_id",
+          as: "part",
         },
-        {
-          $unwind: "$part",
-        },
-        {
-          $addFields: {
-            color: {
-              $cond: {
-                if: { $eq: ["$part.color", true] },
-                then: inventory.color,
-                else: "$color",
-              },
+      },
+      {
+        $unwind: "$part",
+      },
+      {
+        $addFields: {
+          color: {
+            $cond: {
+              if: { $eq: ["$part.color", true] },
+              then: inventory.color,
+              else: "$color",
             },
-            lastYear: inventory.lastYear,
           },
+          lastYear: inventory.lastYear,
         },
+      },
+      {
+        $project: {
+          _id: 1,  // Keep `_id` for reference in the update
+          color: 1,
+          lastYear: 1,
+        },
+      },
+    ]);
+    
+    // Update each document using the aggregation result
+    for (const vehicle of vehiclesToUpdate) {
+      await Vehicle.updateOne(
+        { _id: vehicle._id },
         {
-          $project: {
-            // location: inventory.location._id,
-            color: 1,
-            lastYear: 1,
+          $set: {
+            color: vehicle.color,
+            lastYear: vehicle.lastYear,
           },
-        },
-        // {
-        //   $merge: {
-        //     into: "vehicles",
-        //     on: "_id",
-        //     whenMatched: "replace",
-        //     whenNotMatched: "fail",
-        //   },
-        // },
-      ]
-    );
+        }
+      );
+    }
+    ;
 
     // Send response
     res.status(200).json({
