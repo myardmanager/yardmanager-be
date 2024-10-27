@@ -179,13 +179,15 @@ exports.updateVehicle = async (req, res) => {
               else: "$color",
             },
           },
+          // location: inventory.location._id,
+          lastYear: inventory.lastYear,
         },
       },
       {
         $project: {
-          // location: inventory.location._id,
-          lastYear: inventory.lastYear,
           color: 1,
+          lastYear: 1,
+          // location: 1
         },
       },
       // {
