@@ -192,6 +192,8 @@ exports.updateVehicle = async (req, res) => {
         $merge: {
           into: "vehicles",
           on: "_id",
+          whenMatched: "replace",
+          
           whenNotMatched: "fail",
         },
       },
