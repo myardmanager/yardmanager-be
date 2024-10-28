@@ -192,7 +192,7 @@ exports.updateVehicle = async (req, res) => {
 
     if (vehiclesPart.length > 0) {
       for (let i = 0; i < vehiclesPart.length; i++) {
-        await Part.findOneAndUpdate(
+        await Vehicle.findOneAndUpdate(
           { _id: vehiclesPart[i].part._id },
           { color: inventory.color }
         );
