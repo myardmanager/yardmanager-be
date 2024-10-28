@@ -153,7 +153,19 @@ exports.updateVehicle = async (req, res) => {
     }
 
     // Update all other vehicles with same vin number
-    const vehiclesToUpdate = await Vehicle.aggregate([
+    const allVehicles = await Vehicle.updateMany(
+      {
+        vin: inventory.vin,
+        company: req.user.company,
+      },
+      {
+        $set: {
+          lastYear: inventory.lastYear,
+        },
+      }
+    );
+
+    const vehiclesPart = await Vehicle.aggregate([
       {
         $match: {
           vin: inventory.vin,
@@ -169,49 +181,23 @@ exports.updateVehicle = async (req, res) => {
         },
       },
       {
-        $unwind: "$part",
-      },
-      {
-        $set: {
-          // color: "$part.color",
-          location: inventory.location,
-        },
+        $unwind: { path: "$part", preserveNullAndEmptyArrays: true },
       },
       {
         $match: {
           "part.color": true,
         },
       },
-      {
-        $set: {
-          color: "$part.color",
-          // location: inventory.location,
-        },
-      },
     ]);
-    
-    // Update each document using the aggregation result
-    for (const vehicle of vehiclesToUpdate) {
-      await Vehicle.updateOne(
-        { _id: vehicle._id },
-        {
-          $set: vehicle,
-        }
-      );
+
+    if (vehiclesPart.length > 0) {
+      for (let i = 0; i < vehiclesPart.length; i++) {
+        await Part.findOneAndUpdate(
+          { _id: vehiclesPart[i].part._id },
+          { color: inventory.color }
+        );
+      }
     }
-    
-    // Update each document using the aggregation result
-    // for (const vehicle of vehiclesToUpdate) {
-    //   await Vehicle.updateOne(
-    //     { _id: vehicle._id },
-    //     {
-    //       $set: {
-    //         color: vehicle.color,
-    //         lastYear: vehicle.lastYear,
-    //       },
-    //     }
-    //   );
-    // }
 
     // Send response
     res.status(200).json({
