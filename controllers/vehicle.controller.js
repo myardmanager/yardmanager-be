@@ -172,22 +172,20 @@ exports.updateVehicle = async (req, res) => {
         $unwind: "$part",
       },
       {
-        $addFields: {
-          color: {
-            $cond: {
-              if: { $eq: ["$part.color", true] },
-              then: inventory.color,
-              else: "$color",
-            },
-          },
-          lastYear: inventory.lastYear,
+        $set: {
+          // color: "$part.color",
+          location: inventory.location,
         },
       },
       {
-        $project: {
-          _id: 1,  // Keep `_id` for reference in the update
-          color: 1,
-          lastYear: 1,
+        $match: {
+          "part.color": true,
+        },
+      },
+      {
+        $set: {
+          color: "$part.color",
+          // location: inventory.location,
         },
       },
     ]);
@@ -197,14 +195,23 @@ exports.updateVehicle = async (req, res) => {
       await Vehicle.updateOne(
         { _id: vehicle._id },
         {
-          $set: {
-            color: vehicle.color,
-            lastYear: vehicle.lastYear,
-          },
+          $set: vehicle,
         }
       );
     }
-    ;
+    
+    // Update each document using the aggregation result
+    // for (const vehicle of vehiclesToUpdate) {
+    //   await Vehicle.updateOne(
+    //     { _id: vehicle._id },
+    //     {
+    //       $set: {
+    //         color: vehicle.color,
+    //         lastYear: vehicle.lastYear,
+    //       },
+    //     }
+    //   );
+    // }
 
     // Send response
     res.status(200).json({
