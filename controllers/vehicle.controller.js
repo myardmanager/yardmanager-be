@@ -165,7 +165,7 @@ exports.updateVehicle = async (req, res) => {
       }
     );
 
-    const vehiclesPart = await Vehicle.aggregate([
+    const vehiclesPart = await Vehicle.updateMany([
       {
         $match: {
           vin: inventory.vin,
@@ -188,16 +188,21 @@ exports.updateVehicle = async (req, res) => {
           "part.color": true,
         },
       },
+      {
+        $set: {
+          color: inventory.color,
+        },
+      },
     ]);
 
-    if (vehiclesPart.length > 0) {
-      for (let i = 0; i < vehiclesPart.length; i++) {
-        await Vehicle.findOneAndUpdate(
-          { _id: vehiclesPart[i].part._id },
-          { color: inventory.color }
-        );
-      }
-    }
+    // if (vehiclesPart.length > 0) {
+    //   for (let i = 0; i < vehiclesPart.length; i++) {
+    //     await Vehicle.findOneAndUpdate(
+    //       { _id: vehiclesPart[i].part._id },
+    //       { color: inventory.color }
+    //     );
+    //   }
+    // }
 
     // Send response
     res.status(200).json({
