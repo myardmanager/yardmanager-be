@@ -165,35 +165,18 @@ exports.updateVehicle = async (req, res) => {
       }
     );
 
-    const vehiclesPart = await Vehicle.updateMany([
+    const vehiclesPart = await Vehicle.updateMany(
       {
-        $match: {
-          vin: inventory.vin,
-          company: req.user.company,
-        },
-      },
-      {
-        $lookup: {
-          from: "parts",
-          localField: "part",
-          foreignField: "_id",
-          as: "part",
-        },
-      },
-      {
-        $unwind: { path: "$part", preserveNullAndEmptyArrays: true },
-      },
-      {
-        $match: {
-          "part.color": true,
-        },
+        vin: inventory.vin,
+        company: req.user.company,
+        "part.color": true,
       },
       {
         $set: {
           color: inventory.color,
         },
-      },
-    ]);
+      }
+    );
 
     // if (vehiclesPart.length > 0) {
     //   for (let i = 0; i < vehiclesPart.length; i++) {
