@@ -165,18 +165,74 @@ exports.updateVehicle = async (req, res) => {
       }
     );
 
-    const vehiclesPart = await Vehicle.find({
-      vin: inventory.vin,
-      company: req.user.company,
-      // "part.color": true,
-    }).populate("part");
+    console.log(allVehicles.length, 'All Vehicles\n\n', allVehicles);
+    
+    const vehiclePart = await Vehicle.aggregate([
+      {
+        $match: {
+          vin: inventory.vin,
+          company: new mongoose.Types.ObjectId(req.user.company)
+        }
+      },
+      {
+        $lookup: {
+          from: "parts",
+          localField: "part",
+          foreignField: "_id",
+          as: "part"
+        }
+      },
+      {
+        $unwind: { path: "$part" }
+      },
+      {
+        $match: {
+          "part.color": true
+        }
+      },
+      {
+        $set: {
+          color: inventory.color
+        }
+      },
+      {
+        $project: {
+          part: 0
+        }
+      },
+      {
+        $merge: {
+          into: "vehicles",
+          on: "_id",
+          whenMatched: "merge",
+          whenNotMatched: "discard",
+          let: { color: "$color" },
+          pipeline: [
+            {
+              $set: {
+                color: "$$color"
+              }
+            }
+          ]
+        }
+      }
+    ]);
+    console.log(vehiclePart.length, 'Vehicles Part\n\n');
+    
+    // const vehiclesPart = await Vehicle.find({
+    //   vin: inventory.vin,
+    //   company: req.user.company,
+    //   // "part.color": true,
+    // }).populate("part");
 
-    for (let i = 0; i < vehiclesPart.length; i++) {
-      await Vehicle.findOneAndUpdate(
-        { _id: vehiclesPart[i]._id, 'part.color': true },
-        { color: inventory.color }
-      );
-    }
+    // console.log(vehiclesPart.length, 'Vehicles Part\n\n');
+    
+    // for (let i = 0; i < vehiclesPart.length; i++) {
+    //   await Vehicle.findOneAndUpdate(
+    //     { _id: new mongoose.Types.ObjectId(vehiclesPart[i]._id), 'part.color': true },
+    //     { color: inventory.color }
+    //   );
+    // }
 
     // if (vehiclesPart.length > 0) {
     //   for (let i = 0; i < vehiclesPart.length; i++) {
