@@ -206,14 +206,14 @@ exports.updateVehicle = async (req, res) => {
           on: "_id",
           whenMatched: "merge",
           whenNotMatched: "discard",
-          let: { color: "$color" },
-          pipeline: [
-            {
-              $set: {
-                color: "$$color"
-              }
-            }
-          ]
+          // let: { color: "$color" },
+          // pipeline: [
+          //   {
+          //     $set: {
+          //       color: "$$color"
+          //     }
+          //   }
+          // ]
         }
       }
     ]);
