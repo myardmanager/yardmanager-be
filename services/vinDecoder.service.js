@@ -15,7 +15,7 @@ const vinDecoder = async (vin) => {
     return {
       make: response.data.manufacturer,
       model: response.data.model,
-      year: response.data.year - 1,
+      year: response.data.year,
 			// ...response.data,
     };
   } catch (error) {
