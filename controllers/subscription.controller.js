@@ -19,6 +19,12 @@ exports.subscribeCustomer = async (req, res) => {
     const { priceId, user } = req.body;
 
     let email = user.email;
+    const checkEmployee = await employeeModel.findOne({ email: email });
+    if (checkEmployee) {
+      return res
+        .status(400)
+        .json({ success: false, error: "User already exists" });
+    }
     let password = user.password;
     let name = user.name;
     const salt = await bcrypt.genSalt(10);
